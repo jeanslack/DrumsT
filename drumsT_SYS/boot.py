@@ -6,7 +6,7 @@
 # Porpose: Check OS type and configuration files
 # Writer: Gianluca Pernigoto <jeanlucperni@gmail.com>
 # Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
-# license: GPL3
+# license: GNU GENERAL PUBLIC LICENSE (see LICENSE)
 # Rev (01) 15/05/2015
 #########################################################
 
@@ -96,20 +96,33 @@ def control_config():
 
     return (drumsT_icon, openStudent_icon, addStudent_icon, changeStudent_icon, 
             delStudent_icon, OS, main_path, copyerr)
-
-
+    
+#-------------------------------------------------------------------------#
 def parser_fileconf():
     """
     execute a parsing on drumsT.conf.
     This parser system not evaluate the rows and columns for 
     reading specific lines. The only limit is that the name 
     of the variables should never be changed.
+    NOTE:
+    remove empty string from a list:
+    
+            cleaned = filter(None, uncomment)
+    
+    Note however, that filter returns a list in Python 2, but a generator 
+    in Python 3. You will need to convert it into a list in Python 3 :
+    
+            cleaned = list(filter(None, uncomment)) 
+    
+    or use the list comprehension solution:
+    
+            cleaned = [x for x in uncomment if x]
     """
-    conf = '%s/.drumsT/drumsT.conf' % (DIRNAME)
+    drumsT_conf = '%s/.drumsT/drumsT.conf' % (DIRNAME)
     
     uncomment = []
 
-    fconf = open(conf, 'r')
+    fconf = open(drumsT_conf, 'r')
     list_lines = fconf.readlines()
     fconf.close()
 
@@ -117,18 +130,7 @@ def parser_fileconf():
         if not line.startswith('#'):
             # strip remove all \n + spaces and tab
             uncomment.append(line.strip())
-    """
-    remove empty string from a list:
 
-                cleaned = filter(None, uncomment)
-
-    Note however, that filter returns a list in Python 2, but a generator 
-    in Python 3. You will need to convert it into a list in Python 3 :
-
-                cleaned = list(filter(None, uncomment)) 
-                
-    or use the list comprehension solution:
-    """
     cleaned = [x for x in uncomment if x]
 
     if cleaned == []:
@@ -144,3 +146,23 @@ def parser_fileconf():
         else:
             ret = path_db[19:].strip()
     return ret
+
+#-------------------------------------------------------------------------#
+def control_db(path_name, file_name):
+    """
+    Check existing path and file
+    """
+    #path_name, file_name = ntpath.split(path) #must be imported ntpath
+
+    if os.path.exists(path_name):
+        path_exist = True
+    else:
+        path_exist = False
+        
+    if os.path.isfile('%s/%s' %(path_name, file_name)):
+        file_exist = True
+    else:
+        file_exist = False
+        
+    return path_exist, file_exist
+

@@ -1,7 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+#
+#########################################################
+# Name: on_init.py
+# Porpose: bootstrap with controls gear system
+# Writer: Gianluca Pernigoto <jeanlucperni@gmail.com>
+# Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
+# license: GNU GENERAL PUBLIC LICENSE (see LICENSE)
+# Rev (00) 15/05/2015
+#########################################################
+#
 import wx
-from drumsT_SYS.boot import control_config, parser_fileconf
+from drumsT_SYS.boot import control_config, parser_fileconf, control_db
 
 class DrumsTeacher(wx.App):
     """
@@ -11,6 +21,7 @@ class DrumsTeacher(wx.App):
         """
         Main initilize ctrl
         """
+        #----------------------Main assignements------------------------#
         ctrl = control_config() #system control
         self.drumsT_icon = ctrl[0]
         self.openStudent_icon = ctrl[1]
@@ -27,20 +38,37 @@ class DrumsTeacher(wx.App):
             print 'DrumsT: Fatal Error, can not find the source configuration'
             return False
         
+        #---------------------Parsing file-conf-------------------------#
         conf = parser_fileconf() #parsing drumsT.conf
+        self.school_db = 'schools.drtDB'
         self.path_db = conf
         
-        if self.path_db == 'empty':
+        if self.path_db == 'empty': # not set
             from drumsT_GUI.first_time_start import MyDialog
             main_frame = MyDialog(self.drumsT_icon)
             main_frame.Show()
             self.SetTopWindow(main_frame)
             return True
         
-        elif self.path_db == 'error':
+        elif self.path_db == 'error': # is corrupt
             wx.MessageBox('The configuration file is wrong',
-                          'Fatal Error', wx.ICON_STOP)
+                          'DrumsT: Fatal Error', wx.ICON_STOP)
             print 'drumsT: The configuration file is wrong'
+            return False
+        
+        #--------------------Check paths--------------------------------#
+        ret = control_db(self.path_db, self.school_db) #control existing 
+        
+        if not ret[0]:
+            wx.MessageBox('The directory with database not exist !',
+                          'DrumsT: Fatal Error', wx.ICON_STOP)
+            print 'error: path db not exist'
+            return False
+        
+        elif not ret[1]:
+            wx.MessageBox('The database not exist in the path-name !',
+                          'DrumsT: Fatal Error', wx.ICON_STOP)
+            print 'error: file db not exist'
             return False
         
         else:

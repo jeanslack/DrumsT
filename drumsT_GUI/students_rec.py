@@ -2,12 +2,12 @@
 # -*- coding: UTF-8 -*-
 #
 #########################################################
-# Name: presets_addnew.py
-# Porpose: profile storing and profile editing dialog
+# Name: students_rec.py
+# Porpose: students profile storing dialog
 # Writer: Gianluca Pernigoto <jeanlucperni@gmail.com>
 # Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
 # license: GPL3
-# Rev (01) 01/05/2015
+# Rev (00) 16/05/2015
 #########################################################
 
 import wx

@@ -1,6 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 #
+#########################################################
+# Name: first_time_start.py
+# Porpose: Show when there is not nothing database
+# Writer: Gianluca Pernigoto <jeanlucperni@gmail.com>
+# Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
+# license: GNU GENERAL PUBLIC LICENSE (see LICENSE)
+# Rev (00) 16/05/2015
+#########################################################
 #
 import wx
 

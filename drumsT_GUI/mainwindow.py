@@ -1,9 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 #
+#########################################################
+# Name: mainwindow.py
+# Porpose: main_frame
+# Writer: Gianluca Pernigoto <jeanlucperni@gmail.com>
+# Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
+# license: GNU GENERAL PUBLIC LICENSE (see LICENSE)
+# Rev (00) 15/05/2015
+#########################################################
 #
 import wx
-from drumsT_SYS.data_students import query, delete
+from drumsT_SYS import data_students
+from drumsT_SYS import data_schools
 import students_rec
 
 ## COLORS:
@@ -24,22 +33,24 @@ class MainFrame(wx.Frame):
         self.changeStudent_ico = wx.GetApp().changeStudent_icon
         self.path_db = wx.GetApp().path_db
         
+        school = ['not selected']
+        self.year = ['not selected']
+        d = data_schools.query(self.path_db)
+        for a in d:
+            school.append(a[0])
+            self.year.append(a[1])
+        print self.year
+
         
         wx.Frame.__init__(self, None, -1, style=wx.DEFAULT_FRAME_STYLE)
         
         panel = wx.Panel(self)
         self.tool_bar()
         self.menu_bar()
-        self.cmbx_school = wx.ComboBox(panel,wx.ID_ANY, choices=['not selected',
-                                                                 'scuola1',
-                                                                 'scuola2'],
+        self.cmbx_school = wx.ComboBox(panel,wx.ID_ANY, choices=school,
                                        style=wx.CB_DROPDOWN | wx.CB_READONLY
                                        )
-        self.cmbx_year = wx.ComboBox(panel,wx.ID_ANY, choices=['not selected',
-                                                               '2015/2016',
-                                                               '2016/2017',
-                                                               '2017/2018',
-                                                               '2018/2019'],
+        self.cmbx_year = wx.ComboBox(panel,wx.ID_ANY, choices=self.year,
                                      style=wx.CB_DROPDOWN | wx.CB_READONLY
                                      )
         self.cmbx_level = wx.ComboBox(panel,wx.ID_ANY, choices=['not selected',
@@ -59,7 +70,9 @@ class MainFrame(wx.Frame):
         self.SetSize((1100, 600))
         self.cmbx_school.SetSelection(0)
         self.cmbx_year.SetSelection(0)
+        self.cmbx_year.Disable()
         self.cmbx_level.SetSelection(0)
+        self.cmbx_level.Disable()
         self.list_ctrl.SetBackgroundColour(green)
         self.list_ctrl.SetToolTipString("Select a profile to use")
         
@@ -102,9 +115,11 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.on_select, self.list_ctrl)
         self.Bind( wx.EVT_LIST_ITEM_DESELECTED, self.on_deselect, self.list_ctrl)
         self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.on_enter, self.list_ctrl)
+        self.cmbx_school.Bind(wx.EVT_COMBOBOX, self.on_school)
+        self.cmbx_year.Bind(wx.EVT_COMBOBOX, self.on_year)
         
         
-        self.reset_list()
+        #self.reset_list()
         
     ################ COMMON METHODS FOR USEFUL
     def reset_list(self):
@@ -126,7 +141,8 @@ class MainFrame(wx.Frame):
         self.reset_list()
         self.set_listctrl()
         """
-        profiles = query(self.path_db) # function for parsing
+        c = '%s/Barbarano/2014_2015/students.drtDB' % self.path_db
+        profiles = data_students.query(c) # function for parsing
         index = 0
         for rec in profiles:
             rows = self.list_ctrl.InsertStringItem(index, rec[0])
@@ -158,6 +174,27 @@ class MainFrame(wx.Frame):
         Type enter key or double clicked mouse event
         """
         print 'double click|enter'
+        
+    def on_school(self, event):
+        if self.cmbx_school.GetValue() == 'not selected':
+            self.cmbx_year.SetSelection(0)
+            self.cmbx_year.Disable()
+        else:
+            # http://stackoverflow.com/questions/682923/dynamically-change-the-choices-in-a-wx-combobox
+            self.cmbx_year.Enable()
+            self.cmbx_year.Clear()
+            self.cmbx_year.AppendItems(self.year)
+            #for append in self.year:
+                #self.cmbx_year.Append(append)
+            
+    def on_year(self, event):
+        print 'si'
+        #if self.cmbx_school.GetValue() == 'not selected':
+            #self.cmbx_year.Disable()
+        #else:
+            #self.cmbx_year.Enable()
+            
+        
     
     
     ######################################################################
