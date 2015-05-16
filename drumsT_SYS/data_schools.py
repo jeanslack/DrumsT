@@ -6,32 +6,27 @@ import sys
 
 #print sys.argv
 
-def create_new(path):
-    # create a table
+def create_new(path): # quando crei tutto nuovo e non esiste nessun database
+    name = raw_input('Insert name school  ')
+    date = raw_input('Year  ')
+    
+    
+    
     conn = sqlite3.connect('%s/schools.drtDB' % path) # or use :memory: to put it in RAM
     cursor = conn.cursor()
+    # create a table school
+    cursor.execute("""CREATE TABLE schools (name text)""")
+    # insert name in schools
+    cursor.execute("INSERT INTO schools VALUES ('%s')" % name)
     
-    cursor.execute("""CREATE TABLE schools
-                (name text, year text)""")
+    # create a table year
+    cursor.execute("""CREATE TABLE %s (year text)""" % name)
+    # insert data in year
+    cursor.execute("INSERT INTO %s VALUES ('%s')" % (name,date))
 
-    choice = raw_input('Insert one record (1) or more records (*)')
 
-    if choice == '1':
-        cursor.execute("INSERT INTO schools VALUES ('Barbarano medie', '2016_2017')")
+    conn.commit()
 
-        # save data to database
-        conn.commit()
-        
-    elif choice == '*':
-        # insert multiple records using the more secure "?" method
-        schools = [('Barbarano medie', '2013_2014'),
-                ('Privatamente', '2014_2015'),
-                ('Tregnago', '2012_2013')]
-        cursor.executemany("INSERT INTO schools VALUES (?,?)", schools)
-        conn.commit()
-        
-    else:
-        print 'error'
     
     
 def update_year(path):
@@ -92,14 +87,23 @@ def query(path_db):
     conn = sqlite3.connect('%s/schools.drtDB' % path_db) # or use :memory: to put it in RAM
     
     schools = []
-    cursor = conn.execute("SELECT name, year from schools")
+    cursor = conn.execute("SELECT name from schools")
     for row in cursor:
         schools.append(row)
     conn.close()
-    print schools
+    return schools
+
+def key_query(path_db, key): # ricerca nella tabella year della scuola
+    conn = sqlite3.connect('%s/schools.drtDB' % path_db) # or use :memory: to put it in RAM
+    
+    schools = []
+    cursor = conn.execute("SELECT year from %s" % key)
+    for row in cursor:
+        schools.append(row)
+    conn.close()
     return schools
     
-def insert(path_db):
+def insert(path_db): # solo quando aggiungi nuove scuole
     """
     inserisce un nuovo records
     """
@@ -109,16 +113,30 @@ def insert(path_db):
     name = raw_input('name  ')
     year = raw_input('year  ')
 
+    cursor.execute('''INSERT INTO schools VALUES(?)''',[name])
     
-    cursor.execute('''INSERT INTO schools VALUES(?,?)''', 
-                   [name,year])
+    # insert data in year
+    cursor.execute("""CREATE TABLE %s (year text)""" % name)
+    cursor.execute("INSERT INTO %s VALUES ('%s')" % (name,year))
+    
+    conn.commit()
+    conn.close()
+    
+def add_date(path_db,name):
+    conn = sqlite3.connect('%s/schools.drtDB' % path_db) # or use :memory: to put it in RAM
+    cursor = conn.cursor()
+    
+    year = raw_input('year  ')
+    # insert data in year
+    cursor.execute("INSERT INTO %s VALUES ('%s')" % (name,year))
+    
     conn.commit()
     conn.close()
     
     
-    
-#insert('/home/gianluca/Documenti/DrumsT_DataBases')
-
+#add_date('/home/gianluca/Pubblici/Project_github/DrumsT/test/DrumsT_DataBases', 'Barbarano')
+#insert('/home/gianluca/Pubblici/Project_github/DrumsT/test/DrumsT_DataBases')
+#create_new('/home/gianluca/Pubblici/Project_github/DrumsT/test/DrumsT_DataBases')
 #if sys.argv[1] == "create":
     #create_new()
 #elif sys.argv[1] == "update":

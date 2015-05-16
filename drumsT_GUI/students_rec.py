@@ -18,13 +18,13 @@ class AddRecords(wx.Dialog):
     """
     Show a dialog window.
     """
-    def __init__(self, parent, title):
+    def __init__(self, parent, title, path):
         """
         Mask dialog for recording new students profiles.
         """
         wx.Dialog.__init__(self, parent, -1, title, style=wx.DEFAULT_DIALOG_STYLE)
         
-        self.path_db = wx.GetApp().path_db
+        self.path_db = path
 
         siz_name = wx.StaticBox(self, wx.ID_ANY, "  Name/Surname:")
         siz_address = wx.StaticBox(self, wx.ID_ANY, "  Address:")

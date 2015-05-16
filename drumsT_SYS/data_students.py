@@ -38,7 +38,7 @@ def insert(name,address,birth_dates,phone,date,level,path_db):
     """
     inserisce un nuovo records
     """
-    conn = sqlite3.connect(path_db) # or use :memory: to put it in RAM
+    conn = sqlite3.connect('%s/students.drtDB' % path_db) # or use :memory: to put it in RAM
     cursor = conn.cursor()
     
     #name = raw_input('name  ')
@@ -136,7 +136,7 @@ def query(path_db):
     return students
 
 def search_all(long_name, path_db):
-    conn = sqlite3.connect(path_db) # or use :memory: to put it in RAM
+    conn = sqlite3.connect('%s/students.drtDB' % path_db) # or use :memory: to put it in RAM
     cursor = conn.cursor()
     
     #sql = "SELECT * FROM students WHERE name=?, address=?"
