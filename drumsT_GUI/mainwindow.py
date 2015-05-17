@@ -122,9 +122,8 @@ class MainFrame(wx.Frame):
     def set_listctrl(self):
         """
         Populate the list_ctrl with data or new data. Before to use this
-        method must be pass to reset_list() method first in the order:
-        self.reset_list()
-        self.set_listctrl()
+        method first must be use self.list_ctrl.DeleteAllItems() otherwise 
+        append result in the list_ctrl
         """
         path = '%s/%s/students.drtDB' % (self.path_db, self.choice)
         profiles = data_students.query(path) # function for parsing
@@ -164,6 +163,7 @@ class MainFrame(wx.Frame):
     #-------------------------------------------------------------------#
     def on_school(self, event): # combobox
         """
+        
         """
         if self.cmbx_school.GetValue() == 'not selected':
             self.cmbx_year.Clear()
@@ -171,15 +171,14 @@ class MainFrame(wx.Frame):
             self.cmbx_year.SetSelection(0)
             self.cmbx_year.Disable()
         else:
-            # http://stackoverflow.com/questions/682923/dynamically-change-the-choices-in-a-wx-combobox
             key = self.cmbx_school.GetValue()
             self.cmbx_year.Enable()
             self.cmbx_year.Clear()
             #self.cmbx_year.SetValue(' ')
             self.cmbx_year.Append('not selected')
             year = data_schools.key_query(self.path_db, key)
-            for append in year:
-                self.cmbx_year.Append(append[0])
+            for items in year:
+                self.cmbx_year.Append(items[0])
             self.cmbx_year.SetSelection(0)
     #-------------------------------------------------------------------#
     def on_year(self, event): # combobox
@@ -200,6 +199,9 @@ class MainFrame(wx.Frame):
             self.set_listctrl()
     #-------------------------------------------------------------------#
     def on_change_school(self, event): # combobox
+        """
+        when you change school selection in combobox resets to default 
+        """
         self.list_ctrl.DeleteAllItems()
         self.toolbar.EnableTool(wx.ID_FILE2, False)
         self.toolbar.EnableTool(wx.ID_FILE3, False)
@@ -215,7 +217,7 @@ class MainFrame(wx.Frame):
         """
         #--------- Properties
         self.toolbar = self.CreateToolBar(style=(wx.TB_HORZ_LAYOUT | wx.TB_TEXT))
-        #self.toolbar.SetToolBitmapSize((32,32))
+        self.toolbar.SetToolBitmapSize((32,32))
         self.toolbar.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
         
         # ------- See student data
@@ -238,7 +240,10 @@ class MainFrame(wx.Frame):
                                              wx.Bitmap(self.delStudent_ico))
         self.toolbar.AddSeparator()
         
-        #---------------------Binding----------------------------#
+        # ----------- finally, create it
+        self.toolbar.Realize()
+        
+        #------------ Binding
         self.Bind(wx.EVT_TOOL, self.Pupil, pupil)
         self.Bind(wx.EVT_TOOL, self.Addpupil, addpupil)
         self.Bind(wx.EVT_TOOL, self.Modify, modifypupil)

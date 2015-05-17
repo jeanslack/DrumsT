@@ -11,7 +11,7 @@
 #########################################################
 #
 import wx
-
+from add_school import AddSchool
 class MyDialog(wx.Dialog):
     
     def __init__(self, img):
@@ -70,7 +70,12 @@ class MyDialog(wx.Dialog):
         self.Destroy()
         
     def create_now(self, event):
-        print 'creare'
+        dialog = AddSchool(self, "Add new identity profile to database")
+        retcode = dialog.ShowModal()
+        #ret = dialog.ShowModal()
+        if retcode == wx.ID_OK:
+            data = dialog.GetValue()
+            print 'ritorno', data
         
     def import_now(self, event):
         print 'importare'
