@@ -35,7 +35,10 @@ class MainFrame(wx.Frame):
         self.choice = None
         
         school = ['not selected']
-        call = data_schools.query(self.path_db)
+        
+        self.school = data_schools.Schools_Id()
+        call = self.school.query(self.path_db)
+        #call = data_schools.query(self.path_db)
         for i in call:
             school.append(i[0])
             
@@ -127,6 +130,11 @@ class MainFrame(wx.Frame):
         """
         path = '%s/%s/students.drtDB' % (self.path_db, self.choice)
         profiles = data_students.query(path) # function for parsing
+        
+        if profiles == []:
+            wx.MessageBox("You must add new students now", 
+                          'Empty database', wx.ICON_EXCLAMATION, self)
+            return
         index = 0
         for rec in profiles:
             rows = self.list_ctrl.InsertStringItem(index, rec[0])
@@ -176,7 +184,7 @@ class MainFrame(wx.Frame):
             self.cmbx_year.Clear()
             #self.cmbx_year.SetValue(' ')
             self.cmbx_year.Append('not selected')
-            year = data_schools.key_query(self.path_db, key)
+            year = self.school.key_query(self.path_db, key)
             for items in year:
                 self.cmbx_year.Append(items[0])
             self.cmbx_year.SetSelection(0)

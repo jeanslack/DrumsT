@@ -2,13 +2,60 @@
 # -*- coding: utf-8 -*-
 
 import sqlite3
+from boot import write_fileconf, create_path
 
-class Schools_Names(object):
+class Schools_Id(object):
     """
     """
     def __init__(self):
         """
         """
+        
+    def first_start(self, name, year, path):
+        """
+        When run DrumsT for first time and there is nothing 
+        database/path-name configured, this method set a new.
+        """
+        create_path(path,name,year)
+        try:
+            conn = sqlite3.connect('%s/DrumsT_DataBases/schools.drtDB' % path) # or use :memory: to put it in RAM
+            cursor = conn.cursor()
+            
+            # create a table school
+            cursor.execute("""CREATE TABLE schools (name text)""")
+            # insert name in schools
+            cursor.execute("INSERT INTO schools VALUES ('%s')" % name)
+
+            # create a table year
+            cursor.execute("""CREATE TABLE '%s' (year text)""" % name)
+            # insert data in year
+            cursor.execute("INSERT INTO '%s' VALUES ('%s')" % (name,year))
+            
+            conn.commit()
+            conn.close()
+            
+        except sqlite3.OperationalError:
+            print "Failed to create new database 'schools.drtDB'"
+            return
+        
+        try:
+            conn = sqlite3.connect('%s/DrumsT_DataBases/%s/%s/students.drtDB' % (path,name,year))
+            #conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            
+            cursor.execute("""CREATE TABLE students
+            (name text, address text, birth_dates text, phone text, joined_date text, level_course text)""")
+            
+            conn.commit()
+            conn.close()
+        except sqlite3.OperationalError:
+            print "Failed to create new database 'students.drtDB'"
+            return
+        
+        write_fileconf('%s/DrumsT_DataBases' % path) # writing drumsT.conf
+        
+        
+        
 
     def create_new(self, path): # quando crei tutto nuovo e non esiste ancora nessun database
         
@@ -89,6 +136,7 @@ class Schools_Names(object):
         
         
     def query(self, path_db):
+        print 'query'
         conn = sqlite3.connect('%s/schools.drtDB' % path_db) # or use :memory: to put it in RAM
         
         schools = []
@@ -102,7 +150,7 @@ class Schools_Names(object):
         conn = sqlite3.connect('%s/schools.drtDB' % path_db) # or use :memory: to put it in RAM
         
         schools = []
-        cursor = conn.execute("SELECT year from %s" % key)
+        cursor = conn.execute("SELECT year from '%s'" % key)
         for row in cursor:
             schools.append(row)
         conn.close()

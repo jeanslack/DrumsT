@@ -3,7 +3,7 @@
 #
 #########################################################
 # Name: on_init.py
-# Porpose: bootstrap with controls gear system
+# Porpose: bootstrap with application system controls
 # Writer: Gianluca Pernigoto <jeanlucperni@gmail.com>
 # Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
 # license: GNU GENERAL PUBLIC LICENSE (see LICENSE)
@@ -44,10 +44,10 @@ class DrumsTeacher(wx.App):
         self.path_db = conf
         
         if self.path_db == 'empty': # not set
-            from drumsT_GUI.first_time_start import MyDialog
-            main_frame = MyDialog(self.drumsT_icon)
+            from drumsT_GUI.first_time_start import FirstStart
+            main_frame = FirstStart(self.drumsT_icon)
             main_frame.Show()
-            self.SetTopWindow(main_frame)
+            #self.SetTopWindow(main_frame)
             return True
         
         elif self.path_db == 'error': # is corrupt
