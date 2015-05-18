@@ -47,7 +47,7 @@ class DrumsTeacher(wx.App):
             from drumsT_GUI.first_time_start import FirstStart
             main_frame = FirstStart(self.drumsT_icon)
             main_frame.Show()
-            #self.SetTopWindow(main_frame)
+            self.SetTopWindow(main_frame)
             return True
         
         elif self.path_db == 'error': # is corrupt

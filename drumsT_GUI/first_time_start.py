@@ -13,7 +13,10 @@
 import wx
 from add_school import AddSchool
 from drumsT_SYS.data_schools import Schools_Id
-from drumsT_SYS.boot import write_fileconf
+from drumsT_SYS.os_proc import write_newpath, create_rootdir
+
+#from drumsT_SYS.data_schools import Schools_Id
+#from drumsT_SYS.boot import write_fileconf
 class FirstStart(wx.Dialog):
     
     def __init__(self, img):
@@ -23,23 +26,22 @@ class FirstStart(wx.Dialog):
         wx.Dialog.__init__(self, None, -1, style=wx.DEFAULT_DIALOG_STYLE)
         
         # variables or attributes:
-        msg = ("Questa e la prima volta vhe avviate DrumsT.\n\n"
-               "DrumsT e un gestionale scolastico indicato per gli "
-               "insegnanti di batteria.\n\n"
-               "- Se vuoi creare ora un nuovo database premi il pulsante "
-               "Crea.\n\n- Se vuoi importarne uno di esistente premi il "
-               "pulsante importa.\n\n- Premi esci per uscire semplicemente")
+        msg = ("This is the first time you start DrumsT.\n\n"
+               "DrumsT is a management school designed for drums teachers.\n\n"
+               "- If you want to create a new database now press the "
+               "create button.\n\n- If a database already exists press "
+               "the import button.\n\n- Press the exit button to exit simply")
         
         # widget:
         bitmap_drumsT = wx.StaticBitmap(self, wx.ID_ANY, wx.Bitmap(
             img,wx.BITMAP_TYPE_ANY))
         lab_welc2 = wx.StaticText(self, wx.ID_ANY, (msg))
-        lab_welc1 = wx.StaticText(self, wx.ID_ANY, ("Benvenuti !"))
-        lab_create = wx.StaticText(self, wx.ID_ANY, ("Creare un nuovo database:"))
-        lab_import = wx.StaticText(self, wx.ID_ANY, ("Importa un database di back-up:"))
-        lab_exit = wx.StaticText(self, wx.ID_ANY, ("Esci e non fare niente:"))
-        create_btn = wx.Button(self, wx.ID_ANY, ("Crea"))
-        import_btn = wx.Button(self, wx.ID_ANY, ("Importa"))
+        lab_welc1 = wx.StaticText(self, wx.ID_ANY, ("Welcome !"))
+        lab_create = wx.StaticText(self, wx.ID_ANY, ("Create a new database:"))
+        lab_import = wx.StaticText(self, wx.ID_ANY, ("Show me an existing database:"))
+        lab_exit = wx.StaticText(self, wx.ID_ANY, ("Exit and do nothing:"))
+        create_btn = wx.Button(self, wx.ID_ANY, ("Create"))
+        import_btn = wx.Button(self, wx.ID_ANY, ("Import"))
         close_btn = wx.Button(self, wx.ID_EXIT, "")
         
         # properties
@@ -66,17 +68,20 @@ class FirstStart(wx.Dialog):
         grd_base.Fit(self)
         self.Layout()
         
-        ######################## binding #####################
+        ######################## bindings #####################
         self.Bind(wx.EVT_BUTTON, self.on_close)
         self.Bind(wx.EVT_BUTTON, self.create_now, create_btn)
         self.Bind(wx.EVT_BUTTON, self.import_now, import_btn)
         
-    #-----------------------EVENTS--------------------------------------#
+    # EVENTS:
     #-------------------------------------------------------------------#
     def on_close(self, event):
         self.Destroy()
     #-------------------------------------------------------------------#
     def create_now(self, event):
+        """
+        Create new 
+        """
         dialog = AddSchool(self, "DrumsT - create new database school")
         retcode = dialog.ShowModal()
 
@@ -92,9 +97,21 @@ class FirstStart(wx.Dialog):
         if dialogdir.ShowModal() == wx.ID_OK:
             path = dialogdir.GetPath()
             dialogdir.Destroy()
-            #print path, data[0], data[1]
+            
+            if create_rootdir(path,data[0],data[1]) == "Failed":
+                wx.MessageBox("Failed to make database root dir", 'ERROR', 
+                              wx.ICON_ERROR, self)
+                return
+                
+            
             s = Schools_Id()
-            s.first_start(data[0],data[1],path)
+            if s.first_start(data[0],data[1],path) == "Failed":
+                wx.MessageBox("Failed to create new database sqlite", 'ERROR', 
+                              wx.ICON_ERROR, self)
+                return
+            
+            write_newpath('%s/DrumsT_DataBases' % path) # writing drumsT.conf
+            
             wx.MessageBox("A new database has been created successfully in:"
                           "\n\n%s/DrumsT_Databases\n\nYou must re-start the "
                           "DrumsT application now.\n\nGood Work !" % path, 
@@ -107,12 +124,14 @@ class FirstStart(wx.Dialog):
     #-------------------------------------------------------------------#
     def import_now(self, event):
         
-        dialdir = wx.DirDialog(self, "Where is the database folder ?")   
+        dialdir = wx.DirDialog(self, "Where is the database folder "
+                                     "'DrumsT_DataBases' ?"
+                                     )
         if dialdir.ShowModal() == wx.ID_OK:
             path = dialdir.GetPath()
             dialdir.Destroy()
             
-            write_fileconf(path)
+            write_newpath(path)
             wx.MessageBox("A database has been imported successfully in:"
                           "\n\n%s\n\nYou must re-start the "
                           "DrumsT application now.\n\nGood Work !" % path, 

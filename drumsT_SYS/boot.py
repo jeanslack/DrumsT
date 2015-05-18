@@ -165,38 +165,3 @@ def control_db(path_name, file_name):
         file_exist = False
         
     return path_exist, file_exist
-
-#--------------------------------------------------------------------------#
-def write_fileconf(path):
-    
-    # path è il percorso del database
-    
-    F = open('%s/.drumsT/drumsT.conf' %(DIRNAME),'r').readlines()
-    data = F
-    F = open('%s/.drumsT/drumsT.conf' %(DIRNAME),'r').close()
-
-    #print data
-    
-    for a in data:
-        if a.startswith('DATABASE_PATH_NAME='):
-            print 'certo'
-            data = [w.replace(a, 'DATABASE_PATH_NAME= %s\n' % (path)) 
-                    for w in data
-                    ]
-    
-    F = open('%s/.drumsT/drumsT.conf' %(DIRNAME),'w')
-    for i in data:
-        overwrite = F.write('%s' % i)
-                                   
-    F.close()
-    
-#--------------------------------------------------------------------------#
-def create_path():
-    try: # if exist dir not exit OSError, go...
-        os.makedirs('%s/DrumsT_DataBases/%s/%s' % (path,name,year))
-
-    except OSError:
-        print "Failed to make database directory"
-        return
-    
-    

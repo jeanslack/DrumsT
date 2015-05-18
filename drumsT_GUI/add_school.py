@@ -72,7 +72,8 @@ class AddSchool(wx.Dialog):
         self.Bind(wx.EVT_SPINCTRL, self.enter_year, self.spinctrl_year)
         self.Bind(wx.EVT_TEXT, self.enter_text, self.txt_name)
         
-        
+    # EVENTES:
+    #-------------------------------------------------------------------#
     def enter_text(self, event):
         """
         Emit text change: If text is only spaces not enable to save.
@@ -87,8 +88,7 @@ class AddSchool(wx.Dialog):
         else:
             self.apply_btn.Enable()
             self.name = strippedString.strip()
-            
-        
+    #-------------------------------------------------------------------#
     def enter_year(self, event):
         """
         Apply a confortable reading for school years.
@@ -99,14 +99,12 @@ class AddSchool(wx.Dialog):
         self.max_year = str(y)
         self.lab_year.SetLabel(" /     %s" % self.max_year)
         #self.sizer.Layout() # use it if the change layout too
-        
-        
-        
+    #-------------------------------------------------------------------#
     def on_close(self, event):
         self.parent.Show()
         self.Destroy()
         #event.Skip()
-        
+    #-------------------------------------------------------------------#
     #def on_apply(self, event):
         """
         pass event to self.GetValue()
@@ -121,12 +119,10 @@ class AddSchool(wx.Dialog):
         #Event.Skip(), work correctly here. Sometimes needs to disable 
         #it for needs to maintain the view of the window (for exemple).
         #event.Skip()
-        
+    #-------------------------------------------------------------------#
     def GetValue(self):
         """
         Return by call before Destroy()
         """
         setyear = '%s_%s' % (self.min_year,self.max_year)
         return self.name, setyear
-        
-
