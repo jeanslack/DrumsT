@@ -28,7 +28,7 @@ class AddSchool(wx.Dialog):
         self.min_year = '2015'
         self.name = None
         
-        self.parent.Hide()
+        #self.parent.Hide()
         
         # Widgets:
         lab_1 = wx.StaticText(self, wx.ID_ANY, ("Type school name or location identifier:"))
@@ -101,7 +101,7 @@ class AddSchool(wx.Dialog):
         #self.sizer.Layout() # use it if the change layout too
     #-------------------------------------------------------------------#
     def on_close(self, event):
-        self.parent.Show()
+        #self.parent.Show()
         self.Destroy()
         #event.Skip()
     #-------------------------------------------------------------------#

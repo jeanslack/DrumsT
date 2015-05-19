@@ -12,7 +12,8 @@
 
 import wx
 import string
-from drumsT_SYS.data_students import insert, search_all
+#from drumsT_SYS.data_students import insert, search_all
+from drumsT_SYS.data_students import Students_Id
 
 class AddRecords(wx.Dialog):
     """
@@ -131,8 +132,8 @@ class AddRecords(wx.Dialog):
                     break
                 else:
                     return
-
-        insert(name,address,birth,phone,date,level,self.path_db)
+                
+        add = Students_Id().insert(name,address,birth,phone,date,level,self.path_db)
         wx.MessageBox("Successfull storing !", "Success", wx.OK, self)
         #self.txt_name.SetValue(''), self.txt_address.SetValue(''),
         #self.txt_birth.SetValue(''), self.txt_phones.SetValue('')

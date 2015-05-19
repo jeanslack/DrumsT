@@ -13,7 +13,11 @@
 import wx
 from drumsT_SYS import data_students
 from drumsT_SYS import data_schools
+from add_school import AddSchool
+from drumsT_SYS.os_proc import create_rootdir
 import students_rec
+from drumsT_SYS.data_schools import Schools_Id
+from drumsT_SYS.data_students import Students_Id
 
 ## COLORS:
 azure = '#d9ffff' # rgb form (wx.Colour(217,255,255))
@@ -32,10 +36,10 @@ class MainFrame(wx.Frame):
         self.delStudent_ico = wx.GetApp().delStudent_icon
         self.changeStudent_ico = wx.GetApp().changeStudent_icon
         self.path_db = wx.GetApp().path_db
-        self.choice = None
+        self.choice = None # schoolName/schoolYear
         
+        self.students = data_students.Students_Id()
         school = ['not selected']
-        
         self.school = data_schools.Schools_Id()
         call = self.school.query(self.path_db)
         #call = data_schools.query(self.path_db)
@@ -128,11 +132,13 @@ class MainFrame(wx.Frame):
         method first must be use self.list_ctrl.DeleteAllItems() otherwise 
         append result in the list_ctrl
         """
+        #print self.choice
         path = '%s/%s/students.drtDB' % (self.path_db, self.choice)
-        profiles = data_students.query(path) # function for parsing
+        profiles = self.students.query(path)
         
         if profiles == []:
-            wx.MessageBox("You must add new students now", 
+            wx.MessageBox("There isn't any list to load.\n"
+                          "You must add new students now", 
                           'Empty database', wx.ICON_EXCLAMATION, self)
             return
         index = 0
@@ -171,7 +177,7 @@ class MainFrame(wx.Frame):
     #-------------------------------------------------------------------#
     def on_school(self, event): # combobox
         """
-        
+        When select a item in combobox school go in.
         """
         if self.cmbx_school.GetValue() == 'not selected':
             self.cmbx_year.Clear()
@@ -191,6 +197,7 @@ class MainFrame(wx.Frame):
     #-------------------------------------------------------------------#
     def on_year(self, event): # combobox
         """
+        When select a item in combobox year go in
         """
         if self.cmbx_year.GetValue() == 'not selected':
             self.list_ctrl.DeleteAllItems()
@@ -300,6 +307,8 @@ class MainFrame(wx.Frame):
         
         addschool = schoolButton.Append(wx.ID_ANY, "Add new school", 
                                             "Create a new record for school")
+        addate = schoolButton.Append(wx.ID_ANY, "Add new year to selected school", 
+                                           "Create a new record for school")
         modifyschool = schoolButton.Append(wx.ID_ANY, "Modify school name", 
                                      "Create a new record for school")
         deleteschool = schoolButton.Append(wx.ID_ANY, "Delete a school", 
@@ -326,12 +335,38 @@ class MainFrame(wx.Frame):
         #-----------------------Binding menu bar-------------------------#
         # menu tools
         self.Bind(wx.EVT_MENU, self.Addschool, addschool)
+        self.Bind(wx.EVT_MENU, self.Addate, addate)
 
         
     #-----------------Callback menu bar (event handler)------------------#
     #------------------------------------------------------------------#
     def Addschool(self, event):
-        print 'si'
+
+        dialog = AddSchool(self, "DrumsT - Add new school and date")
+        retcode = dialog.ShowModal()
+
+        if retcode == wx.ID_OK:
+            data = dialog.GetValue()
+        else:
+            return
+
+        mkdirs = create_rootdir(self.path_db,data[0],data[1])
+        if mkdirs[0]:
+            wx.MessageBox(mkdirs[1], 'ERROR', wx.ICON_ERROR, self)
+            return
+        schools = Schools_Id().new_school(self.path_db,data[0],data[1])
+        #if schools[0]:
+            #wx.MessageBox(schools[1], 'ERROR', wx.ICON_ERROR, self)
+            #return
+        students = Students_Id().first_start(self.path_db,data[0],data[1])
+        if students[0]:
+            wx.MessageBox(students[1], 'ERROR', wx.ICON_ERROR, self)
+            return
+    #------------------------------------------------------------------#
+    def Addate(self, event):
+        date = '2013_2014'
+        
+        
 
         
         

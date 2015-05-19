@@ -25,29 +25,32 @@ def write_newpath(path):
     data = F
     F = open('%s/.drumsT/drumsT.conf' %(DIRNAME),'r').close()
 
-    #print data
     for a in data:
         if a.startswith('DATABASE_PATH_NAME='):
             match = a
-            
     data = [w.replace(match, 'DATABASE_PATH_NAME=%s\n' % (path)) 
             for w in data
             ]
-
+    
     F = open('%s/.drumsT/drumsT.conf' %(DIRNAME),'w')
     for i in data:
         overwrite = F.write('%s' % i)
 
     F.close()
-    
 #--------------------------------------------------------------------------#
-def create_rootdir(path,name,year):
+def create_rootdir(rootpath,name,year):
     """
     Prepare a root dir for database during first time running 
     or when create another school with name and year
     """
-    try: # if exist dir not exit OSError, go...
-        os.makedirs('%s/DrumsT_DataBases/%s/%s' % (path,name,year))
-
-    except OSError:
-        return "Failed"
+    err = False
+    exc = None
+    try:
+        os.makedirs('%s/%s/%s' % (rootpath,name,year))
+        
+    except OSError as error:
+        err = True
+        exc = ("DrumsT: Failed to make database root dir\n\nOSError: %s" % error)
+        print error
+        
+    return err, exc

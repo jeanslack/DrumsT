@@ -13,6 +13,7 @@
 import wx
 from add_school import AddSchool
 from drumsT_SYS.data_schools import Schools_Id
+from drumsT_SYS.data_students import Students_Id
 from drumsT_SYS.os_proc import write_newpath, create_rootdir
 
 #from drumsT_SYS.data_schools import Schools_Id
@@ -96,18 +97,22 @@ class FirstStart(wx.Dialog):
         
         if dialogdir.ShowModal() == wx.ID_OK:
             path = dialogdir.GetPath()
+            rootpath = "%s/DrumsT_DataBases"
             dialogdir.Destroy()
             
-            if create_rootdir(path,data[0],data[1]) == "Failed":
-                wx.MessageBox("Failed to make database root dir", 'ERROR', 
-                              wx.ICON_ERROR, self)
+            mkdirs = create_rootdir(rootpath,data[0],data[1])
+            if mkdirs[0]:
+                wx.MessageBox(mkdirs[1], 'ERROR', wx.ICON_ERROR, self)
                 return
-                
+
+            schools = Schools_Id().first_start(path,data[0],data[1])
+            if schools[0]:
+                wx.MessageBox(schools[1], 'ERROR', wx.ICON_ERROR, self)
+                return
             
-            s = Schools_Id()
-            if s.first_start(data[0],data[1],path) == "Failed":
-                wx.MessageBox("Failed to create new database sqlite", 'ERROR', 
-                              wx.ICON_ERROR, self)
+            students = Students_Id().first_start(rootpath,data[0],data[1])
+            if students[0]:
+                wx.MessageBox(students[1], 'ERROR', wx.ICON_ERROR, self)
                 return
             
             write_newpath('%s/DrumsT_DataBases' % path) # writing drumsT.conf
@@ -118,8 +123,8 @@ class FirstStart(wx.Dialog):
                           'Success !', wx.ICON_INFORMATION, self)
             self.Destroy()
         else:
-            wx.MessageBox("You could not set anything", 
-                          'Warning', wx.ICON_EXCLAMATION, self)
+            wx.MessageBox("You could not set anything", 'Warning', 
+                          wx.ICON_EXCLAMATION, self)
             return
     #-------------------------------------------------------------------#
     def import_now(self, event):

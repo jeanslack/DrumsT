@@ -5,77 +5,73 @@ import sqlite3
 
 class Schools_Id(object):
     """
+    Records to a main database index.
     """
-    def first_start(self, name, year, path):
+    
+    def __init__(self):
+        """
+        
+        """
+        self.error = False
+        self.exception = None
+    #-------------------------------------------------------------------------#
+    def first_start(self, path, name, year):
         """
         When run DrumsT for first time and there is nothing 
-        database/path-name configured, this method set a new.
+        database/path-name configured, this method set a new one.
         """
-        folder = 'DrumsT_DataBases'
+        root = 'DrumsT_DataBases'
+        ########### create schools.drtDB
         try:
             # or use :memory: to put it in RAM
-            conn = sqlite3.connect('%s/%s/schools.drtDB' % (folder,path)) 
+            conn = sqlite3.connect('%s/%s/schools.drtDB' % (path, root)) 
             cursor = conn.cursor()
             
-            # create a table school
-            cursor.execute("""CREATE TABLE schools (name text)""")
+            # create a table school name
+            cursor.execute("CREATE TABLE schools (name text)")
             # insert name in schools
-            cursor.execute("INSERT INTO schools VALUES ('%s')" % name)
+            cursor.execute("INSERT INTO schools (name) VALUES(?)", (name,))
 
-            # create a table year
-            cursor.execute("""CREATE TABLE '%s' (year text)""" % name)
+            # create a table year name
+            cursor.execute("CREATE TABLE '%s' (year text)" % name)
             # insert data in year
-            cursor.execute("INSERT INTO '%s' VALUES ('%s')" % (name,year))
+            cursor.execute("INSERT INTO '%s' (year) VALUES(?)" % (name), (year,))
             
-            conn.commit()
-            conn.close()
+            conn.commit() # record stores
+            conn.close() # connect close
             
-        except sqlite3.OperationalError:
-            print "Failed to create new database 'schools.drtDB'"
-            return "Failed"
+        except sqlite3.OperationalError as err:
+            self.error = True
+            self.exception = ("DrumsT: Failed to create new database "
+                      "'schools.drtDB'\nsqlite3.OperationalError: %s" % err)
+
+        return self.error, self.exception
+
         
-        try:
-            conn = sqlite3.connect('%s/%s/%s/%s/students.drtDB' % (path,
-                                                                   folder,
-                                                                   name,year))
-            #conn.row_factory = sqlite3.Row
-            cursor = conn.cursor()
-            
-            cursor.execute("""CREATE TABLE students
-            (name text, address text, birth_dates text, phone text, joined_date text, level_course text)""")
-            
-            conn.commit()
-            conn.close()
-            
-        except sqlite3.OperationalError:
-            print "Failed to create new database 'students.drtDB'"
-            return "Failed"
-        
-        
-    def create_new(self, path): # quando crei tutto nuovo e non esiste ancora nessun database
-        
-        name = raw_input('Insert name school  ')
-        date = raw_input('Year  ')
-        
-        
-        
-        conn = sqlite3.connect('%s/schools.drtDB' % path) # or use :memory: to put it in RAM
+    #-------------------------------------------------------------------------#
+    def new_school(self, path, name, year):
+        conn = sqlite3.connect('%s/schools.drtDB' % (path)) 
         cursor = conn.cursor()
-        # create a table school
-        cursor.execute("""CREATE TABLE schools (name text)""")
-        # insert name in schools
-        cursor.execute("INSERT INTO schools VALUES ('%s')" % name)
         
-        # create a table year
-        cursor.execute("""CREATE TABLE %s (year text)""" % name)
+        # insert name in schools
+        #cursor.execute("INSERT INTO schools (name) VALUES(?)", (name,))
         # insert data in year
-        cursor.execute("INSERT INTO %s VALUES ('%s')" % (name,date))
+        #cursor.execute("INSERT INTO '%s' (year) VALUES(?)" % (name), (year,))
+        
+        #conn.commit() # record stores
+        #conn.close() # connect close
+        #####################################################################
 
-
+        
+        cursor.execute('''INSERT INTO schools VALUES(?)''',[name])
+        
+        # insert data in year
+        cursor.execute("""CREATE TABLE '%s' (year text)""" % name)
+        cursor.execute("INSERT INTO '%s' (year) VALUES(?)" % (name), (year,))
+        
         conn.commit()
+        conn.close()
 
-    
-    
     def update_year(self, path):
         """
         aggiorna records già esistenti
@@ -140,7 +136,10 @@ class Schools_Id(object):
         conn.close()
         return schools
 
-    def key_query(self, path_db, key): # ricerca nella tabella year della scuola
+    def key_query(self, path_db, key):
+        """
+        ricerca nella tabella year della scuola
+        """
         conn = sqlite3.connect('%s/schools.drtDB' % path_db) # or use :memory: to put it in RAM
         
         schools = []
