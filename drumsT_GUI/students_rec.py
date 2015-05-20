@@ -116,7 +116,7 @@ class AddRecords(wx.Dialog):
                               "Warning", wx.ICON_EXCLAMATION, self)
                 return
             
-        err_match = search_all(name, self.path_db)
+        err_match = Students_Id().search_all(name, self.path_db)
         for m in err_match:
             if m[0] == name:
                 warn = wx.MessageDialog(self,"This name already exists:"

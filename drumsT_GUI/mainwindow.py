@@ -11,11 +11,8 @@
 #########################################################
 #
 import wx
-from drumsT_SYS import data_students
-from drumsT_SYS import data_schools
-from add_school import AddSchool
+import students_rec, add_school
 from drumsT_SYS.os_proc import create_rootdir
-import students_rec
 from drumsT_SYS.data_schools import Schools_Id
 from drumsT_SYS.data_students import Students_Id
 
@@ -37,12 +34,11 @@ class MainFrame(wx.Frame):
         self.changeStudent_ico = wx.GetApp().changeStudent_icon
         self.path_db = wx.GetApp().path_db
         self.choice = None # schoolName/schoolYear
+        self.school = Schools_Id()
+        self.students = Students_Id()
         
-        self.students = data_students.Students_Id()
         school = ['not selected']
-        self.school = data_schools.Schools_Id()
         call = self.school.query(self.path_db)
-        #call = data_schools.query(self.path_db)
         for i in call:
             school.append(i[0])
             
@@ -342,7 +338,7 @@ class MainFrame(wx.Frame):
     #------------------------------------------------------------------#
     def Addschool(self, event):
 
-        dialog = AddSchool(self, "DrumsT - Add new school and date")
+        dialog = add_school.AddSchool(self, "DrumsT - Add new school and date")
         retcode = dialog.ShowModal()
 
         if retcode == wx.ID_OK:
@@ -362,6 +358,14 @@ class MainFrame(wx.Frame):
         if students[0]:
             wx.MessageBox(students[1], 'ERROR', wx.ICON_ERROR, self)
             return
+        
+        self.cmbx_school.Clear()
+        school = ['not selected']
+        call = self.school.query(self.path_db)
+        for i in call:
+            school.append(i[0])
+        self.cmbx_school.AppendItems(school)
+       
     #------------------------------------------------------------------#
     def Addate(self, event):
         date = '2013_2014'

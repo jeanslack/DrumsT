@@ -97,7 +97,7 @@ class FirstStart(wx.Dialog):
         
         if dialogdir.ShowModal() == wx.ID_OK:
             path = dialogdir.GetPath()
-            rootpath = "%s/DrumsT_DataBases"
+            rootpath = "%s/DrumsT_DataBases" % path
             dialogdir.Destroy()
             
             mkdirs = create_rootdir(rootpath,data[0],data[1])

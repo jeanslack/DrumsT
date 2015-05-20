@@ -52,17 +52,7 @@ class Schools_Id(object):
     def new_school(self, path, name, year):
         conn = sqlite3.connect('%s/schools.drtDB' % (path)) 
         cursor = conn.cursor()
-        
-        # insert name in schools
-        #cursor.execute("INSERT INTO schools (name) VALUES(?)", (name,))
-        # insert data in year
-        #cursor.execute("INSERT INTO '%s' (year) VALUES(?)" % (name), (year,))
-        
-        #conn.commit() # record stores
-        #conn.close() # connect close
-        #####################################################################
 
-        
         cursor.execute('''INSERT INTO schools VALUES(?)''',[name])
         
         # insert data in year
