@@ -11,10 +11,10 @@
 #########################################################
 #
 import wx
+#import os
 import students_rec, add_school
 from drumsT_SYS.os_proc import create_rootdir
-from drumsT_SYS.data_schools import Schools_Id
-from drumsT_SYS.data_students import Students_Id
+from drumsT_SYS.SQLite_lib import Schools_Id
 
 ## COLORS:
 azure = '#d9ffff' # rgb form (wx.Colour(217,255,255))
@@ -32,30 +32,26 @@ class MainFrame(wx.Frame):
         self.openStudent_ico = wx.GetApp().openStudent_icon
         self.delStudent_ico = wx.GetApp().delStudent_icon
         self.changeStudent_ico = wx.GetApp().changeStudent_icon
-        self.path_db = wx.GetApp().path_db
+        # base diractory to save any db:
+        self.rootdir = wx.GetApp().rootdir
         self.choice = None # schoolName/schoolYear
-        self.school = Schools_Id()
-        self.students = Students_Id()
+        # name of school:
+        self.schoolName = None
+        # path name of current file .drtDB :
+        self.path_db = None
         
-        school = ['not selected']
-        call = self.school.query(self.path_db)
-        for i in call:
-            school.append(i[0])
-            
+        self.school = Schools_Id()
+        
         wx.Frame.__init__(self, None, -1, style=wx.DEFAULT_FRAME_STYLE)
         
         panel = wx.Panel(self)
         self.tool_bar()
         self.menu_bar()
-        self.cmbx_school = wx.ComboBox(panel,wx.ID_ANY, choices=school,
-                                       style=wx.CB_DROPDOWN | wx.CB_READONLY
-                                       )
+        import_btn = wx.Button(panel, wx.ID_ANY, ("Import"))
         self.cmbx_year = wx.ComboBox(panel,wx.ID_ANY, choices=['not selected'],
                                      style=wx.CB_DROPDOWN | wx.CB_READONLY
                                      )
-        self.cmbx_level = wx.ComboBox(panel,wx.ID_ANY, choices=['not selected'],
-                                      style=wx.CB_DROPDOWN | wx.CB_READONLY
-                                      )
+        self.import_txt = wx.TextCtrl(panel, wx.ID_ANY, "", style=wx.TE_READONLY)
         self.list_ctrl = wx.ListCtrl(panel, wx.ID_ANY, style=wx.LC_REPORT | 
                                      wx.SUNKEN_BORDER
                                      )
@@ -65,11 +61,12 @@ class MainFrame(wx.Frame):
         icon.CopyFromBitmap(wx.Bitmap(self.drumsT_ico, wx.BITMAP_TYPE_ANY))
         self.SetIcon(icon)
         self.SetSize((1100, 600))
-        self.cmbx_school.SetSelection(0)
+        import_btn.SetMinSize((180, 20))
+        import_btn.SetBackgroundColour(azure)
         self.cmbx_year.SetSelection(0)
         self.cmbx_year.Disable()
-        self.cmbx_level.SetSelection(0)
-        self.cmbx_level.Disable()
+        self.import_txt.SetMinSize((350, 20))
+        self.import_txt.Disable()
         self.list_ctrl.SetBackgroundColour(green)
         self.list_ctrl.SetToolTipString("Select a profile to use")
         
@@ -89,19 +86,19 @@ class MainFrame(wx.Frame):
         siz_base = wx.FlexGridSizer(2,1,0,0)
         grd_s1 = wx.FlexGridSizer(1,3,0,40)
         #box_school.Lower()
-        box_school = wx.StaticBox(panel, wx.ID_ANY, "Select a school location:")
+        box_school = wx.StaticBox(panel, wx.ID_ANY, "School Database Importing:")
         school = wx.StaticBoxSizer(box_school, wx.VERTICAL)
-        school.Add(self.cmbx_school, wx.EXPAND,0)
+        school.Add(import_btn, wx.EXPAND,0)
         
-        box_year = wx.StaticBox(panel, wx.ID_ANY, "Select a school year:")
+        box_txt = wx.StaticBox(panel, wx.ID_ANY, "Name Database Imported:")
+        dbname = wx.StaticBoxSizer(box_txt, wx.VERTICAL)
+        dbname.Add(self.import_txt, wx.EXPAND,0)
+        
+        box_year = wx.StaticBox(panel, wx.ID_ANY, "School Year selection:")
         year = wx.StaticBoxSizer(box_year, wx.VERTICAL)
         year.Add(self.cmbx_year, wx.EXPAND,0)
-        
-        box_level = wx.StaticBox(panel, wx.ID_ANY, "Select a course level:")
-        level = wx.StaticBoxSizer(box_level, wx.VERTICAL)
-        level.Add(self.cmbx_level, wx.EXPAND,0)
-        
-        grd_s1.AddMany([(school),(year),(level)])
+
+        grd_s1.AddMany([(school),(dbname),(year)])
         
         siz_base.Add(grd_s1, 0, wx.ALL, 15)
         siz_base.Add(self.list_ctrl, 0, wx.ALL | wx.EXPAND, 15)
@@ -112,15 +109,13 @@ class MainFrame(wx.Frame):
         siz_base.AddGrowableCol(1)
         #self.Layout()
         self.Centre()
-        
         ######################## binding #####################
         self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.on_select, self.list_ctrl)
         self.Bind( wx.EVT_LIST_ITEM_DESELECTED, self.on_deselect, self.list_ctrl)
         self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.on_enter, self.list_ctrl)
-        self.cmbx_school.Bind(wx.EVT_COMBOBOX, self.on_school)
+        self.Bind(wx.EVT_BUTTON, self.open_school, import_btn)
         self.cmbx_year.Bind(wx.EVT_COMBOBOX, self.on_year)
-        self.cmbx_school.Bind(wx.EVT_TEXT, self.on_change_school)
-
+        
     ################ COMMON METHODS USEFUL
     def set_listctrl(self):
         """
@@ -128,9 +123,7 @@ class MainFrame(wx.Frame):
         method first must be use self.list_ctrl.DeleteAllItems() otherwise 
         append result in the list_ctrl
         """
-        #print self.choice
-        path = '%s/%s/students.drtDB' % (self.path_db, self.choice)
-        profiles = self.students.query(path)
+        profiles = self.school.query(self.path_db, self.schoolName)
         
         if profiles == []:
             wx.MessageBox("There isn't any list to load.\n"
@@ -139,13 +132,13 @@ class MainFrame(wx.Frame):
             return
         index = 0
         for rec in profiles:
-            rows = self.list_ctrl.InsertStringItem(index, rec[0])
-            self.list_ctrl.SetStringItem(rows, 0, rec[0])
-            self.list_ctrl.SetStringItem(rows, 1, rec[1])
-            self.list_ctrl.SetStringItem(rows, 2, rec[2])
-            self.list_ctrl.SetStringItem(rows, 3, rec[3])
-            self.list_ctrl.SetStringItem(rows, 4, rec[4])
-            self.list_ctrl.SetStringItem(rows, 5, rec[5])
+            rows = self.list_ctrl.InsertStringItem(index, rec[1])
+            self.list_ctrl.SetStringItem(rows, 0, rec[1])
+            #self.list_ctrl.SetStringItem(rows, 1, rec[1])
+            #self.list_ctrl.SetStringItem(rows, 2, rec[2])
+            #self.list_ctrl.SetStringItem(rows, 3, rec[3])
+            #self.list_ctrl.SetStringItem(rows, 4, rec[4])
+            #self.list_ctrl.SetStringItem(rows, 5, rec[5])
         
     #-----------------------EVENTS--------------------------------------#
     def on_select(self, event): # list_ctrl
@@ -171,29 +164,41 @@ class MainFrame(wx.Frame):
         """
         print 'double click|enter'
     #-------------------------------------------------------------------#
-    def on_school(self, event): # combobox
+    def open_school(self, event): # import button
         """
-        When select a item in combobox school go in.
+        Open a existing database with .drtDB extension. The filedialog 
+        is set to opening in the 'drumsT_DB' directory 
         """
-        if self.cmbx_school.GetValue() == 'not selected':
-            self.cmbx_year.Clear()
+        wildcard = ("drumsT db (*.drtDB)|*.drtDB|" "All files (*.*)|*.*")
+        dialfile = wx.FileDialog(self, 
+                       "Select filename with '.drtDB' extension ",
+                       ".", "", wildcard, wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+        dialfile.SetDirectory(self.rootdir)
+        
+        if dialfile.ShowModal() == wx.ID_OK: 
+            self.schoolName = dialfile.GetFilename().split(".drtDB")[0]
+            self.path_db = dialfile.GetPath()
+            self.cmbx_year.Enable(), self.cmbx_year.Clear()
             self.cmbx_year.Append('not selected')
-            self.cmbx_year.SetSelection(0)
-            self.cmbx_year.Disable()
-        else:
-            key = self.cmbx_school.GetValue()
-            self.cmbx_year.Enable()
-            self.cmbx_year.Clear()
-            #self.cmbx_year.SetValue(' ')
-            self.cmbx_year.Append('not selected')
-            year = self.school.key_query(self.path_db, key)
+            year = self.school.key_query(self.path_db)
+            
             for items in year:
-                self.cmbx_year.Append(items[0])
+                self.cmbx_year.Append(items[0])# can be more data
+                
             self.cmbx_year.SetSelection(0)
+            self.import_txt.Enable(), self.import_txt.SetValue("")
+            self.import_txt.AppendText(dialfile.GetFilename())
+            
+            if self.list_ctrl.GetItemCount() > 0:# if list_ctrl is not empty
+                self.list_ctrl.DeleteAllItems()
+                self.toolbar.EnableTool(wx.ID_FILE2, False)
+                self.toolbar.EnableTool(wx.ID_FILE3, False)
+                self.toolbar.EnableTool(wx.ID_FILE4, False)
+                self.toolbar.EnableTool(wx.ID_FILE5, False)
     #-------------------------------------------------------------------#
     def on_year(self, event): # combobox
         """
-        When select a item in combobox year go in
+        When select a item in cmbx_year go in this setup
         """
         if self.cmbx_year.GetValue() == 'not selected':
             self.list_ctrl.DeleteAllItems()
@@ -202,22 +207,11 @@ class MainFrame(wx.Frame):
             self.toolbar.EnableTool(wx.ID_FILE4, False)
             self.toolbar.EnableTool(wx.ID_FILE5, False)
         else:
-            school = self.cmbx_school.GetValue()
-            year = self.cmbx_year.GetValue()
-            self.choice = '%s/%s' % (school,year)
+            #year = self.cmbx_year.GetValue()
             self.toolbar.EnableTool(wx.ID_FILE3, True)
             self.list_ctrl.DeleteAllItems()
             self.set_listctrl()
     #-------------------------------------------------------------------#
-    def on_change_school(self, event): # combobox
-        """
-        when you change school selection in combobox resets to default 
-        """
-        self.list_ctrl.DeleteAllItems()
-        self.toolbar.EnableTool(wx.ID_FILE2, False)
-        self.toolbar.EnableTool(wx.ID_FILE3, False)
-        self.toolbar.EnableTool(wx.ID_FILE4, False)
-        self.toolbar.EnableTool(wx.ID_FILE5, False)
 
     ######################################################################
     #------------------------Build the Tool Bar--------------------------#
@@ -228,12 +222,12 @@ class MainFrame(wx.Frame):
         """
         #--------- Properties
         self.toolbar = self.CreateToolBar(style=(wx.TB_HORZ_LAYOUT | wx.TB_TEXT))
-        self.toolbar.SetToolBitmapSize((32,32))
+        self.toolbar.SetToolBitmapSize((16,16))
         self.toolbar.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        
+
         # ------- See student data
-        pupil = self.toolbar.AddLabelTool(wx.ID_FILE2, 'Open Selected Student', 
-                                            wx.Bitmap(self.openStudent_ico))
+        pupil = self.toolbar.AddLabelTool(wx.ID_FILE2, 'Open Selected Student',
+                                          wx.Bitmap(self.openStudent_ico))
         self.toolbar.AddSeparator()
         
         # ------- Add new student
@@ -271,14 +265,13 @@ class MainFrame(wx.Frame):
         """
         Add one new record to database
         """
-        path = '%s/%s' % (self.path_db,self.choice)
         dialog = students_rec.AddRecords(self, 
-                                  "Add new identity profile to database", path)
+                                      "Add new identity profile to database", 
+                                       self.path_db,self.schoolName)
         ret = dialog.ShowModal()
         if ret == wx.ID_OK:
             self.list_ctrl.DeleteAllItems() # clear all items in list_ctrl
             self.set_listctrl() # re-charging list_ctrl with newer
-        
     #------------------------------------------------------------------#
     def Modify(self, event):
         print 'modifica alunno'
@@ -345,27 +338,14 @@ class MainFrame(wx.Frame):
             data = dialog.GetValue()
         else:
             return
-
-        mkdirs = create_rootdir(self.path_db,data[0],data[1])
+        mkdirs = create_rootdir(self.rootdir,data[0])
         if mkdirs[0]:
             wx.MessageBox(mkdirs[1], 'ERROR', wx.ICON_ERROR, self)
             return
-        schools = Schools_Id().new_school(self.path_db,data[0],data[1])
-        #if schools[0]:
-            #wx.MessageBox(schools[1], 'ERROR', wx.ICON_ERROR, self)
-            #return
-        students = Students_Id().first_start(self.path_db,data[0],data[1])
-        if students[0]:
-            wx.MessageBox(students[1], 'ERROR', wx.ICON_ERROR, self)
+        schools = Schools_Id().newSchool(self.rootdir,data[0],data[1])
+        if schools[0]:
+            wx.MessageBox(schools[1], 'ERROR', wx.ICON_ERROR, self)
             return
-        
-        self.cmbx_school.Clear()
-        school = ['not selected']
-        call = self.school.query(self.path_db)
-        for i in call:
-            school.append(i[0])
-        self.cmbx_school.AppendItems(school)
-       
     #------------------------------------------------------------------#
     def Addate(self, event):
         date = '2013_2014'

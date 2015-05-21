@@ -38,15 +38,15 @@ def write_newpath(path):
 
     F.close()
 #--------------------------------------------------------------------------#
-def create_rootdir(rootpath,name,year):
+def create_rootdir(path,name):
     """
     Prepare a root dir for database during first time running 
-    or when create another school with name and year
+    or when create another school
     """
     err = False
     exc = None
     try:
-        os.makedirs('%s/%s/%s' % (rootpath,name,year))
+        os.makedirs('%s/%s' % (path,name))
         
     except OSError as error:
         err = True

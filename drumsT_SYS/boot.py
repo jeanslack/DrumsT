@@ -148,7 +148,7 @@ def parser_fileconf():
     return ret
 
 #-------------------------------------------------------------------------#
-def control_db(path_name, file_name):
+def control_db(path_name):
     """
     Check existing path and file
     """
@@ -159,9 +159,9 @@ def control_db(path_name, file_name):
     else:
         path_exist = False
         
-    if os.path.isfile('%s/%s' %(path_name, file_name)):
-        file_exist = True
-    else:
-        file_exist = False
+    #if os.path.isfile('%s/%s' %(path_name, file_name)):
+        #file_exist = True
+    #else:
+        #file_exist = False
         
-    return path_exist, file_exist
+    return path_exist

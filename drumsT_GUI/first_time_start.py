@@ -12,18 +12,15 @@
 #
 import wx
 from add_school import AddSchool
-from drumsT_SYS.data_schools import Schools_Id
-from drumsT_SYS.data_students import Students_Id
+from drumsT_SYS.SQLite_lib import Schools_Id
 from drumsT_SYS.os_proc import write_newpath, create_rootdir
 
-#from drumsT_SYS.data_schools import Schools_Id
+#from drumsT_SYS.SQLite_lib import Schools_Id
 #from drumsT_SYS.boot import write_fileconf
 class FirstStart(wx.Dialog):
     
     def __init__(self, img):
-        
-        self.path_db = wx.GetApp().path_db
-        
+
         wx.Dialog.__init__(self, None, -1, style=wx.DEFAULT_DIALOG_STYLE)
         
         # variables or attributes:
@@ -39,7 +36,7 @@ class FirstStart(wx.Dialog):
         lab_welc2 = wx.StaticText(self, wx.ID_ANY, (msg))
         lab_welc1 = wx.StaticText(self, wx.ID_ANY, ("Welcome !"))
         lab_create = wx.StaticText(self, wx.ID_ANY, ("Create a new database:"))
-        lab_import = wx.StaticText(self, wx.ID_ANY, ("Show me an existing database:"))
+        lab_import = wx.StaticText(self, wx.ID_ANY, ("Show me an drumsT_DB existing directory for database:"))
         lab_exit = wx.StaticText(self, wx.ID_ANY, ("Exit and do nothing:"))
         create_btn = wx.Button(self, wx.ID_ANY, ("Create"))
         import_btn = wx.Button(self, wx.ID_ANY, ("Import"))
@@ -96,26 +93,25 @@ class FirstStart(wx.Dialog):
         dialogdir = wx.DirDialog(self, "Where do you want to save ?")
         
         if dialogdir.ShowModal() == wx.ID_OK:
-            path = dialogdir.GetPath()
-            rootpath = "%s/DrumsT_DataBases" % path
+            path = '%s/drumsT_DB' % dialogdir.GetPath()
             dialogdir.Destroy()
             
-            mkdirs = create_rootdir(rootpath,data[0],data[1])
+            mkdirs = create_rootdir(path,data[0])
             if mkdirs[0]:
                 wx.MessageBox(mkdirs[1], 'ERROR', wx.ICON_ERROR, self)
                 return
 
-            schools = Schools_Id().first_start(path,data[0],data[1])
+            schools = Schools_Id().newSchool(path,data[0],data[1])
             if schools[0]:
                 wx.MessageBox(schools[1], 'ERROR', wx.ICON_ERROR, self)
                 return
             
-            students = Students_Id().first_start(rootpath,data[0],data[1])
-            if students[0]:
-                wx.MessageBox(students[1], 'ERROR', wx.ICON_ERROR, self)
-                return
+            #students = Students_Id().first_start(path,data[0],data[1])
+            #if students[0]:
+                #wx.MessageBox(students[1], 'ERROR', wx.ICON_ERROR, self)
+                #return
             
-            write_newpath('%s/DrumsT_DataBases' % path) # writing drumsT.conf
+            write_newpath(path) # writing drumsT.conf
             
             wx.MessageBox("A new database has been created successfully in:"
                           "\n\n%s/DrumsT_Databases\n\nYou must re-start the "

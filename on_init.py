@@ -40,36 +40,36 @@ class DrumsTeacher(wx.App):
         
         #---------------------Parsing file-conf-------------------------#
         conf = parser_fileconf() #parsing drumsT.conf
-        self.school_db = 'schools.drtDB'
-        self.path_db = conf
+        #self.school_db = 'schools.drtDB'
+        self.rootdir = conf
         
-        if self.path_db == 'empty': # not set
+        if self.rootdir == 'empty': # not set
             from drumsT_GUI.first_time_start import FirstStart
             main_frame = FirstStart(self.drumsT_icon)
             main_frame.Show()
             self.SetTopWindow(main_frame)
             return True
         
-        elif self.path_db == 'error': # is corrupt
+        elif self.rootdir == 'error': # is corrupt
             wx.MessageBox('The configuration file is wrong',
                           'DrumsT: Fatal Error', wx.ICON_STOP)
             print 'drumsT: The configuration file is wrong'
             return False
         
         #--------------------Check paths--------------------------------#
-        ret = control_db(self.path_db, self.school_db) #control existing 
+        #ret = control_db(self.rootdir) #control existing 
         
-        if not ret[0]:
-            wx.MessageBox('The directory with database not exist !',
-                          'DrumsT: Fatal Error', wx.ICON_STOP)
-            print 'error: path db not exist'
-            return False
+        #if not ret:
+            #wx.MessageBox('The directory with database not exist !',
+                          #'DrumsT: Fatal Error', wx.ICON_STOP)
+            #print 'error: path db not exist'
+            #return False
         
-        elif not ret[1]:
-            wx.MessageBox('The database not exist in the path-name !',
-                          'DrumsT: Fatal Error', wx.ICON_STOP)
-            print 'error: file db not exist'
-            return False
+        #elif not ret[1]:
+            #wx.MessageBox('The database not exist in the path-name !',
+                          #'DrumsT: Fatal Error', wx.ICON_STOP)
+            #print 'error: file db not exist'
+            #return False
         
         else:
             from drumsT_GUI.mainwindow import MainFrame

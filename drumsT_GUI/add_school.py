@@ -33,14 +33,13 @@ class AddSchool(wx.Dialog):
         # Widgets:
         lab_1 = wx.StaticText(self, wx.ID_ANY, ("Type school name or location identifier:"))
         self.txt_name = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_PROCESS_ENTER)
-        lab_2 = wx.StaticText(self, wx.ID_ANY, ("Add a school year:"))
+        lab_2 = wx.StaticText(self, wx.ID_ANY, ("School year:"))
         self.spinctrl_year = wx.SpinCtrl(self, wx.ID_ANY, "", min=2010, max=2030, 
                                                   initial=2015, style=wx.TE_PROCESS_ENTER
                                                   )
         self.lab_year = wx.StaticText(self, wx.ID_ANY, (" /     2016"))
         close_btn = wx.Button(self, wx.ID_EXIT, "")
         self.apply_btn = wx.Button(self, wx.ID_OK, "")
-        
         # properties:
         self.txt_name.SetMinSize((250, 20))
         self.txt_name.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))

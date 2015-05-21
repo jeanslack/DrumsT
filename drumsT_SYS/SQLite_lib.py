@@ -5,7 +5,7 @@ import sqlite3
 
 class Schools_Id(object):
     """
-    Records to a main database index.
+    Records to a main databases index.
     """
     
     def __init__(self):
@@ -15,27 +15,27 @@ class Schools_Id(object):
         self.error = False
         self.exception = None
     #-------------------------------------------------------------------------#
-    def first_start(self, path, name, year):
+    def newSchool(self, path, name, year):
         """
-        When run DrumsT for first time and there is nothing 
+        Add new schools: the 'school' name is the name of newer table 
+        with content progressive school years.
+        The Students table is defined by school year names.
+        Also, when run DrumsT for first time and there is nothing 
         database/path-name configured, this method set a new one.
         """
-        root = 'DrumsT_DataBases'
-        ########### create schools.drtDB
         try:
-            # or use :memory: to put it in RAM
-            conn = sqlite3.connect('%s/%s/schools.drtDB' % (path, root)) 
+            conn = sqlite3.connect('%s/%s/%s.drtDB' % (path,name,name)) 
             cursor = conn.cursor()
             
-            # create a table school name
-            cursor.execute("CREATE TABLE schools (name text)")
-            # insert name in schools
-            cursor.execute("INSERT INTO schools (name) VALUES(?)", (name,))
+            # create a table School
+            cursor.execute("CREATE TABLE School (IDyear text)")
+            # insert IDyear in school
+            cursor.execute("INSERT INTO School (IDyear) VALUES(?)", (year,))
 
-            # create a table year name
-            cursor.execute("CREATE TABLE '%s' (year text)" % name)
+            # create a table Students
+            cursor.execute("CREATE TABLE 'Students_%s' (Id INTEGER PRIMARY KEY AUTOINCREMENT, name text)" % name)
             # insert data in year
-            cursor.execute("INSERT INTO '%s' (year) VALUES(?)" % (name), (year,))
+            #cursor.execute("INSERT INTO '%s' (year) VALUES(?)" % (name), (year,))
             
             conn.commit() # record stores
             conn.close() # connect close
@@ -46,21 +46,25 @@ class Schools_Id(object):
                       "'schools.drtDB'\nsqlite3.OperationalError: %s" % err)
 
         return self.error, self.exception
-
-        
     #-------------------------------------------------------------------------#
-    def new_school(self, path, name, year):
-        conn = sqlite3.connect('%s/schools.drtDB' % (path)) 
-        cursor = conn.cursor()
+    #def insert(self, path_db): # solo quando aggiungi nuove scuole
+        #"""
+        #inserisce un nuovo records
+        #"""
+        #conn = sqlite3.connect('%s/schools.drtDB' % path_db) # or use :memory: to put it in RAM
+        #cursor = conn.cursor()
+        
+        #name = raw_input('name  ')
+        #year = raw_input('year  ')
 
-        cursor.execute('''INSERT INTO schools VALUES(?)''',[name])
+        #cursor.execute('''INSERT INTO schools VALUES(?)''',[name])
         
-        # insert data in year
-        cursor.execute("""CREATE TABLE '%s' (year text)""" % name)
-        cursor.execute("INSERT INTO '%s' (year) VALUES(?)" % (name), (year,))
+        ## insert data in year
+        #cursor.execute("""CREATE TABLE %s (year text)""" % name)
+        #cursor.execute("INSERT INTO %s VALUES ('%s')" % (name,year))
         
-        conn.commit()
-        conn.close()
+        #conn.commit()
+        #conn.close()
 
     def update_year(self, path):
         """
@@ -116,47 +120,30 @@ class Schools_Id(object):
         conn.commit()
         
         
-    def query(self, path_db):
-        conn = sqlite3.connect('%s/schools.drtDB' % path_db) # or use :memory: to put it in RAM
+    def query(self, path_db, name):
+        conn = sqlite3.connect('%s' % path_db) # or use :memory: to put it in RAM
         
         schools = []
-        cursor = conn.execute("SELECT name from schools")
+        cursor = conn.execute("SELECT Id, name from Students_%s" % name)
         for row in cursor:
             schools.append(row)
         conn.close()
         return schools
 
-    def key_query(self, path_db, key):
+    def key_query(self, path_db):
         """
         ricerca nella tabella year della scuola
         """
-        conn = sqlite3.connect('%s/schools.drtDB' % path_db) # or use :memory: to put it in RAM
+        conn = sqlite3.connect('%s' % path_db) # or use :memory: to put it in RAM
         
         schools = []
-        cursor = conn.execute("SELECT year from '%s'" % key)
+        cursor = conn.execute("SELECT IDyear from school")
         for row in cursor:
             schools.append(row)
         conn.close()
         return schools
         
-    def insert(self, path_db): # solo quando aggiungi nuove scuole
-        """
-        inserisce un nuovo records
-        """
-        conn = sqlite3.connect('%s/schools.drtDB' % path_db) # or use :memory: to put it in RAM
-        cursor = conn.cursor()
-        
-        name = raw_input('name  ')
-        year = raw_input('year  ')
-
-        cursor.execute('''INSERT INTO schools VALUES(?)''',[name])
-        
-        # insert data in year
-        cursor.execute("""CREATE TABLE %s (year text)""" % name)
-        cursor.execute("INSERT INTO %s VALUES ('%s')" % (name,year))
-        
-        conn.commit()
-        conn.close()
+    
         
     def add_date(self, path_db,name):
         conn = sqlite3.connect('%s/schools.drtDB' % path_db) # or use :memory: to put it in RAM
@@ -166,6 +153,26 @@ class Schools_Id(object):
         # insert data in year
         cursor.execute("INSERT INTO %s VALUES ('%s')" % (name,year))
         
+        conn.commit()
+        conn.close()
+        
+    def insert(self,name,address,birth_dates,phone,date,level,path_db, schoolname):
+        """
+        inserisce un nuovo records
+        """
+        conn = sqlite3.connect(path_db)
+        cursor = conn.cursor()
+        
+        #name = raw_input('name  ')
+        #address = raw_input('address  ')
+        #birth_dates = raw_input('birth_dates  ')
+        #phone = raw_input('phone  ')
+        #phone = raw_input('joined_date  ')
+        #level = raw_input('level  ')
+        
+        #cursor.execute('''INSERT INTO students VALUES(?,?,?,?,?,?)''', 
+        #[name,address,birth_dates,phone,date,level])
+        cursor.execute('''INSERT INTO Students_%s (name) VALUES(?)''' % (schoolname), [name])
         conn.commit()
         conn.close()
     

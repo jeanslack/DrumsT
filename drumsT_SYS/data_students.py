@@ -160,7 +160,8 @@ class Students_Id(object):
         #cursor.execute(sql)
         #print cursor.fetchall()
         students = []
-        cursor = conn.execute("SELECT name, address, birth_dates, phone, joined_date, level_course  from students")
+        #cursor = conn.execute("SELECT name, address, birth_dates, phone, joined_date, level_course  from students")
+        cursor = conn.execute("SELECT * FROM Students_Barbarano")
         for row in cursor:
             students.append(row)
         conn.close()

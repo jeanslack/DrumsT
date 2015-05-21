@@ -13,19 +13,20 @@
 import wx
 import string
 #from drumsT_SYS.data_students import insert, search_all
-from drumsT_SYS.data_students import Students_Id
+from drumsT_SYS.SQLite_lib import Schools_Id
 
 class AddRecords(wx.Dialog):
     """
     Show a dialog window.
     """
-    def __init__(self, parent, title, path):
+    def __init__(self, parent, title, path, name):
         """
         Mask dialog for recording new students profiles.
         """
         wx.Dialog.__init__(self, parent, -1, title, style=wx.DEFAULT_DIALOG_STYLE)
         
         self.path_db = path
+        self.schoolName = name
 
         siz_name = wx.StaticBox(self, wx.ID_ANY, "  Name/Surname:")
         siz_address = wx.StaticBox(self, wx.ID_ANY, "  Address:")
@@ -116,24 +117,24 @@ class AddRecords(wx.Dialog):
                               "Warning", wx.ICON_EXCLAMATION, self)
                 return
             
-        err_match = Students_Id().search_all(name, self.path_db)
-        for m in err_match:
-            if m[0] == name:
-                warn = wx.MessageDialog(self,"This name already exists:"
-                                     "\n\nNAME:  %s\nADDRESS:  %s\n"
-                                     "BIRTH DATES:  %s\nPHONE:  %s\n"
-                                     "JOINED DATE:  %s\nLEVEL:  %s"
-                                     "\n\nWant you to save anyway?" % (
-                                     m[0],m[1],m[2],m[3],m[4],m[5]), 
-                                     "Warning", wx.YES_NO | wx.CANCEL | 
-                                     wx.ICON_EXCLAMATION
-                                     )
-                if warn.ShowModal() == wx.ID_YES:
-                    break
-                else:
-                    return
+        #err_match = Students_Id().search_all(name, self.path_db)
+        #for m in err_match:
+            #if m[0] == name:
+                #warn = wx.MessageDialog(self,"This name already exists:"
+                                     #"\n\nNAME:  %s\nADDRESS:  %s\n"
+                                     #"BIRTH DATES:  %s\nPHONE:  %s\n"
+                                     #"JOINED DATE:  %s\nLEVEL:  %s"
+                                     #"\n\nWant you to save anyway?" % (
+                                     #m[0],m[1],m[2],m[3],m[4],m[5]), 
+                                     #"Warning", wx.YES_NO | wx.CANCEL | 
+                                     #wx.ICON_EXCLAMATION
+                                     #)
+                #if warn.ShowModal() == wx.ID_YES:
+                    #break
+                #else:
+                    #return
                 
-        add = Students_Id().insert(name,address,birth,phone,date,level,self.path_db)
+        add = Schools_Id().insert(name,address,birth,phone,date,level,self.path_db, self.schoolName)
         wx.MessageBox("Successfull storing !", "Success", wx.OK, self)
         #self.txt_name.SetValue(''), self.txt_address.SetValue(''),
         #self.txt_birth.SetValue(''), self.txt_phones.SetValue('')
