@@ -11,7 +11,7 @@
 #########################################################
 #
 import wx
-from drumsT_SYS.boot import control_config, parser_fileconf, control_db
+from drumsT_SYS.boot import control_config, parser_fileconf, rootdirControl
 
 class DrumsTeacher(wx.App):
     """
@@ -33,50 +33,60 @@ class DrumsTeacher(wx.App):
         copyerr = ctrl[7]
         
         if copyerr: # if source dir is corrupt
-            wx.MessageBox('Can not find the configuration file',
-                          'Fatal Error', wx.ICON_STOP)
-            print 'DrumsT: Fatal Error, can not find the source configuration'
+            message = ("Can not find the configuration file. "
+                       "Please, reinstall the drumsT application")
+            print "DrumsT: Fatal Error, %s" % message
+            wx.MessageBox(message, 'drumsT: Fatal Error', wx.ICON_STOP)
             return False
         
         #---------------------Parsing file-conf-------------------------#
         conf = parser_fileconf() #parsing drumsT.conf
-        #self.school_db = 'schools.drtDB'
         self.rootdir = conf
         
         if self.rootdir == 'empty': # not set
-            from drumsT_GUI.first_time_start import FirstStart
-            main_frame = FirstStart(self.drumsT_icon)
-            main_frame.Show()
-            self.SetTopWindow(main_frame)
+            self.reprise()
             return True
         
         elif self.rootdir == 'error': # is corrupt
-            wx.MessageBox('The configuration file is wrong',
-                          'DrumsT: Fatal Error', wx.ICON_STOP)
-            print 'drumsT: The configuration file is wrong'
+            message = ("The configuration file is wrong. "
+                       "Please, reinstall the drumsT application")
+            print "DrumsT: Fatal Error, %s" % message
+            wx.MessageBox(message, 'DrumsT: Fatal Error', wx.ICON_STOP)
             return False
         
         #--------------------Check paths--------------------------------#
-        #ret = control_db(self.rootdir) #control existing 
+        ret = rootdirControl(self.rootdir) #control existing 
         
-        #if not ret:
-            #wx.MessageBox('The directory with database not exist !',
-                          #'DrumsT: Fatal Error', wx.ICON_STOP)
-            #print 'error: path db not exist'
-            #return False
-        
-        #elif not ret[1]:
-            #wx.MessageBox('The database not exist in the path-name !',
-                          #'DrumsT: Fatal Error', wx.ICON_STOP)
-            #print 'error: file db not exist'
-            #return False
-        
-        else:
+        if not ret:
+            message = ("The root directory for saving databases no longer\n"
+                       "exists.\n\n"
+                       "Do you want to provide to create another one?")
+            print ("DrumsT: Warning, The root directory for saving "
+                   "databases no longer exists.")
+            style = wx.YES_NO | wx.CANCEL | wx.ICON_EXCLAMATION
+            dlg = wx.MessageDialog(parent=None, message=message, 
+                                   caption="DrumsT: Warning", style=style
+                                   )
+            if dlg.ShowModal() == wx.ID_YES:
+                self.reprise()
+                return True
+            else:
+                return False
+       #-----------------------------------------------------------------#
+        else: # run main frame
             from drumsT_GUI.mainwindow import MainFrame
             main_frame = MainFrame()
             main_frame.Show()
             self.SetTopWindow(main_frame)
             return True
+        
+    def reprise(self): # start a temporary dialog
+        from drumsT_GUI.first_time_start import FirstStart
+        main_frame = FirstStart(self.drumsT_icon)
+        main_frame.Show()
+        self.SetTopWindow(main_frame)
+        return True
+        
     
 if __name__ == "__main__":
     app = DrumsTeacher(False)

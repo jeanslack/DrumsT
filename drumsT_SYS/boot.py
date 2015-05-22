@@ -148,7 +148,7 @@ def parser_fileconf():
     return ret
 
 #-------------------------------------------------------------------------#
-def control_db(path_name):
+def rootdirControl(path_name):
     """
     Check existing path and file
     """
