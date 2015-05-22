@@ -4,7 +4,7 @@
 #########################################################
 # Name: first_time_start.py
 # Porpose: Showing when there is not nothing database
-# Writer: Gianluca Pernigoto <jeanlucperni@gmail.com>
+# Author: Gianluca Pernigoto <jeanlucperni@gmail.com>
 # Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
 # license: GNU GENERAL PUBLIC LICENSE (see LICENSE)
 # Rev (00) 16/05/2015
@@ -13,7 +13,7 @@
 import wx
 from add_school import AddSchool
 from drumsT_SYS.SQLite_lib import Schools_Id
-from drumsT_SYS.os_proc import write_newpath, create_rootdir
+from drumsT_SYS.os_filesystem import write_newpath, create_rootdir
 
 #from drumsT_SYS.SQLite_lib import Schools_Id
 #from drumsT_SYS.boot import write_fileconf

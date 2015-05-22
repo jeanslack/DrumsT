@@ -4,13 +4,14 @@
 #########################################################
 # Name: add_school.py
 # Porpose: Add new school and school year
-# Writer: Gianluca Pernigoto <jeanlucperni@gmail.com>
+# Author: Gianluca Pernigoto <jeanlucperni@gmail.com>
 # Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
 # license: GPL3
 # Rev (00) 17/05/2015
 #########################################################
 
 import wx
+from drumsT_SYS.os_filesystem import urlify
 
 class AddSchool(wx.Dialog):
     """
@@ -123,5 +124,6 @@ class AddSchool(wx.Dialog):
         """
         Return by call before Destroy()
         """
+        name = urlify(self.name)
         setyear = '%s_%s' % (self.min_year,self.max_year)
-        return self.name, setyear
+        return name, setyear

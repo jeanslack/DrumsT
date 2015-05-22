@@ -4,7 +4,7 @@
 #########################################################
 # Name: students_rec.py
 # Porpose: students profile storing dialog
-# Writer: Gianluca Pernigoto <jeanlucperni@gmail.com>
+# Author: Gianluca Pernigoto <jeanlucperni@gmail.com>
 # Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
 # license: GPL3
 # Rev (00) 16/05/2015
@@ -90,7 +90,6 @@ class AddRecords(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self.on_close, close_btn)
         #self.Bind(wx.EVT_BUTTON, self.on_help, btn4)
         self.Bind(wx.EVT_BUTTON, self.on_apply, ok_btn) 
-        
         
     #---------------------Callback (event handler)----------------------#
 

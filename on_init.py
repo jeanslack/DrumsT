@@ -4,7 +4,7 @@
 #########################################################
 # Name: on_init.py
 # Porpose: bootstrap with application system controls
-# Writer: Gianluca Pernigoto <jeanlucperni@gmail.com>
+# Author: Gianluca Pernigoto <jeanlucperni@gmail.com>
 # Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
 # license: GNU GENERAL PUBLIC LICENSE (see LICENSE)
 # Rev (00) 15/05/2015

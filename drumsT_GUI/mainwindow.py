@@ -4,7 +4,7 @@
 #########################################################
 # Name: mainwindow.py
 # Porpose: main_frame
-# Writer: Gianluca Pernigoto <jeanlucperni@gmail.com>
+# Author: Gianluca Pernigoto <jeanlucperni@gmail.com>
 # Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
 # license: GNU GENERAL PUBLIC LICENSE (see LICENSE)
 # Rev (00) 15/05/2015
@@ -13,7 +13,7 @@
 import wx
 #import os
 import students_rec, add_school
-from drumsT_SYS.os_proc import create_rootdir
+from drumsT_SYS.os_filesystem import create_rootdir
 from drumsT_SYS.SQLite_lib import Schools_Id
 
 ## COLORS:
@@ -22,6 +22,7 @@ orange = '#ff5f1a' # rgb form (wx.Colour(255,95,26))
 yellow = '#faff35'
 red = '#ff3a1f'
 green = '#deffb4'
+greendeph = '#91ff8f'
 
 class MainFrame(wx.Frame):
 
@@ -43,10 +44,10 @@ class MainFrame(wx.Frame):
         self.school = Schools_Id()
         
         wx.Frame.__init__(self, None, -1, style=wx.DEFAULT_FRAME_STYLE)
-        
         panel = wx.Panel(self)
         self.tool_bar()
         self.menu_bar()
+        self.sb = self.CreateStatusBar(0)
         import_btn = wx.Button(panel, wx.ID_ANY, ("Import"))
         self.cmbx_year = wx.ComboBox(panel,wx.ID_ANY, choices=['not selected'],
                                      style=wx.CB_DROPDOWN | wx.CB_READONLY
@@ -65,10 +66,10 @@ class MainFrame(wx.Frame):
         import_btn.SetBackgroundColour(azure)
         self.cmbx_year.SetSelection(0)
         self.cmbx_year.Disable()
-        self.import_txt.SetMinSize((350, 20))
+        self.import_txt.SetMinSize((270, 20))
         self.import_txt.Disable()
-        self.list_ctrl.SetBackgroundColour(green)
-        self.list_ctrl.SetToolTipString("Select a profile to use")
+        #self.list_ctrl.SetBackgroundColour(green)
+        self.list_ctrl.SetToolTipString("Double click to open a individual profile")
         
         self.list_ctrl.InsertColumn(0, 'Name Surname', width=200)
         self.list_ctrl.InsertColumn(1, 'Address', width=300)
@@ -107,7 +108,7 @@ class MainFrame(wx.Frame):
         siz_base.AddGrowableCol(0)
         siz_base.AddGrowableRow(1)
         siz_base.AddGrowableCol(1)
-        #self.Layout()
+        self.Layout()
         self.Centre()
         ######################## binding #####################
         self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.on_select, self.list_ctrl)
@@ -116,6 +117,18 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.open_school, import_btn)
         self.cmbx_year.Bind(wx.EVT_COMBOBOX, self.on_year)
         
+    ################ COMMON METHODS USEFUL
+    def statusbar_msg(self, msg, color):
+        """
+        set the status-bar with messages and color types
+        """
+        if color == None:
+            self.sb.SetBackgroundColour(wx.NullColour)
+        else:
+            self.sb.SetBackgroundColour(color)
+            
+        self.sb.SetStatusText(msg)
+        self.sb.Refresh()
     ################ COMMON METHODS USEFUL
     def set_listctrl(self):
         """
@@ -126,10 +139,11 @@ class MainFrame(wx.Frame):
         profiles = self.school.query(self.path_db, self.schoolName)
         
         if profiles == []:
-            wx.MessageBox("There isn't any list to load.\n"
-                          "You must add new students now", 
-                          'Empty database', wx.ICON_EXCLAMATION, self)
+            msg = ("Info - Empty database: There isn't any list to load. "
+                "You must add new students now")
+            self.statusbar_msg(msg, greendeph)
             return
+        
         index = 0
         for rec in profiles:
             rows = self.list_ctrl.InsertStringItem(index, rec[1])
@@ -139,7 +153,7 @@ class MainFrame(wx.Frame):
             #self.list_ctrl.SetStringItem(rows, 3, rec[3])
             #self.list_ctrl.SetStringItem(rows, 4, rec[4])
             #self.list_ctrl.SetStringItem(rows, 5, rec[5])
-        
+            
     #-----------------------EVENTS--------------------------------------#
     def on_select(self, event): # list_ctrl
         """
@@ -272,6 +286,7 @@ class MainFrame(wx.Frame):
         if ret == wx.ID_OK:
             self.list_ctrl.DeleteAllItems() # clear all items in list_ctrl
             self.set_listctrl() # re-charging list_ctrl with newer
+        self.statusbar_msg('', None)
     #------------------------------------------------------------------#
     def Modify(self, event):
         print 'modifica alunno'

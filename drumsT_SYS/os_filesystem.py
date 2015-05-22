@@ -2,15 +2,16 @@
 # -*- coding: UTF-8 -*- 
 #
 #########################################################
-# Name: os_proc.py
+# Name: os_filesystem.py
 # Porpose: Common operative system processing
-# Writer: Gianluca Pernigoto <jeanlucperni@gmail.com>
+# Author: Gianluca Pernigoto <jeanlucperni@gmail.com>
 # Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
 # license: GNU GENERAL PUBLIC LICENSE (see LICENSE)
 # Rev (01) 18/05/2015
 #########################################################
 
 import os
+import re
 
 DIRNAME = os.path.expanduser('~') # /home/user
 
@@ -54,3 +55,20 @@ def create_rootdir(path,name):
         print error
         
     return err, exc
+
+def urlify(string):
+    """
+    Convert any string with white spaces, tabs, digits, question marks,  
+    apostrophes, exclamation points, etc, in URLs satisfying for the
+    filesystems and SQlite
+    """
+    # remove all digits 1234567890
+    #a = re.sub("\d+", "", string)
+
+    # Remove all non-word characters (everything except numbers and letters)
+    b = re.sub(r"[^\w\s]", '', string)
+    
+    # Replace all runs of whitespace with a single underscore
+    c = re.sub(r"\s+", '_', b)
+    print c
+    return c

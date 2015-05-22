@@ -4,7 +4,7 @@
 #########################################################
 # Name: boot.py
 # Porpose: Check OS type and configuration files
-# Writer: Gianluca Pernigoto <jeanlucperni@gmail.com>
+# Author: Gianluca Pernigoto <jeanlucperni@gmail.com>
 # Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
 # license: GNU GENERAL PUBLIC LICENSE (see LICENSE)
 # Rev (01) 15/05/2015
