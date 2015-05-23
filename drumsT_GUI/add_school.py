@@ -38,7 +38,7 @@ class AddSchool(wx.Dialog):
         self.spinctrl_year = wx.SpinCtrl(self, wx.ID_ANY, "", min=2010, max=2030, 
                                                   initial=2015, style=wx.TE_PROCESS_ENTER
                                                   )
-        self.lab_year = wx.StaticText(self, wx.ID_ANY, (" /     2016"))
+        self.lab_year = wx.StaticText(self, wx.ID_ANY, ("  /      2016"))
         close_btn = wx.Button(self, wx.ID_EXIT, "")
         self.apply_btn = wx.Button(self, wx.ID_OK, "")
         # properties:
@@ -88,6 +88,7 @@ class AddSchool(wx.Dialog):
         else:
             self.apply_btn.Enable()
             self.name = strippedString.strip()
+
     #-------------------------------------------------------------------#
     def enter_year(self, event):
         """
@@ -97,7 +98,7 @@ class AddSchool(wx.Dialog):
         self.min_year = self.spinctrl_year.GetValue()
         y = int(self.min_year) + 1
         self.max_year = str(y)
-        self.lab_year.SetLabel(" /     %s" % self.max_year)
+        self.lab_year.SetLabel("  /      %s" % self.max_year)
         #self.sizer.Layout() # use it if the change layout too
     #-------------------------------------------------------------------#
     def on_close(self, event):
@@ -125,5 +126,5 @@ class AddSchool(wx.Dialog):
         Return by call before Destroy()
         """
         name = urlify(self.name)
-        setyear = '%s_%s' % (self.min_year,self.max_year)
+        setyear = '%s/%s' % (self.min_year,self.max_year)
         return name, setyear

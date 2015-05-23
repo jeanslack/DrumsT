@@ -12,9 +12,9 @@
 #
 import wx
 #import os
-import students_rec, add_school
+import add_student, add_school, add_newyear
 from drumsT_SYS.os_filesystem import create_rootdir
-from drumsT_SYS.SQLite_lib import Schools_Id
+from drumsT_SYS.SQLite_lib import School_Class
 
 ## COLORS:
 azure = '#d9ffff' # rgb form (wx.Colour(217,255,255))
@@ -35,13 +35,13 @@ class MainFrame(wx.Frame):
         self.changeStudent_ico = wx.GetApp().changeStudent_icon
         # base diractory to save any db:
         self.rootdir = wx.GetApp().rootdir
-        self.choice = None # schoolName/schoolYear
+        self.IDyear = None # int db school
         # name of school:
         self.schoolName = None
         # path name of current file .drtDB :
         self.path_db = None
         
-        self.school = Schools_Id()
+        self.school = School_Class()
         
         wx.Frame.__init__(self, None, -1, style=wx.DEFAULT_FRAME_STYLE)
         panel = wx.Panel(self)
@@ -71,12 +71,14 @@ class MainFrame(wx.Frame):
         #self.list_ctrl.SetBackgroundColour(green)
         self.list_ctrl.SetToolTipString("Double click to open a individual profile")
         
-        self.list_ctrl.InsertColumn(0, 'Name Surname', width=200)
-        self.list_ctrl.InsertColumn(1, 'Address', width=300)
-        self.list_ctrl.InsertColumn(2, 'Birth Date', width=150)
+        self.list_ctrl.InsertColumn(0, 'School Year', width=100)
+        self.list_ctrl.InsertColumn(1, 'Name', width=120)
+        self.list_ctrl.InsertColumn(2, 'Surname', width=120)
         self.list_ctrl.InsertColumn(3, 'Phone', width=180)
-        self.list_ctrl.InsertColumn(4, 'Joined Date', width=150)
-        self.list_ctrl.InsertColumn(5, 'Level-Course', width=400)
+        self.list_ctrl.InsertColumn(4, 'Address', width=300)
+        self.list_ctrl.InsertColumn(5, 'Birth Date', width=150)
+        self.list_ctrl.InsertColumn(6, 'Joined Date', width=150)
+        self.list_ctrl.InsertColumn(7, 'Level-Course', width=400)
         
         self.toolbar.EnableTool(wx.ID_FILE2, False)
         self.toolbar.EnableTool(wx.ID_FILE3, False)
@@ -136,23 +138,24 @@ class MainFrame(wx.Frame):
         method first must be use self.list_ctrl.DeleteAllItems() otherwise 
         append result in the list_ctrl
         """
-        profiles = self.school.query(self.path_db, self.schoolName)
-        
+        profiles = self.school.displayclass(self.path_db, self.IDyear)
         if profiles == []:
             msg = ("Info - Empty database: There isn't any list to load. "
                 "You must add new students now")
             self.statusbar_msg(msg, greendeph)
             return
-        
+
         index = 0
         for rec in profiles:
             rows = self.list_ctrl.InsertStringItem(index, rec[1])
             self.list_ctrl.SetStringItem(rows, 0, rec[1])
-            #self.list_ctrl.SetStringItem(rows, 1, rec[1])
-            #self.list_ctrl.SetStringItem(rows, 2, rec[2])
-            #self.list_ctrl.SetStringItem(rows, 3, rec[3])
-            #self.list_ctrl.SetStringItem(rows, 4, rec[4])
-            #self.list_ctrl.SetStringItem(rows, 5, rec[5])
+            self.list_ctrl.SetStringItem(rows, 1, rec[2])
+            self.list_ctrl.SetStringItem(rows, 2, rec[3])
+            self.list_ctrl.SetStringItem(rows, 3, rec[4])
+            self.list_ctrl.SetStringItem(rows, 4, rec[5])
+            self.list_ctrl.SetStringItem(rows, 5, rec[6])
+            self.list_ctrl.SetStringItem(rows, 6, rec[7])
+            self.list_ctrl.SetStringItem(rows, 7, rec[8])
             
     #-----------------------EVENTS--------------------------------------#
     def on_select(self, event): # list_ctrl
@@ -194,8 +197,8 @@ class MainFrame(wx.Frame):
             self.path_db = dialfile.GetPath()
             self.cmbx_year.Enable(), self.cmbx_year.Clear()
             self.cmbx_year.Append('not selected')
-            year = self.school.key_query(self.path_db)
-            
+            year = self.school.displayschool(self.path_db)
+
             for items in year:
                 self.cmbx_year.Append(items[0])# can be more data
                 
@@ -222,6 +225,7 @@ class MainFrame(wx.Frame):
             self.toolbar.EnableTool(wx.ID_FILE5, False)
         else:
             #year = self.cmbx_year.GetValue()
+            self.IDyear = self.cmbx_year.GetValue()
             self.toolbar.EnableTool(wx.ID_FILE3, True)
             self.list_ctrl.DeleteAllItems()
             self.set_listctrl()
@@ -277,15 +281,20 @@ class MainFrame(wx.Frame):
     #------------------------------------------------------------------#
     def Addpupil(self, event):
         """
-        Add one new record to database
+        Add one new record to Class table
         """
-        dialog = students_rec.AddRecords(self, 
+        dialog = add_student.AddRecords(self, 
                                       "Add new identity profile to database", 
-                                       self.path_db,self.schoolName)
+                                       self.path_db,self.IDyear)
         ret = dialog.ShowModal()
         if ret == wx.ID_OK:
             self.list_ctrl.DeleteAllItems() # clear all items in list_ctrl
             self.set_listctrl() # re-charging list_ctrl with newer
+            
+        if schools[0]:
+            wx.MessageBox(schools[1], 'ERROR', wx.ICON_ERROR, self)
+            return
+            
         self.statusbar_msg('', None)
     #------------------------------------------------------------------#
     def Modify(self, event):
@@ -345,6 +354,9 @@ class MainFrame(wx.Frame):
     #-----------------Callback menu bar (event handler)------------------#
     #------------------------------------------------------------------#
     def Addschool(self, event):
+        """
+        Add new school database to school directory
+        """
 
         dialog = add_school.AddSchool(self, "DrumsT - Add new school and date")
         retcode = dialog.ShowModal()
@@ -353,17 +365,33 @@ class MainFrame(wx.Frame):
             data = dialog.GetValue()
         else:
             return
+        
         mkdirs = create_rootdir(self.rootdir,data[0])
         if mkdirs[0]:
             wx.MessageBox(mkdirs[1], 'ERROR', wx.ICON_ERROR, self)
             return
-        schools = Schools_Id().newSchool(self.rootdir,data[0],data[1])
+        schools = School_Class().newSchoolyear(self.rootdir,data[0],data[1])
         if schools[0]:
             wx.MessageBox(schools[1], 'ERROR', wx.ICON_ERROR, self)
             return
+        
+        wx.MessageBox('DrumsT: Success on create new school', 'ERROR', 
+                      wx.ICON_ERROR, self)
     #------------------------------------------------------------------#
     def Addate(self, event):
-        date = '2013_2014'
+        """
+        Add new date event
+        """
+        dialog = add_newyear.AddYear(self, "DrumsT")
+        retcode = dialog.ShowModal()
+        
+        if retcode == wx.ID_OK:
+            data = dialog.GetValue()
+        else:
+            return
+        
+        schools = School_Class().add_date(self.path_db,data)
+        self.cmbx_year.Append(data)
         
         
 

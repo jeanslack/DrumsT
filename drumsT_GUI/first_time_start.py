@@ -12,10 +12,10 @@
 #
 import wx
 from add_school import AddSchool
-from drumsT_SYS.SQLite_lib import Schools_Id
+from drumsT_SYS.SQLite_lib import School_Class
 from drumsT_SYS.os_filesystem import write_newpath, create_rootdir
 
-#from drumsT_SYS.SQLite_lib import Schools_Id
+#from drumsT_SYS.SQLite_lib import School_Class
 #from drumsT_SYS.boot import write_fileconf
 class FirstStart(wx.Dialog):
     
@@ -101,7 +101,7 @@ class FirstStart(wx.Dialog):
                 wx.MessageBox(mkdirs[1], 'ERROR', wx.ICON_ERROR, self)
                 return
 
-            schools = Schools_Id().newSchool(path,data[0],data[1])
+            schools = School_Class().newSchoolyear(path,data[0],data[1])
             if schools[0]:
                 wx.MessageBox(schools[1], 'ERROR', wx.ICON_ERROR, self)
                 return
@@ -113,7 +113,7 @@ class FirstStart(wx.Dialog):
             
             write_newpath(path) # writing drumsT.conf
             
-            wx.MessageBox("A new database has been created successfully in:"
+            wx.MessageBox("A new drumsT rootdir has been created successfully in:"
                           "\n\n%s/DrumsT_Databases\n\nYou must re-start the "
                           "DrumsT application now.\n\nGood Work !" % path, 
                           'Success !', wx.ICON_INFORMATION, self)
