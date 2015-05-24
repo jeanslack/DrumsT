@@ -142,6 +142,9 @@ class MainFrame(wx.Frame):
             msg = ("Info - Empty database: There isn't any list to load. "
                 "You must add new students now")
             self.statusbar_msg(msg, greendeph)
+            self.toolbar.EnableTool(wx.ID_FILE2, False)
+            self.toolbar.EnableTool(wx.ID_FILE4, False)
+            self.toolbar.EnableTool(wx.ID_FILE5, False)
             return
 
         index = 0

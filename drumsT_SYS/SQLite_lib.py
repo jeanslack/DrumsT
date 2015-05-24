@@ -7,7 +7,6 @@ class School_Class(object):
     """
     Records to a main databases index.
     """
-    
     def __init__(self):
         """
         
@@ -17,11 +16,11 @@ class School_Class(object):
     #-------------------------------------------------------------------------#
     def newSchoolyear(self, path, name, year):
         """
-        Add new schools: the 'School' name is the name of newer table 
-        with content progressive  IDyears.
-        The Class table is defined by own IDclass and IDyear of the school.
-        Also, when run DrumsT for first time and there is nothing 
-        database/path-name configured, this method set a new one.
+        Create new School and Class tables: 
+        The 'School' table has one only column with IDyear.
+        The Class table is defined by own ID and IDyear of the school.
+        Also, this method is used when run DrumsT for first time and there 
+        is nothing database/path-name configured, this method set a new one.
         """
         try:
             conn = sqlite3.connect('%s/%s/%s.drtDB' % (path,name,name)) 
@@ -53,9 +52,9 @@ class School_Class(object):
     #-----------------------------------------------------------------------#
     def checkstudent(self, Name, Surname, path, IDyear):
         """
-        This method is used before the insertstudent() method to 
+        This method must be used before the insertstudent() method to 
         test if there are existance profiles with same match by 
-        name and surname
+        name and surname.
         """
         conn = sqlite3.connect('%s' % path)
         cursor = conn.cursor()
@@ -77,7 +76,11 @@ class School_Class(object):
 
     #-----------------------------------------------------------------------#
     def insertstudent(self, Name, Surname, Phone, Address, BirthDate, 
-                    JoinDate, LevelCourse, path, IDyear):
+                      JoinDate, LevelCourse, path, IDyear):
+        """
+        Insert new student profile into Class table. Note that this add
+        a only one element by call.
+        """
         try:
             conn = sqlite3.connect('%s' % path)
             cursor = conn.cursor()
