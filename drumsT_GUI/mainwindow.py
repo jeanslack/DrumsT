@@ -47,7 +47,9 @@ class MainFrame(wx.Frame):
         self.cmbx_year = wx.ComboBox(panel,wx.ID_ANY, choices=['not selected'],
                                      style=wx.CB_DROPDOWN | wx.CB_READONLY
                                      )
-        self.import_txt = wx.TextCtrl(panel, wx.ID_ANY, "", style=wx.TE_READONLY)
+        self.import_txt = wx.TextCtrl(panel, wx.ID_ANY, "", 
+                                      style=wx.TE_READONLY | wx.TE_CENTRE
+                                      )
         self.list_ctrl = wx.ListCtrl(panel, wx.ID_ANY, style=wx.LC_REPORT | 
                                      wx.SUNKEN_BORDER
                                      )
@@ -153,7 +155,11 @@ class MainFrame(wx.Frame):
             self.list_ctrl.SetStringItem(rows, 5, rec[6])
             self.list_ctrl.SetStringItem(rows, 6, rec[7])
             self.list_ctrl.SetStringItem(rows, 7, rec[8])
-            
+            if index % 2:
+                self.list_ctrl.SetItemBackgroundColour(index, "white")
+            else:
+                 self.list_ctrl.SetItemBackgroundColour(index, green)
+            index += 1
     #-----------------------EVENTS--------------------------------------#
     def on_select(self, event): # list_ctrl
         """
@@ -281,18 +287,31 @@ class MainFrame(wx.Frame):
         """
         Add one new record to Class table
         """
-        dialog = add_student.AddRecords(self, 
-                                      "Add new identity profile to database", 
-                                       self.path_db,self.IDyear)
+        dialog = add_student.AddRecords(self,
+                                        "Add new identity profile to database")
         ret = dialog.ShowModal()
+        
         if ret == wx.ID_OK:
-            self.list_ctrl.DeleteAllItems() # clear all items in list_ctrl
-            self.set_listctrl() # re-charging list_ctrl with newer
-            
-        if schools[0]:
-            wx.MessageBox(schools[1], 'ERROR', wx.ICON_ERROR, self)
+            data = dialog.GetValue()
+            check = School_Class().checkstudent(data[0],data[1],self.path_db, self.IDyear)
+        else:
             return
             
+        if check[0]:
+            warn = wx.MessageDialog(self, check[1], "Warning", wx.YES_NO | 
+                                    wx.CANCEL | wx.ICON_EXCLAMATION)
+            
+            if warn.ShowModal() == wx.ID_YES:
+                pass
+            else:
+                return
+            
+        add = School_Class().insertstudent(data[0],data[1],data[2],data[3],
+                          data[4],data[5],data[6],self.path_db, self.IDyear)
+        wx.MessageBox("Successfull storing !", "Success", wx.OK, self)
+
+        self.list_ctrl.DeleteAllItems() # clear all items in list_ctrl
+        self.set_listctrl() # re-charging list_ctrl with newer
         self.statusbar_msg('', None)
     #------------------------------------------------------------------#
     def Modify(self, event):

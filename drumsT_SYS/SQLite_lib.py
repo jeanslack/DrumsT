@@ -51,22 +51,44 @@ class School_Class(object):
         return self.error, self.exception
     
     #-----------------------------------------------------------------------#
-    def insertclass(self, Name, Surname, Phone, Address, BirthDate, 
+    def checkstudent(self, Name, Surname, path, IDyear):
+        """
+        This method is used before the insertstudent() method to 
+        test if there are existance profiles with same match by 
+        name and surname
+        """
+        conn = sqlite3.connect('%s' % path)
+        cursor = conn.cursor()
+        
+        ctrl = cursor.execute("SELECT * FROM Class WHERE (IDyear=?)", [IDyear])
+        for m in ctrl:
+            if '%s %s' %(m[2],m[3]) == '%s %s' %(Name,Surname):
+                conn.close()
+                self.error = True
+                self.exception = ("This name already exists:"
+                                  "\n\nNAME/SURNAME:  %s %s\nPHONE:  %s\n"
+                                  "ADDRESS:  %s\nBIRTHDATE:  %s\n"
+                                  "JOINED DATE:  %s\nLEVEL:  %s"
+                                  "\n\nWant you to save anyway?" % (
+                                  m[2],m[3],m[4],m[5],m[6],m[7],m[8]))
+                break
+        conn.close()
+        return self.error ,self.exception
+
+    #-----------------------------------------------------------------------#
+    def insertstudent(self, Name, Surname, Phone, Address, BirthDate, 
                     JoinDate, LevelCourse, path, IDyear):
-        """
-        Insert data Class
-        """
         try:
             conn = sqlite3.connect('%s' % path)
             cursor = conn.cursor()
-
-            #cursor.execute('SELECT max(IDyear) FROM School')
-            #max_id = cursor.fetchone()[0]
+        
+            #cursor.execute('SELECT max(IDyear) FROM School')# by index
+            #max_id = cursor.fetchone()[0] # by index
             cursor.execute("""INSERT INTO Class (IDyear,Name,Surname,Phone,
-                        Address,BirthDate,LevelCourse, JoinDate) 
-                        VALUES(?,?,?,?,?,?,?,?)""", [IDyear,Name,Surname,
-                                                        Phone,Address,BirthDate,
-                                                        LevelCourse,JoinDate])
+                              Address,BirthDate,LevelCourse, JoinDate) 
+                              VALUES(?,?,?,?,?,?,?,?)
+                           """, [IDyear,Name,Surname,Phone,Address,BirthDate,
+                                 LevelCourse,JoinDate])
             conn.commit()
             conn.close()
             
@@ -76,9 +98,7 @@ class School_Class(object):
                               "sqlite3.OperationalError: %s" % err)
 
         return self.error, self.exception
-        
-        
-        
+
     #----------------------------------------------------------------------#
     def displayclass(self, path, IDyear):
         """

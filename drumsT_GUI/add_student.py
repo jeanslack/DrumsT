@@ -11,22 +11,17 @@
 #########################################################
 
 import wx
-import string
-#from drumsT_SYS.data_students import insert, search_all
-from drumsT_SYS.SQLite_lib import School_Class
 
 class AddRecords(wx.Dialog):
     """
     Show a dialog window.
     """
-    def __init__(self, parent, title, path, IDyear):
+    def __init__(self, parent, title):
         """
         Mask dialog for recording new students profiles.
         """
         wx.Dialog.__init__(self, parent, -1, title, style=wx.DEFAULT_DIALOG_STYLE)
-        # set attributes:
-        self.path_db = path
-        self.IDyear = IDyear
+        self.listret = []
         # widgets:
         siz_name = wx.StaticBox(self, wx.ID_ANY, "  Name:")
         siz_surname = wx.StaticBox(self, wx.ID_ANY, "  Surname:")
@@ -101,7 +96,6 @@ class AddRecords(wx.Dialog):
 
         #----------------------Binder (EVT)----------------------#
         self.Bind(wx.EVT_BUTTON, self.on_close, close_btn)
-        #self.Bind(wx.EVT_BUTTON, self.on_help, btn4)
         self.Bind(wx.EVT_BUTTON, self.on_apply, ok_btn) 
         
     #---------------------Callback (event handler)----------------------#
@@ -111,6 +105,9 @@ class AddRecords(wx.Dialog):
         event.Skip()
 
     def on_apply(self, event):
+        """
+        Apply is need to management errors before go GetValue()
+        """
         name = self.txt_name.GetValue()
         surname = self.txt_surname.GetValue()
         phone = self.txt_phones.GetValue()
@@ -119,38 +116,18 @@ class AddRecords(wx.Dialog):
         date = self.txt_date.GetValue()
         level = self.txt_level.GetValue()
         
-        li = [name,surname,phone,address,birthdate,date,level]
-        for e in li:
+        self.listret = [name,surname,phone,address,birthdate,date,level]
+        for e in self.listret:
             if e == '':
                 wx.MessageBox(u"Incomplete profile assignement. Is not "
-                               "still possible to save into the database !",
+                              "still possible to save into the database !",
                               "Warning", wx.ICON_EXCLAMATION, self)
                 return
             
-        #err_match = Students_Id().search_all(name, self.path_db)
-        #for m in err_match:
-            #if m[0] == name:
-                #warn = wx.MessageDialog(self,"This name already exists:"
-                                     #"\n\nNAME:  %s\nADDRESS:  %s\n"
-                                     #"BIRTH DATES:  %s\nPHONE:  %s\n"
-                                     #"JOINED DATE:  %s\nLEVEL:  %s"
-                                     #"\n\nWant you to save anyway?" % (
-                                     #m[0],m[1],m[2],m[3],m[4],m[5]), 
-                                     #"Warning", wx.YES_NO | wx.CANCEL | 
-                                     #wx.ICON_EXCLAMATION
-                                     #)
-                #if warn.ShowModal() == wx.ID_YES:
-                    #break
-                #else:
-                    #return
-        #print name,surname,phone,address,birthdate,date,level,self.path_db, self.IDyear
-        add = School_Class().insertclass(name,surname,phone,address,birthdate,date,level,self.path_db, self.IDyear)
-        wx.MessageBox("Successfull storing !", "Success", wx.OK, self)
-        #self.txt_name.SetValue(''), self.txt_address.SetValue(''),
-        #self.txt_birth.SetValue(''), self.txt_phones.SetValue('')
-        #self.txt_date.SetValue(''), self.txt_level.SetValue('')
-
         event.Skip()
         
-        
-        
+    def GetValue(self):
+        """
+        Return by call before Destroy()
+        """
+        return self.listret
