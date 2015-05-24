@@ -67,8 +67,7 @@ def urlify(string):
 
     # Remove all non-word characters (everything except numbers and letters)
     b = re.sub(r"[^\w\s]", '', string)
-    
     # Replace all runs of whitespace with a single underscore
     c = re.sub(r"\s+", '_', b)
-    print c
+    
     return c

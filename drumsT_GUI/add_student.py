@@ -14,14 +14,19 @@ import wx
 
 class AddRecords(wx.Dialog):
     """
-    Show a dialog window.
+    Show a dialog window for recording new students profiles.
     """
     def __init__(self, parent, title):
         """
-        Mask dialog for recording new students profiles.
+        It is set need attributes to filter only some text fields
         """
         wx.Dialog.__init__(self, parent, -1, title, style=wx.DEFAULT_DIALOG_STYLE)
+        
+        # set attributes
+        self.name = None
+        self.surname = None
         self.listret = []
+        
         # widgets:
         siz_name = wx.StaticBox(self, wx.ID_ANY, "  Name:")
         siz_surname = wx.StaticBox(self, wx.ID_ANY, "  Surname:")
@@ -32,19 +37,34 @@ class AddRecords(wx.Dialog):
         siz_level = wx.StaticBox(self, wx.ID_ANY, "  Level:")
         siz_info = wx.StaticBox(self, wx.ID_ANY, "  Others Info:")
         
-        self.txt_name = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_PROCESS_ENTER)
-        self.txt_surname = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_PROCESS_ENTER)
-        self.txt_phones = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_PROCESS_ENTER)
-        self.txt_address = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_PROCESS_ENTER | wx.TE_MULTILINE)
-        self.txt_birth = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_PROCESS_ENTER)
-        self.txt_date = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_PROCESS_ENTER)
-        self.txt_level = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_PROCESS_ENTER)
-        self.txt_info = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_PROCESS_ENTER)
-        
+        self.txt_name = wx.TextCtrl(self, wx.ID_ANY, "", 
+                                    style=wx.TE_PROCESS_ENTER
+                                    )
+        self.txt_surname = wx.TextCtrl(self, wx.ID_ANY, "", 
+                                       style=wx.TE_PROCESS_ENTER
+                                       )
+        self.txt_phones = wx.TextCtrl(self, wx.ID_ANY, "", 
+                                      style=wx.TE_PROCESS_ENTER
+                                      )
+        self.txt_address = wx.TextCtrl(self, wx.ID_ANY, "", 
+                                       style=wx.TE_PROCESS_ENTER | 
+                                       wx.TE_MULTILINE
+                                       )
+        self.txt_birth = wx.TextCtrl(self, wx.ID_ANY, "", 
+                                     style=wx.TE_PROCESS_ENTER
+                                     )
+        self.txt_date = wx.TextCtrl(self, wx.ID_ANY, "", 
+                                    style=wx.TE_PROCESS_ENTER
+                                    )
+        self.txt_level = wx.TextCtrl(self, wx.ID_ANY, "", 
+                                     style=wx.TE_PROCESS_ENTER
+                                     )
+        self.txt_info = wx.TextCtrl(self, wx.ID_ANY, "", 
+                                    style=wx.TE_PROCESS_ENTER
+                                    )
         close_btn = wx.Button(self, wx.ID_CANCEL, "Close")
-        #help_btn = wx.Button(self, wx.ID_HELP, "")
         ok_btn = wx.Button(self, wx.ID_OK, "") 
-
+        
         # Properties:
         self.txt_name.SetMinSize((180, 30))
         self.txt_surname.SetMinSize((180, 30))
@@ -97,26 +117,56 @@ class AddRecords(wx.Dialog):
         #----------------------Binder (EVT)----------------------#
         self.Bind(wx.EVT_BUTTON, self.on_close, close_btn)
         self.Bind(wx.EVT_BUTTON, self.on_apply, ok_btn) 
-        
-    #---------------------Callback (event handler)----------------------#
+        self.Bind(wx.EVT_TEXT, self.name_e , self.txt_name)
+        self.Bind(wx.EVT_TEXT, self.surname_e , self.txt_surname)
 
+    #---------------------Callback (event handler)----------------------#
     def on_close(self, event):
         #self.Destroy()
         event.Skip()
+        
+        
+    def name_e(self, event):
+        """
+        Emit text change: If text is only spaces not enable to save.
+        If name has spaces in head or in tail, strip method remove them.
+        This method does not allow you to add spaces or tabs at the 
+        beginning and end of a text because the fields name and surname 
+        must be compared with others.
+        """
+        getVal = self.txt_name.GetValue()
+        strippedString = getVal.strip() # remove all spaces head/tail in str
+        
+        if  strippedString == '':
+            self.name = None
+        else:
+            self.name = strippedString.title() # capitalize the first letters
+
+    def surname_e(self, event):
+        """
+        See above name_e() method.
+        """
+        getVal = self.txt_surname.GetValue()
+        strippedString = getVal.strip()
+        
+        if  strippedString == '':
+            self.surname = None
+        else:
+            self.surname = strippedString.title()
 
     def on_apply(self, event):
         """
-        Apply is need to management errors before go GetValue()
+        Apply is need to management errors before go GetValue().
+        It is not allowed to leave here empty text fields
+        
         """
-        name = self.txt_name.GetValue()
-        surname = self.txt_surname.GetValue()
         phone = self.txt_phones.GetValue()
-        address = self.txt_address.GetValue()
+        address = self.txt_address.GetValue().title()
         birthdate = self.txt_birth.GetValue()
         date = self.txt_date.GetValue()
         level = self.txt_level.GetValue()
         
-        self.listret = [name,surname,phone,address,birthdate,date,level]
+        self.listret = [self.name,self.surname,phone,address,birthdate,date,level]
         for e in self.listret:
             if e == '':
                 wx.MessageBox(u"Incomplete profile assignement. Is not "
