@@ -24,10 +24,10 @@ class AddRecords(wx.Dialog):
         Mask dialog for recording new students profiles.
         """
         wx.Dialog.__init__(self, parent, -1, title, style=wx.DEFAULT_DIALOG_STYLE)
-        
+        # set attributes:
         self.path_db = path
         self.IDyear = IDyear
-
+        # widgets:
         siz_name = wx.StaticBox(self, wx.ID_ANY, "  Name:")
         siz_surname = wx.StaticBox(self, wx.ID_ANY, "  Surname:")
         siz_phone = wx.StaticBox(self, wx.ID_ANY, "  Phone:")
@@ -50,7 +50,7 @@ class AddRecords(wx.Dialog):
         #help_btn = wx.Button(self, wx.ID_HELP, "")
         ok_btn = wx.Button(self, wx.ID_OK, "") 
 
-        #----------------------Set Properties----------------------#
+        # Properties:
         self.txt_name.SetMinSize((180, 30))
         self.txt_surname.SetMinSize((180, 30))
         self.txt_phones.SetMinSize((180, 30))
@@ -60,7 +60,7 @@ class AddRecords(wx.Dialog):
         self.txt_level.SetMinSize((150, 30))
         self.txt_info.SetMinSize((150, 30))
         
-        #----------------------layout----------------------#
+        # Layout:
         base = wx.FlexGridSizer(5, 2, 20, 20)
         
         box_name = wx.StaticBoxSizer(siz_name, wx.VERTICAL)
@@ -110,9 +110,6 @@ class AddRecords(wx.Dialog):
         #self.Destroy()
         event.Skip()
 
-    #def on_help(self, event):
-        #wx.MessageBox(u"Work in progress")
-        
     def on_apply(self, event):
         name = self.txt_name.GetValue()
         surname = self.txt_surname.GetValue()

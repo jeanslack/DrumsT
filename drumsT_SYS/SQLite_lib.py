@@ -112,20 +112,48 @@ class School_Class(object):
         return schools
     
     #----------------------------------------------------------------------#
-    def add_date(self, path, year):
+    def updateyear(self, path, year):
         """
         Insert new date in School if not still exist
         """
         conn = sqlite3.connect('%s' % (path))
         cursor = conn.cursor()
+        
+        # find a match error
+        ctrl = cursor.execute("SELECT * FROM School WHERE IDyear=?", [year])
+        for m in ctrl:
+            if year == m[0]:
+                conn.close()
+                self.error = True
+                return self.error
 
         # insert year in school
         cursor.execute("INSERT INTO School (IDyear) VALUES(?)", [year])
         
         conn.commit()
         conn.close()
+        
+        return self.error
+    #----------------------------------------------------------------------#
+    def search_all(self, long_name, path_db):
+        conn = sqlite3.connect('%s/students.drtDB' % path_db) # or use :memory: to put it in RAM
+        cursor = conn.cursor()
+        
+        #sql = "SELECT * FROM students WHERE name=?, address=?"
+        #cursor.execute(sql, [(name)])
+        #print cursor.fetchall()  # or use fetchone() for grab first result
+        #print cursor.fetchone()  # or use fetchone()
+        
+        sql = """
+        SELECT * FROM students 
+        WHERE instr(name, '%s') > 0;""" % (long_name,)
+        #cursor.execute(sql, [])
+        cursor.execute(sql)
+        #print cursor.fetchall()
+        ret = cursor.fetchall()
+        return re
     ########################################################################
-    def update_year(self, path):
+    def update(self, path):
         """
         aggiorna records già esistenti
         """

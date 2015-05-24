@@ -26,7 +26,7 @@ class AddYear(wx.Dialog):
         self.parent = parent
         self.max_year = '2016'
         self.min_year = '2015'
-
+        # widgets:
         labmsg = wx.StaticText(self, wx.ID_ANY, (
                                     "Add a school year to selected school:")
         )
@@ -36,22 +36,22 @@ class AddYear(wx.Dialog):
         self.labyear = wx.StaticText(self, wx.ID_ANY, ("  /      2016"))
         close_btn = wx.Button(self, wx.ID_EXIT, "")
         apply_btn = wx.Button(self, wx.ID_OK, "")
-
+        # properties:
         self.spinctrl_year.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
         self.labyear.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-
+        # layout:
         gridbase = wx.FlexGridSizer(3, 1, 0, 0)
-        grid_sizer_2 = wx.GridSizer(1, 3, 0, 0)
-        grid_sizer_3 = wx.FlexGridSizer(1, 4, 0, 0)
+        gridsiz1 = wx.GridSizer(1, 3, 0, 0)
+        gridsiz2 = wx.FlexGridSizer(1, 4, 0, 0)
         gridbase.Add(labmsg, 0, wx.ALIGN_CENTER | wx.ALL, 15)
-        grid_sizer_3.Add((60, 20), 0, wx.ALIGN_CENTER | wx.ALL, 15)
-        grid_sizer_3.Add(self.spinctrl_year, 0, wx.ALIGN_CENTER | wx.ALL, 15)
-        grid_sizer_3.Add(self.labyear, 0, wx.ALIGN_CENTER | wx.ALL, 15)
-        gridbase.Add(grid_sizer_3, 1, 0, 0)
-        grid_sizer_2.Add(close_btn, 0, wx.ALIGN_CENTER | wx.ALL, 15)
-        grid_sizer_2.Add((100, 20), 0, wx.ALIGN_CENTER | wx.ALL, 15)
-        grid_sizer_2.Add(apply_btn, 0, wx.ALIGN_CENTER | wx.ALL, 15)
-        gridbase.Add(grid_sizer_2, 1, 0, 0)
+        gridsiz2.Add((60, 20), 0, wx.ALIGN_CENTER | wx.ALL, 15)
+        gridsiz2.Add(self.spinctrl_year, 0, wx.ALIGN_CENTER | wx.ALL, 15)
+        gridsiz2.Add(self.labyear, 0, wx.ALIGN_CENTER | wx.ALL, 15)
+        gridbase.Add(gridsiz2, 1, 0, 0)
+        gridsiz1.Add(close_btn, 0, wx.ALIGN_CENTER | wx.ALL, 15)
+        gridsiz1.Add((100, 20), 0, wx.ALIGN_CENTER | wx.ALL, 15)
+        gridsiz1.Add(apply_btn, 0, wx.ALIGN_CENTER | wx.ALL, 15)
+        gridbase.Add(gridsiz1, 1, 0, 0)
         self.SetSizer(gridbase)
         gridbase.Fit(self)
         self.Layout()
@@ -59,7 +59,6 @@ class AddYear(wx.Dialog):
         self.Bind(wx.EVT_CLOSE, self.on_close)
         self.Bind(wx.EVT_BUTTON, self.on_close, close_btn)
         self.Bind(wx.EVT_SPINCTRL, self.enter_year, self.spinctrl_year)
-        
     #-------------------------------------------------------------------#
     def enter_year(self, event):
         """
@@ -99,4 +98,4 @@ class AddYear(wx.Dialog):
 
         setyear = '%s/%s' % (self.min_year,self.max_year)
         return setyear
-
+    

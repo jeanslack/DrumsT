@@ -33,15 +33,10 @@ class MainFrame(wx.Frame):
         self.openStudent_ico = wx.GetApp().openStudent_icon
         self.delStudent_ico = wx.GetApp().delStudent_icon
         self.changeStudent_ico = wx.GetApp().changeStudent_icon
-        # base diractory to save any db:
-        self.rootdir = wx.GetApp().rootdir
-        self.IDyear = None # int db school
-        # name of school:
-        self.schoolName = None
-        # path name of current file .drtDB :
-        self.path_db = None
-        
-        self.school = School_Class()
+        self.rootdir = wx.GetApp().rootdir # base diractory to save any db
+        self.IDyear = None # db school year
+        self.schoolName = None # name of school
+        self.path_db = None # path name of current file .drtDB
         
         wx.Frame.__init__(self, None, -1, style=wx.DEFAULT_FRAME_STYLE)
         panel = wx.Panel(self)
@@ -67,6 +62,8 @@ class MainFrame(wx.Frame):
         self.cmbx_year.SetSelection(0)
         self.cmbx_year.Disable()
         self.import_txt.SetMinSize((270, 20))
+        self.import_txt.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.import_txt.SetForegroundColour(orange)
         self.import_txt.Disable()
         #self.list_ctrl.SetBackgroundColour(green)
         self.list_ctrl.SetToolTipString("Double click to open a individual profile")
@@ -138,7 +135,7 @@ class MainFrame(wx.Frame):
         method first must be use self.list_ctrl.DeleteAllItems() otherwise 
         append result in the list_ctrl
         """
-        profiles = self.school.displayclass(self.path_db, self.IDyear)
+        profiles = School_Class().displayclass(self.path_db, self.IDyear)
         if profiles == []:
             msg = ("Info - Empty database: There isn't any list to load. "
                 "You must add new students now")
@@ -197,7 +194,7 @@ class MainFrame(wx.Frame):
             self.path_db = dialfile.GetPath()
             self.cmbx_year.Enable(), self.cmbx_year.Clear()
             self.cmbx_year.Append('not selected')
-            year = self.school.displayschool(self.path_db)
+            year = School_Class().displayschool(self.path_db)
 
             for items in year:
                 self.cmbx_year.Append(items[0])# can be more data
@@ -212,6 +209,7 @@ class MainFrame(wx.Frame):
                 self.toolbar.EnableTool(wx.ID_FILE3, False)
                 self.toolbar.EnableTool(wx.ID_FILE4, False)
                 self.toolbar.EnableTool(wx.ID_FILE5, False)
+            self.statusbar_msg('', None)
     #-------------------------------------------------------------------#
     def on_year(self, event): # combobox
         """
@@ -375,8 +373,8 @@ class MainFrame(wx.Frame):
             wx.MessageBox(schools[1], 'ERROR', wx.ICON_ERROR, self)
             return
         
-        wx.MessageBox('DrumsT: Success on create new school', 'ERROR', 
-                      wx.ICON_ERROR, self)
+        wx.MessageBox('DrumsT: Success on create new school', 'Info',
+                      wx.ICON_INFORMATION, self)
     #------------------------------------------------------------------#
     def Addate(self, event):
         """
@@ -390,19 +388,12 @@ class MainFrame(wx.Frame):
         else:
             return
         
-        schools = School_Class().add_date(self.path_db,data)
+        schools = School_Class().updateyear(self.path_db, data)
+        if schools:
+            wx.MessageBox("DrumsT: This school year already exist, is not "
+                          "possible add this record", 'WARNING', 
+                          wx.ICON_EXCLAMATION, self)
+            return
+        wx.MessageBox('DrumsT: Success on create new year', 'Info', 
+                      wx.ICON_INFORMATION, self)
         self.cmbx_year.Append(data)
-        
-        
-
-        
-        
-
-#if __name__ == "__main__":
-    
-    #app = wx.App(False) #oppure: app = wx.App(0)
-    #main_frame = MyFrame(None, wx.ID_ANY, "Sono il Frame")
-    #app.SetTopWindow(main_frame)
-    #main_frame.Show()
-    #app.MainLoop()
- 
