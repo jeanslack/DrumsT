@@ -11,7 +11,6 @@
 #########################################################
 #
 import wx
-#import os
 import add_student, add_school, add_newyear
 from drumsT_SYS.os_filesystem import create_rootdir
 from drumsT_SYS.SQLite_lib import School_Class
@@ -27,7 +26,7 @@ greendeph = '#91ff8f'
 class MainFrame(wx.Frame):
 
     def __init__(self):
-        
+        #################### set attributes:
         self.drumsT_ico = wx.GetApp().drumsT_icon
         self.addStudent_ico = wx.GetApp().addStudent_icon
         self.openStudent_ico = wx.GetApp().openStudent_icon
@@ -37,7 +36,8 @@ class MainFrame(wx.Frame):
         self.IDyear = None # db school year
         self.schoolName = None # name of school
         self.path_db = None # path name of current file .drtDB
-        
+        self.IDprofile = None # name/surname of pupil
+        #################### widgets:
         wx.Frame.__init__(self, None, -1, style=wx.DEFAULT_FRAME_STYLE)
         panel = wx.Panel(self)
         self.tool_bar()
@@ -67,17 +67,17 @@ class MainFrame(wx.Frame):
         self.import_txt.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
         self.import_txt.SetForegroundColour(orange)
         self.import_txt.Disable()
-        #self.list_ctrl.SetBackgroundColour(green)
         self.list_ctrl.SetToolTipString("Double click to open a individual profile")
         
-        self.list_ctrl.InsertColumn(0, 'School Year', width=100)
-        self.list_ctrl.InsertColumn(1, 'Name', width=120)
-        self.list_ctrl.InsertColumn(2, 'Surname', width=120)
-        self.list_ctrl.InsertColumn(3, 'Phone', width=180)
-        self.list_ctrl.InsertColumn(4, 'Address', width=300)
-        self.list_ctrl.InsertColumn(5, 'Birth Date', width=150)
-        self.list_ctrl.InsertColumn(6, 'Joined Date', width=150)
-        self.list_ctrl.InsertColumn(7, 'Level-Course', width=400)
+        self.list_ctrl.InsertColumn(0, 'ID', width=30)
+        self.list_ctrl.InsertColumn(1, 'School Year', width=100)
+        self.list_ctrl.InsertColumn(2, 'Name', width=120)
+        self.list_ctrl.InsertColumn(3, 'Surname', width=120)
+        self.list_ctrl.InsertColumn(4, 'Phone', width=140)
+        self.list_ctrl.InsertColumn(5, 'Address', width=300)
+        self.list_ctrl.InsertColumn(6, 'Birth Date', width=150)
+        self.list_ctrl.InsertColumn(7, 'Joined Date', width=150)
+        self.list_ctrl.InsertColumn(8, 'Level-Course', width=400)
         
         self.toolbar.EnableTool(wx.ID_FILE2, False)
         self.toolbar.EnableTool(wx.ID_FILE3, False)
@@ -134,8 +134,8 @@ class MainFrame(wx.Frame):
     def set_listctrl(self):
         """
         Populate the list_ctrl with data or new data. Before to use this
-        method first must be use self.list_ctrl.DeleteAllItems() otherwise 
-        append result in the list_ctrl
+        method first must be use self.list_ctrl.DeleteAllItems() method 
+        otherwise append result in the list_ctrl
         """
         profiles = School_Class().displayclass(self.path_db, self.IDyear)
         if profiles == []:
@@ -149,15 +149,16 @@ class MainFrame(wx.Frame):
 
         index = 0
         for rec in profiles:
-            rows = self.list_ctrl.InsertStringItem(index, rec[1])
-            self.list_ctrl.SetStringItem(rows, 0, rec[1])
-            self.list_ctrl.SetStringItem(rows, 1, rec[2])
-            self.list_ctrl.SetStringItem(rows, 2, rec[3])
-            self.list_ctrl.SetStringItem(rows, 3, rec[4])
-            self.list_ctrl.SetStringItem(rows, 4, rec[5])
-            self.list_ctrl.SetStringItem(rows, 5, rec[6])
-            self.list_ctrl.SetStringItem(rows, 6, rec[7])
-            self.list_ctrl.SetStringItem(rows, 7, rec[8])
+            rows = self.list_ctrl.InsertStringItem(index, str(rec[0]))
+            self.list_ctrl.SetStringItem(rows, 0, str(rec[0]))
+            self.list_ctrl.SetStringItem(rows, 1, rec[1])
+            self.list_ctrl.SetStringItem(rows, 2, rec[2])
+            self.list_ctrl.SetStringItem(rows, 3, rec[3])
+            self.list_ctrl.SetStringItem(rows, 4, rec[4])
+            self.list_ctrl.SetStringItem(rows, 5, rec[5])
+            self.list_ctrl.SetStringItem(rows, 6, rec[6])
+            self.list_ctrl.SetStringItem(rows, 7, rec[7])
+            self.list_ctrl.SetStringItem(rows, 8, rec[8])
             if index % 2:
                 self.list_ctrl.SetItemBackgroundColour(index, "white")
             else:
@@ -166,9 +167,12 @@ class MainFrame(wx.Frame):
     #-----------------------EVENTS--------------------------------------#
     def on_select(self, event): # list_ctrl
         """
-        Event emitted when selecting item only
+        Event emitted when selecting item only.
         """
-        slct = event.GetText() # event.GetText is a Name Profile
+        index = self.list_ctrl.GetFocusedItem()
+        item_ID = self.list_ctrl.GetItem(index,0)
+        self.IDprofile = item_ID.GetText()
+        
         self.toolbar.EnableTool(wx.ID_FILE2, True)
         self.toolbar.EnableTool(wx.ID_FILE4, True)
         self.toolbar.EnableTool(wx.ID_FILE5, True)
@@ -180,12 +184,14 @@ class MainFrame(wx.Frame):
         self.toolbar.EnableTool(wx.ID_FILE2, False)
         self.toolbar.EnableTool(wx.ID_FILE4, False)
         self.toolbar.EnableTool(wx.ID_FILE5, False)
+        self.IDprofile = None
     #-------------------------------------------------------------------#
     def on_enter(self, event): # list_ctrl
         """
         Type enter key or double clicked mouse event
         """
         print 'double click|enter'
+        schools = School_Class().displaystudent(self.IDprofile ,self.path_db)
     #-------------------------------------------------------------------#
     def open_school(self, event): # import button
         """
@@ -284,6 +290,11 @@ class MainFrame(wx.Frame):
 
     def Pupil(self, event):
         print 'apri scheda alunno'
+        #attendance = 'presente allievo e insegnante'
+        #date = '12 genn 2014'
+        #studies = (u"""bla bla bla""")
+        #lesson = School_Class().lessons(attendance, date, studies, self.path_db, self.IDprofile)
+        
         
     #------------------------------------------------------------------#
     def Addpupil(self, event):
@@ -375,7 +386,8 @@ class MainFrame(wx.Frame):
     #------------------------------------------------------------------#
     def Addschool(self, event):
         """
-        Add new school database to school directory
+        Add new school with a school year. This method make a new directory
+        with school name and insert data to database.
         """
 
         dialog = add_school.AddSchool(self, "DrumsT - Add new school and date")
@@ -400,7 +412,7 @@ class MainFrame(wx.Frame):
     #------------------------------------------------------------------#
     def Addate(self, event):
         """
-        Add new date event
+        Add new date event into selected school.
         """
         dialog = add_newyear.AddYear(self, "DrumsT")
         retcode = dialog.ShowModal()

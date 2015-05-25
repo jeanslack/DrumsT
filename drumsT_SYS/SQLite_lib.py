@@ -39,6 +39,10 @@ class School_Class(object):
                            LevelCourse TEXT)
                            """)
             
+            cursor.execute("""CREATE TABLE Students 
+                           (IDclass INT, Attendance TEXT, Date TEXT, Lessons TEXT
+                           )""")
+            
             conn.commit() # record stores
             conn.close() # connect close
             
@@ -88,21 +92,36 @@ class School_Class(object):
             #cursor.execute('SELECT max(IDyear) FROM School')# by index
             #max_id = cursor.fetchone()[0] # by index
             cursor.execute("""INSERT INTO Class (IDyear,Name,Surname,Phone,
-                              Address,BirthDate,LevelCourse, JoinDate) 
-                              VALUES(?,?,?,?,?,?,?,?)
-                           """, [IDyear,Name,Surname,Phone,Address,BirthDate,
-                                 LevelCourse,JoinDate])
+                                Address,BirthDate,LevelCourse, JoinDate) 
+                                VALUES(?,?,?,?,?,?,?,?)
+                            """, [IDyear,Name,Surname,Phone,Address,BirthDate,
+                                    LevelCourse,JoinDate])
+            
             conn.commit()
             conn.close()
             
         except sqlite3.OperationalError as err:
             self.error = True
             self.exception = ("DrumsT: Failed to insertclass\n\n"
-                              "sqlite3.OperationalError: %s" % err)
+                                "sqlite3.OperationalError: %s" % err)
 
         return self.error, self.exception
 
     #----------------------------------------------------------------------#
+    def lessons(self, Attendance, date, Lessons, path, IDclass,):
+        conn = sqlite3.connect('%s' % path)
+        cursor = conn.cursor()
+        
+        #cursor.execute('SELECT max(IDyear) FROM School')# by index
+        #max_id = cursor.fetchone()[0] # by index
+        cursor.execute("""INSERT INTO Students (IDclass, Attendance,Date, 
+                       Lessons) VALUES(?,?,?,?)
+                       """, [IDclass,Attendance,date,Lessons])
+
+        conn.commit()
+        conn.close()
+        
+    #-------------------------------------------------------------------------#
     def displayclass(self, path, IDyear):
         """
         Show all items class by selecting school year
@@ -134,6 +153,23 @@ class School_Class(object):
         conn.close()
         return schools
     
+    #----------------------------------------------------------------------#
+    def displaystudent(self, IDclass, path):
+        """
+        Show all items schools by in the combobox school year
+        """
+        conn = sqlite3.connect('%s' % (path))
+        cursor = conn.cursor()
+        
+        student = []
+        n = cursor.execute("""SELECT * FROM Students WHERE IDclass=?""", [IDclass])
+        for row in n:
+            student.append(row)
+            
+        conn.close()
+        print student
+        return student
+        
     #----------------------------------------------------------------------#
     def updateyear(self, path, year):
         """

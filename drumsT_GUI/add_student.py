@@ -11,6 +11,7 @@
 #########################################################
 
 import wx
+import string
 
 class AddRecords(wx.Dialog):
     """
@@ -161,7 +162,7 @@ class AddRecords(wx.Dialog):
         
         """
         phone = self.txt_phones.GetValue()
-        address = self.txt_address.GetValue().title()
+        address = self.txt_address.GetValue().title()#capitalize the first letters
         birthdate = self.txt_birth.GetValue()
         date = self.txt_date.GetValue()
         level = self.txt_level.GetValue()
