@@ -11,7 +11,7 @@
 #########################################################
 #
 import wx
-import add_student, add_school, add_newyear
+import add_student, add_school, add_newyear, lessons
 from drumsT_SYS.os_filesystem import create_rootdir
 from drumsT_SYS.SQLite_lib import School_Class
 
@@ -39,7 +39,7 @@ class MainFrame(wx.Frame):
         self.IDprofile = None # name/surname of pupil
         #################### widgets:
         wx.Frame.__init__(self, None, -1, style=wx.DEFAULT_FRAME_STYLE)
-        panel = wx.Panel(self)
+        panel = wx.Panel(self, wx.ID_ANY)
         self.tool_bar()
         self.menu_bar()
         self.sb = self.CreateStatusBar(0)
@@ -85,6 +85,7 @@ class MainFrame(wx.Frame):
         self.toolbar.EnableTool(wx.ID_FILE5, False)
         
         ####################  Set layout
+
         siz_base = wx.FlexGridSizer(2,1,0,0)
         grd_s1 = wx.FlexGridSizer(1,3,0,40)
         #box_school.Lower()
@@ -104,7 +105,7 @@ class MainFrame(wx.Frame):
         
         siz_base.Add(grd_s1, 0, wx.ALL, 15)
         siz_base.Add(self.list_ctrl, 0, wx.ALL | wx.EXPAND, 15)
-        
+
         panel.SetSizer(siz_base)
         siz_base.AddGrowableCol(0)
         siz_base.AddGrowableRow(1)
@@ -191,7 +192,9 @@ class MainFrame(wx.Frame):
         Type enter key or double clicked mouse event
         """
         print 'double click|enter'
-        schools = School_Class().displaystudent(self.IDprofile ,self.path_db)
+        frame = lessons.Lesson()
+        frame.Show()
+        #schools = School_Class().displaystudent(self.IDprofile ,self.path_db)
     #-------------------------------------------------------------------#
     def open_school(self, event): # import button
         """
@@ -361,7 +364,7 @@ class MainFrame(wx.Frame):
         menuBar.Append(schoolButton,"Schools")
         
         pupilsButton = wx.Menu()
-        addpupil = pupilsButton.Append(wx.ID_ANY, "Add new pupil", 
+        addlesson = pupilsButton.Append(wx.ID_ANY, "Add new pupil", 
                                        "Create a new record for school")
         addmorepupil = pupilsButton.Append(wx.ID_ANY, "Add more one new pupil", 
                                       "Create a new record for school")
@@ -380,6 +383,7 @@ class MainFrame(wx.Frame):
         # menu tools
         self.Bind(wx.EVT_MENU, self.Addschool, addschool)
         self.Bind(wx.EVT_MENU, self.Addate, addate)
+        self.Bind(wx.EVT_MENU, self.Addlesson, addlesson)
 
         
     #-----------------Callback menu bar (event handler)------------------#
@@ -431,3 +435,8 @@ class MainFrame(wx.Frame):
         wx.MessageBox('DrumsT: Success on create new year', 'Info', 
                       wx.ICON_INFORMATION, self)
         self.cmbx_year.Append(data)
+        
+        
+    def Addlesson(self, event):
+        frame = lesson.InsertLesson(self)
+        frame.Show()

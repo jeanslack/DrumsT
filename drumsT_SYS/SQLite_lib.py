@@ -275,28 +275,3 @@ class School_Class(object):
             schools.append(row)
         conn.close()
         return schools
-
-    
-        
-    
-        
-    
-        
-    
-    
-#a = School_Class()
-#a.insert()
-#a.display_class()
-#add_date('/home/gianluca/Pubblici/Project_github/DrumsT/test/DrumsT_DataBases', 'Barbarano')
-#insert('/home/gianluca/Pubblici/Project_github/DrumsT/test/DrumsT_DataBases')
-#create_new('/home/gianluca/Pubblici/Project_github/DrumsT/test/DrumsT_DataBases')
-#if sys.argv[1] == "create":
-    #create_new()
-#elif sys.argv[1] == "update":
-    #update()
-#elif sys.argv[1] == "delete":
-    #delete()
-#elif sys.argv[1] == "query":
-    #query()
-#elif sys.argv[1] == "":
-    #print 'Null'
