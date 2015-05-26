@@ -59,7 +59,7 @@ class MyForm(wx.Frame):
         # Add a panel so it looks the correct on all platforms
         panel = wx.Panel(self, wx.ID_ANY)
         self.grid = gridlib.Grid(panel)
-        self.grid.CreateGrid(25,8)
+        self.grid.CreateGrid(200,8)
         self.grid.Bind(gridlib.EVT_GRID_CELL_RIGHT_CLICK,
                        self.showPopupMenu)
  

@@ -88,7 +88,6 @@ class AddSchool(wx.Dialog):
         else:
             self.apply_btn.Enable()
             self.name = strippedString.strip()
-
     #-------------------------------------------------------------------#
     def enter_year(self, event):
         """

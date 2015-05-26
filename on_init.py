@@ -31,6 +31,8 @@ class DrumsTeacher(wx.App):
         self.OS = ctrl[5]
         self.main_path = ctrl[6]
         copyerr = ctrl[7]
+        self.tab_icon = ctrl[8]
+        self.lesson_icon = ctrl[9]
         
         if copyerr: # if source dir is corrupt
             message = ("Can not find the configuration file. "

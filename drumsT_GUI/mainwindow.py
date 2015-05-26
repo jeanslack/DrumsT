@@ -37,8 +37,12 @@ class MainFrame(wx.Frame):
         self.schoolName = None # name of school
         self.path_db = None # path name of current file .drtDB
         self.IDprofile = None # name/surname of pupil
-        #################### widgets:
+        ####################
         wx.Frame.__init__(self, None, -1, style=wx.DEFAULT_FRAME_STYLE)
+        
+        self.InitUI()
+        
+    def InitUI(self):
         panel = wx.Panel(self, wx.ID_ANY)
         self.tool_bar()
         self.menu_bar()
@@ -109,7 +113,6 @@ class MainFrame(wx.Frame):
         panel.SetSizer(siz_base)
         siz_base.AddGrowableCol(0)
         siz_base.AddGrowableRow(1)
-        siz_base.AddGrowableCol(1)
         self.Layout()
         self.Centre()
         ######################## binding #####################
@@ -191,7 +194,6 @@ class MainFrame(wx.Frame):
         """
         Type enter key or double clicked mouse event
         """
-        print 'double click|enter'
         frame = lessons.Lesson()
         frame.Show()
         #schools = School_Class().displaystudent(self.IDprofile ,self.path_db)

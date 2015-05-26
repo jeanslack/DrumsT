@@ -65,6 +65,8 @@ def control_config():
         addStudent_icon = '%s/art/addStudent.png' % PWD
         changeStudent_icon = '%s/art/changeStudent.png' % PWD
         delStudent_icon = '%s/art/delStudent.png' % PWD
+        tab_icon = '%s/art/opentab.png' % PWD
+        lesson_icon = '%s/art/lesson.png' % PWD
         #help_icon = '%s/art/help.png' % PWD
     else:
         """
@@ -95,7 +97,7 @@ def control_config():
             copyerr = True
 
     return (drumsT_icon, openStudent_icon, addStudent_icon, changeStudent_icon, 
-            delStudent_icon, OS, main_path, copyerr)
+            delStudent_icon, OS, main_path, copyerr, tab_icon, lesson_icon)
     
 #-------------------------------------------------------------------------#
 def parser_fileconf():
