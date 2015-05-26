@@ -242,6 +242,8 @@ class Lesson(wx.Frame):
         self.SetSizer(self.sizer)
         self.Layout()
         
+        #self.Show()# for stand-alone case only
+        
         self.toolbar.EnableTool(wx.ID_FILE2, False)
         
         self.Bind(wx.EVT_CLOSE, self.on_close)
@@ -304,7 +306,7 @@ class Lesson(wx.Frame):
             self.toolbar.EnableTool(wx.ID_FILE3, False)
             self.toolbar.EnableTool(wx.ID_FILE2, True)
             self.Layout()
-        #self.Show()
+        
  
 #if __name__ == '__main__':
     #app = wx.App(False)
