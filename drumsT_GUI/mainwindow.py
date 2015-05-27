@@ -36,7 +36,8 @@ class MainFrame(wx.Frame):
         self.IDyear = None # db school year
         self.schoolName = None # name of school
         self.path_db = None # path name of current file .drtDB
-        self.IDprofile = None # name/surname of pupil
+        self.IDprofile = None # identifier
+        self.nameSur = None # name/surname of pupil
         ####################
         wx.Frame.__init__(self, None, -1, style=wx.DEFAULT_FRAME_STYLE)
         
@@ -175,7 +176,11 @@ class MainFrame(wx.Frame):
         """
         index = self.list_ctrl.GetFocusedItem()
         item_ID = self.list_ctrl.GetItem(index,0)
+        item_name = self.list_ctrl.GetItem(index,2)
+        item_surname = self.list_ctrl.GetItem(index,3)
+        
         self.IDprofile = item_ID.GetText()
+        self.nameSur = "%s %s" % (item_name.GetText(),item_surname.GetText())
         
         self.toolbar.EnableTool(wx.ID_FILE2, True)
         self.toolbar.EnableTool(wx.ID_FILE4, True)
@@ -194,7 +199,7 @@ class MainFrame(wx.Frame):
         """
         Type enter key or double clicked mouse event
         """
-        frame = lessons.Lesson()
+        frame = lessons.Lesson(self.nameSur)
         frame.Show()
         #schools = School_Class().displaystudent(self.IDprofile ,self.path_db)
     #-------------------------------------------------------------------#
