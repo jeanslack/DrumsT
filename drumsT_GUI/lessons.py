@@ -134,7 +134,7 @@ class PanelOne(wx.Panel):
         sizBookOne.AddGrowableRow(4)
         sizBookOne.AddGrowableRow(5)
         sizBookOne.AddGrowableCol(1)
-        notebook.AddPage(bookOne, ("tab 1"))
+        notebook.AddPage(bookOne, ("Study Arguments"))
         notebook.AddPage(bookTwo, ("tab 2"))
         notebook.AddPage(bookThree, ("tab 3"))
         sizTables.Add(notebook, 1, wx.ALL | wx.EXPAND, 5)
@@ -153,9 +153,8 @@ class PanelOne(wx.Panel):
         
         ## BINDING
         self.Bind(wx.EVT_DATE_CHANGED, self.onDate, self.datepk)
-        #self.Bind(wx.EVT_CLOSE, self.on_close)
-        #self.Bind(wx.EVT_BUTTON, self.on_close, btnExit)
         btnExit.Bind(wx.EVT_BUTTON, self.on_close)
+        self.Bind(wx.EVT_BUTTON, self.onOk, btnOk)
         
     #-----------------------HANDLING----------------------------------------------#
     def on_close(self, event):
@@ -165,46 +164,53 @@ class PanelOne(wx.Panel):
         #-------------------------------------------------------------------#
     def onDate(self, event):
         self.currdate = self.datepk.GetValue()
+        
+    def onOk(self, event):
+        print self.currdate
 ###############################################################################
 class MyForm(wx.Panel):
  
     def __init__(self, parent):
         wx.Panel.__init__(self, parent=parent, style=wx.TAB_TRAVERSAL)
- 
-        # Add a panel so it looks the correct on all platforms
-        #panel = wx.Panel(self, wx.ID_ANY)
-        self.grid = gridlib.Grid(self)
-        self.grid.CreateGrid(200,8)
-        self.grid.Bind(gridlib.EVT_GRID_CELL_RIGHT_CLICK,
-                       self.showPopupMenu)
- 
+        myGrid = gridlib.Grid(self)
+        myGrid.CreateGrid(15, 6)
+        
+        myGrid.SetCellValue(0,0, "Hello")
+        myGrid.SetCellFont(0, 0, wx.Font(12, wx.ROMAN, wx.ITALIC, wx.NORMAL))
+        print myGrid.GetCellValue(0,0)
+        
+        myGrid.SetCellValue(1,1, "I'm in red!")
+        myGrid.SetCellTextColour(1, 1, wx.RED)
+        
+        myGrid.SetCellBackgroundColour(2, 2, wx.CYAN)
+        
+        myGrid.SetCellValue(3, 3, "This cell is read-only")
+        myGrid.SetReadOnly(3, 3, True)
+        
+        myGrid.SetCellEditor(5, 0, gridlib.GridCellNumberEditor(1,1000))
+        myGrid.SetCellValue(5, 0, "123")
+        myGrid.SetCellEditor(6, 0, gridlib.GridCellFloatEditor())
+        myGrid.SetCellValue(6, 0, "123.34")
+        myGrid.SetCellEditor(7, 0, gridlib.GridCellNumberEditor())
+        
+        myGrid.SetCellSize(11, 1, 3, 3)
+        myGrid.SetCellAlignment(11, 1, wx.ALIGN_CENTRE, wx.ALIGN_CENTRE)
+        myGrid.SetCellValue(11, 1, "This cell is set to span 3 rows and 3 columns")
+        
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(self.grid, 1, wx.EXPAND, 5)
+        sizer.Add(myGrid)
         self.SetSizer(sizer)
-        sizer.Fit(self)
+        
+        
+        
+        #self.grid = gridlib.Grid(self)
+        #self.grid.CreateGrid(200,8)
  
-    #----------------------------------------------------------------------
-    def showPopupMenu(self, event):
-        """
-        Create and display a popup menu on right-click event
-        """
-        if not hasattr(self, "popupID1"):
-            self.popupID1 = wx.NewId()
-            self.popupID2 = wx.NewId()
-            self.popupID3 = wx.NewId()
-            # make a menu
- 
-        menu = wx.Menu()
-        # Show how to put an icon in the menu
-        item = wx.MenuItem(menu, self.popupID1,"One")
-        menu.AppendItem(item)
-        menu.Append(self.popupID2, "Two")
-        menu.Append(self.popupID3, "Three")
- 
-        # Popup the menu.  If an item is selected then its handler
-        # will be called before PopupMenu returns.
-        self.PopupMenu(menu)
-        menu.Destroy()
+        #sizer = wx.BoxSizer(wx.VERTICAL)
+        #sizer.Add(self.grid, 1, wx.EXPAND, 5)
+        #self.SetSizer(sizer)
+        #sizer.Fit(self)
+
         
 ###############################################################################
 class Lesson(wx.Frame):
@@ -214,11 +220,12 @@ class Lesson(wx.Frame):
     def __init__(self):
         """Constructor"""
         
+        # set attributes:
         self.drumsT_ico = wx.GetApp().drumsT_icon
         self.tab_ico = wx.GetApp().tab_icon
         self.lesson_ico = wx.GetApp().lesson_icon
         
-        wx.Frame.__init__(self, None, title='Test')
+        wx.Frame.__init__(self, None, -1, style=wx.DEFAULT_FRAME_STYLE)
         self.tool_bar()
         
         self.panel_one = PanelOne(self)
@@ -232,7 +239,8 @@ class Lesson(wx.Frame):
         self.sizer.AddGrowableCol(0)
         
         
-        
+        #################### Properties
+        self.SetTitle(("Day Lesson"))
         icon = wx.EmptyIcon()
         icon.CopyFromBitmap(wx.Bitmap(self.drumsT_ico, wx.BITMAP_TYPE_ANY))
         self.SetIcon(icon)
@@ -288,7 +296,7 @@ class Lesson(wx.Frame):
     #------------------------------------------------------------------#
     def panTab(self, event):
         if self.panel_two.IsShown():
-            self.SetTitle("Panel One Showing")
+            self.SetTitle("Day Lesson")
             self.panel_one.Show()
             self.panel_two.Hide()
             self.toolbar.EnableTool(wx.ID_FILE3, True)
@@ -300,7 +308,7 @@ class Lesson(wx.Frame):
         Add one new record to Class table
         """
         if self.panel_one.IsShown():
-            self.SetTitle("Panel Two Showing")
+            self.SetTitle("Panoramic Table")
             self.panel_one.Hide()
             self.panel_two.Show()
             self.toolbar.EnableTool(wx.ID_FILE3, False)
