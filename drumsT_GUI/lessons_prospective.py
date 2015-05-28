@@ -22,7 +22,7 @@ class PanelTwo(wx.Panel):
         
         myGrid.SetCellValue(0,0, "Hello")
         myGrid.SetCellFont(0, 0, wx.Font(12, wx.ROMAN, wx.ITALIC, wx.NORMAL))
-        print myGrid.GetCellValue(0,0)
+        #print myGrid.GetCellValue(0,0)
         
         myGrid.SetCellValue(1,1, "I'm in red!")
         myGrid.SetCellTextColour(1, 1, wx.RED)

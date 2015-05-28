@@ -47,10 +47,15 @@ class School_Class(object):
                            Address TEXT, BirthDate TEXT, JoinDate TEXT, 
                            LevelCourse TEXT)
                            """)
-            
-            cursor.execute("""CREATE TABLE Students 
-                           (IDclass INT, Attendance TEXT, Date TEXT, Lessons TEXT
-                           )""")
+            # create a table Lesson
+            cursor.execute("""CREATE TABLE Lesson
+                           (IDlesson INTEGER PRIMARY KEY AUTOINCREMENT,
+                           IDclass INT, Attendance TEXT, Date TEXT, 
+                           Reading TEXT, Setting TEXT, Rudiments TEXT,
+                           Coordination TEXT, Styles TEXT, Minusone TEXT,
+                           Other1 TEXT, Other2 TEXT, Other3 TEXT, Votes TEXT,
+                           Notes TEXT)
+                           """)
             
             conn.commit() # record stores
             conn.close() # connect close
@@ -117,16 +122,22 @@ class School_Class(object):
         return self.error, self.exception
 
     #----------------------------------------------------------------------#
-    def lessons(self, Attendance, date, Lessons, path, IDclass,):
+    def lessons(self, lisT, path):
+        """
+        Insert a new day lesson into Lesson table
+        """
         conn = sqlite3.connect('%s' % path)
         cursor = conn.cursor()
         
         #cursor.execute('SELECT max(IDyear) FROM School')# by index
         #max_id = cursor.fetchone()[0] # by index
-        cursor.execute("""INSERT INTO Students (IDclass, Attendance,Date, 
-                       Lessons) VALUES(?,?,?,?)
-                       """, [IDclass,Attendance,date,Lessons])
-
+        cursor.execute("""INSERT INTO Lesson (IDclass, Attendance, Date, 
+                          Reading, Setting, Rudiments, Coordination, Styles,
+                          Minusone, Other1, Other2, Other3, Votes, Notes) 
+                          VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                       """, [lisT[0],lisT[1],lisT[2],lisT[3],lisT[4],
+                             lisT[5],lisT[6],lisT[7],lisT[8],lisT[9],
+                             lisT[10],lisT[11],lisT[12],lisT[13]])
         conn.commit()
         conn.close()
         

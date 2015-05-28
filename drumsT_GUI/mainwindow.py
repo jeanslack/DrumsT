@@ -20,13 +20,14 @@ azure = '#d9ffff' # rgb form (wx.Colour(217,255,255))
 orange = '#ff5f1a' # rgb form (wx.Colour(255,95,26))
 yellow = '#faff35'
 red = '#ff3a1f'
-green = '#deffb4'
-greendeph = '#91ff8f'
+greenolive = '#deffb4'
+greenlight = '#91ff8f'
+greendeph = '#516c1a'
 
 class MainFrame(wx.Frame):
     """
     This is a main window of the selections and the 
-    database importing.
+    databases importing.
     """
     def __init__(self):
         """
@@ -70,12 +71,12 @@ class MainFrame(wx.Frame):
         self.SetIcon(icon)
         self.SetSize((1100, 600))
         import_btn.SetMinSize((180, 20))
-        import_btn.SetBackgroundColour(azure)
+        import_btn.SetBackgroundColour(greenlight)
         self.cmbx_year.SetSelection(0)
         self.cmbx_year.Disable()
         self.import_txt.SetMinSize((270, 20))
         self.import_txt.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.import_txt.SetForegroundColour(orange)
+        self.import_txt.SetForegroundColour(greendeph)
         self.import_txt.Disable()
         self.list_ctrl.SetToolTipString("Double click to open a individual profile")
         
@@ -152,7 +153,7 @@ class MainFrame(wx.Frame):
         if profiles == []:
             msg = ("Info - Empty database: There isn't any list to load. "
                 "You must add new students now")
-            self.statusbar_msg(msg, greendeph)
+            self.statusbar_msg(msg, yellow)
             self.toolbar.EnableTool(wx.ID_FILE2, False)
             self.toolbar.EnableTool(wx.ID_FILE4, False)
             self.toolbar.EnableTool(wx.ID_FILE5, False)
@@ -173,7 +174,7 @@ class MainFrame(wx.Frame):
             if index % 2:
                 self.list_ctrl.SetItemBackgroundColour(index, "white")
             else:
-                 self.list_ctrl.SetItemBackgroundColour(index, green)
+                 self.list_ctrl.SetItemBackgroundColour(index, greenolive)
             index += 1
     #-----------------------EVENTS--------------------------------------#
     def on_select(self, event): # list_ctrl
@@ -205,7 +206,7 @@ class MainFrame(wx.Frame):
         """
         Type enter key or double clicked mouse event
         """
-        frame = lessons.Lesson(self.nameSur)
+        frame = lessons.Lesson(self.nameSur, self.IDprofile, self.path_db)
         frame.Show()
         #schools = School_Class().displaystudent(self.IDprofile ,self.path_db)
     #-------------------------------------------------------------------#

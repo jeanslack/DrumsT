@@ -11,16 +11,20 @@
 #########################################################
 
 import wx
+from drumsT_SYS.SQLite_lib import School_Class
 
 class PanelOne(wx.Panel):
     """Record lesson panel"""
-    def __init__(self, parent):
+    def __init__(self, parent, nameSur, IDclass, path_db):
         """
         Shows the interface for data entry on the current lesson
         """
         wx.Panel.__init__(self, parent, -1, style=wx.TAB_TRAVERSAL)
-        self.currdate = None
+        self.currdate = None # current date
         self.switch = False # switch for check absences
+        self.nameSur = nameSur
+        self.IDclass = IDclass
+        self.path_db = path_db
         self.parent = parent
         
         self.InitUI()
@@ -217,6 +221,8 @@ class PanelOne(wx.Panel):
     #-----------------------------------------------------------------------#
     def onOk(self, event):
 
+        absences = u"%s" % (self.rdb.GetItemLabel(self.rdb.GetSelection()))
+        date = u"%s" % (self.currdate)
         arg1 = u"""%s""" % (self.txt1.GetValue().strip())
         arg2 = u"""%s""" % (self.txt2.GetValue().strip())
         arg3 = u"""%s""" % (self.txt3.GetValue().strip())
@@ -228,13 +234,12 @@ class PanelOne(wx.Panel):
         arg9 = u"""%s""" % (self.txt9.GetValue().strip())
         arg10 = u"""%s""" % ( self.txt10.GetValue().strip())
         arg11 = u"""%s""" % ( self.txt11.GetValue().strip())
-        date = u"%s" % (self.currdate)
-        absences = u"%s" % (self.rdb.GetItemLabel(self.rdb.GetSelection()))
-        
-        listObj = [arg1, arg2, arg3, arg4, arg5, arg6, arg7, 
-                   arg8, arg9, arg10, arg11, date, absences
+
+        listObj = [self.IDclass, absences, date, arg1, arg2, arg3, arg4, 
+                   arg5, arg6, arg7, arg8, arg9, arg10, arg11, 
                    ]
         for n, item in enumerate(listObj):
             if item == '':
                 listObj[n] = 'NONE'
-        print listObj 
+
+        lesson = School_Class().lessons(listObj, self.path_db)

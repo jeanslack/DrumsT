@@ -16,9 +16,10 @@ from lessons_prospective import PanelTwo
 
 class Lesson(wx.Frame):
     """
+    Implement a wx frame window for others panels
     """
  
-    def __init__(self, namesur):
+    def __init__(self, namesur, IDclass, path_db):
         """Constructor"""
         
         # set attributes:
@@ -30,7 +31,7 @@ class Lesson(wx.Frame):
         wx.Frame.__init__(self, None, -1, style=wx.DEFAULT_FRAME_STYLE)
         self.tool_bar()
         
-        self.panel_one = PanelOne(self)
+        self.panel_one = PanelOne(self, self.nameSur, IDclass, path_db)
         self.panel_two = PanelTwo(self)
         self.panel_two.Hide()
         
