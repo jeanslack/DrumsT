@@ -24,8 +24,13 @@ green = '#deffb4'
 greendeph = '#91ff8f'
 
 class MainFrame(wx.Frame):
-
+    """
+    This is a main window of the selections and the 
+    database importing.
+    """
     def __init__(self):
+        """
+        """
         #################### set attributes:
         self.drumsT_ico = wx.GetApp().drumsT_icon
         self.addStudent_ico = wx.GetApp().addStudent_icon
@@ -112,6 +117,7 @@ class MainFrame(wx.Frame):
         siz_base.Add(self.list_ctrl, 0, wx.ALL | wx.EXPAND, 15)
 
         panel.SetSizer(siz_base)
+        siz_base.Fit(panel) 
         siz_base.AddGrowableCol(0)
         siz_base.AddGrowableRow(1)
         self.Layout()
