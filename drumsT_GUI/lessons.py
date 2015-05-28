@@ -90,7 +90,7 @@ class PanelOne(wx.Panel):
         self.txt9.SetMinSize((250, 80))
         lab10.SetFont(wx.Font(9, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
         lab11.SetFont(wx.Font(9, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.txt11.SetBackgroundColour('#fff96f')
+        self.txt11.SetBackgroundColour('#fff96f')#yellow
         #-------------------------------------------------- LAYOUT
         sizBase = wx.FlexGridSizer(3, 1, 0, 0)
         sizBottom = wx.GridSizer(1, 2, 0, 0)
@@ -321,7 +321,7 @@ class Lesson(wx.Frame):
         icon.CopyFromBitmap(wx.Bitmap(self.drumsT_ico, wx.BITMAP_TYPE_ANY))
         self.SetIcon(icon)
         
-        self.SetMinSize((795, 530))
+        self.SetSize((810, 550))
         self.CentreOnScreen()
         self.SetSizer(self.sizer)
         self.Layout()
