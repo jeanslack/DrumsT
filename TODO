@@ -1,0 +1,2 @@
+- On macOsX in OnInit exit if return False
+        

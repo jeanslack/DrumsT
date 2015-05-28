@@ -20,10 +20,9 @@ class PanelOne(wx.Panel):
         """"""
         self.datepk = wx.DatePickerCtrl(self, wx.ID_ANY, style=wx.DP_DEFAULT)
         boxDate = wx.StaticBox(self, wx.ID_ANY, ("Setting Date lesson"))
-        self.checkStudent = wx.CheckBox(self, wx.ID_ANY, (
-                                     "Check on whether the student is absent"))
-        self.checkTeacher = wx.CheckBox(self, wx.ID_ANY, (
-                                     "Check on whether the teacher is absent"))
+        self.rdb = wx.RadioBox(self, wx.ID_ANY, (""), choices=[("All Present"), 
+         ("Student is absent"), ("Teacher is absent"),], majorDimension=0, 
+                               style=wx.RA_SPECIFY_COLS)
         boxAttendances = wx.StaticBox(self, wx.ID_ANY, ("Attendances Register"))
         notebook = wx.Notebook(self, wx.ID_ANY)
         #### insert widget in first notebook table
@@ -95,20 +94,17 @@ class PanelOne(wx.Panel):
         sizBase = wx.FlexGridSizer(3, 1, 0, 0)
         sizBottom = wx.GridSizer(1, 2, 0, 0)
         sizTables = wx.FlexGridSizer(1, 1, 0, 0)
-        sizTop = wx.GridSizer(1, 2, 0, 100)
+        sizTop = wx.FlexGridSizer(1, 2, 0, 0)
         sizBookOne = wx.FlexGridSizer(6, 3, 0, 0)
         sizBookTwo = wx.FlexGridSizer(2, 2, 0, 0)
         #boxAttendances.Lower()
-        boxPresence = wx.StaticBoxSizer(boxAttendances, wx.VERTICAL)
-        sizPresence = wx.FlexGridSizer(2, 1, 0, 0)
         #boxDate.Lower()
         boxDate = wx.StaticBoxSizer(boxDate, wx.VERTICAL)
         boxDate.Add(self.datepk, 0, wx.ALIGN_CENTER | wx.ALL, 5)
-        sizTop.Add(boxDate, 1, wx.ALL | wx.EXPAND, 5)
-        sizPresence.Add(self.checkStudent, 0, wx.ALIGN_CENTER | wx.LEFT, 5)
-        sizPresence.Add(self.checkTeacher, 0, wx.ALIGN_CENTER | wx.LEFT, 5)
-        boxPresence.Add(sizPresence, 1, 0, 0)
-        sizTop.Add(boxPresence, 1, wx.ALL | wx.EXPAND, 5)
+        sizTop.Add(boxDate, 1, wx.EXPAND|wx.ALL, 5)
+        boxPresence = wx.StaticBoxSizer(boxAttendances, wx.VERTICAL)
+        boxPresence.Add(self.rdb, 0, wx.ALIGN_CENTER|wx.ALL, 5)
+        sizTop.Add(boxPresence, 0, wx.ALL, 5)
         sizBase.Add(sizTop, 1, 0, 0)
         #### Set first table of notebook
         sizBookOne.Add(lab1, 0, wx.ALIGN_CENTER, 0)
@@ -155,8 +151,8 @@ class PanelOne(wx.Panel):
         sizTables.AddGrowableCol(0)
         #### 
         sizBase.Add(sizTables, 1, wx.EXPAND, 0)
-        sizBottom.Add(btnExit, 0, wx.ALIGN_LEFT | wx.ALL, 5)
-        sizBottom.Add(btnOk, 0, wx.ALIGN_RIGHT | wx.ALL, 5)
+        sizBottom.Add(btnExit, 0, wx.ALIGN_LEFT | wx.ALL, 15)
+        sizBottom.Add(btnOk, 0, wx.ALIGN_RIGHT | wx.ALL, 15)
         sizBase.Add(sizBottom, 1, wx.EXPAND, 0)#####
         self.SetSizer(sizBase)
         sizBase.Fit(self)
@@ -164,14 +160,11 @@ class PanelOne(wx.Panel):
         sizBase.AddGrowableCol(0)
         
         self.currdate = self.datepk.GetValue()
-        
-        
         #------------------------------------------------------- BINDING
         self.Bind(wx.EVT_DATE_CHANGED, self.onDate, self.datepk)
-        self.Bind(wx.EVT_CHECKBOX, self.absentStudent, self.checkStudent)
+        self.Bind(wx.EVT_RADIOBOX, self.absences, self.rdb)
         btnExit.Bind(wx.EVT_BUTTON, self.on_close)
         self.Bind(wx.EVT_BUTTON, self.onOk, btnOk)
-        
     #-----------------------HANDLING----------------------------------------#
     def on_close(self, event):
         self.parent.Destroy()
@@ -180,34 +173,8 @@ class PanelOne(wx.Panel):
     def onDate(self, event):
         self.currdate = self.datepk.GetValue()
     #-----------------------------------------------------------------------#
-    def absentStudent(self, event):
-        
-        if self.checkStudent.IsChecked() and self.checkTeacher.IsChecked():
-            pass
-        else:
-            #self.txt1.SetValue(''), self.txt2.SetValue('')
-            #self.txt3.SetValue(''), self.txt4.SetValue('')
-            #self.txt5.SetValue(''), self.txt6.SetValue('')
-            #self.txt7.SetValue(''), self.txt8.SetValue('')
-            #self.txt9.SetValue('')
-            #self.txt1.Hide(), self.txt2.Hide(), self.txt3.Hide()
-            #self.txt4.Hide(), self.txt5.Hide(), self.txt6.Hide() 
-            #self.txt7.Hide(), self.txt8.Hide(), self.txt9.Hide()
-            
-    def absentTeacher(self, event):
-        
-        if self.checkTeacher.IsChecked() and self.checkStudent.IsChecked():
-            pass
-        else:
-            #self.txt1.SetValue(''), self.txt2.SetValue('')
-            #self.txt3.SetValue(''), self.txt4.SetValue('')
-            #self.txt5.SetValue(''), self.txt6.SetValue('')
-            #self.txt7.SetValue(''), self.txt8.SetValue('')
-            #self.txt9.SetValue('')
-            #self.txt1.Hide(), self.txt2.Hide(), self.txt3.Hide()
-            #self.txt4.Hide(), self.txt5.Hide(), self.txt6.Hide() 
-            #self.txt7.Hide(), self.txt8.Hide(), self.txt9.Hide()
-            
+    def absences(self, event):
+        print 'ok boss'
         
             
             
@@ -227,17 +194,14 @@ class PanelOne(wx.Panel):
         arg10 = self.txt10.GetValue()
         arg11 = self.txt11.GetValue()
         date = self.currdate
-        if self.checkStudent.GetValue():
-            absentS = 'absent'
-        else:
-            absentS = 'present'
+        if self.rdb.GetSelection() == 0:
+            absent = 'both present'
             
-        if self.checkTeacher.GetValue():
-            absentT = 'absent'
-        else:
-            absentT = 'present'
-        
-        print arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, date, absentS, absentT
+        if self.rdb.GetSelection() == 1:
+            absent = 'student absent'
+        if self.rdb.GetSelection() == 2:
+            absent = 'teacher absent'
+        print arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, date, absent
         
         
         
@@ -321,7 +285,7 @@ class Lesson(wx.Frame):
         icon.CopyFromBitmap(wx.Bitmap(self.drumsT_ico, wx.BITMAP_TYPE_ANY))
         self.SetIcon(icon)
         
-        self.SetSize((810, 550))
+        self.SetSize((810, 580))
         self.CentreOnScreen()
         self.SetSizer(self.sizer)
         self.Layout()
