@@ -1,5 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+#
+#########################################################
+# Name: SQLite_lib.py
+# Porpose: read/write access to databases
+# Author: Gianluca Pernigoto <jeanlucperni@gmail.com>
+# Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
+# license: GNU GENERAL PUBLIC LICENSE (see LICENSE)
+# Rev (01) 18/05/2015
+#########################################################
 
 import sqlite3
 
