@@ -27,10 +27,11 @@ greendeph = '#516c1a'
 class MainFrame(wx.Frame):
     """
     This is a main window of the selections and the 
-    databases importing.
+    databases importing. 
     """
     def __init__(self):
         """
+        Here set the attributes that pass at others dialogs and frame
         """
         #################### set attributes:
         self.drumsT_ico = wx.GetApp().drumsT_icon
@@ -39,17 +40,20 @@ class MainFrame(wx.Frame):
         self.delStudent_ico = wx.GetApp().delStudent_icon
         self.changeStudent_ico = wx.GetApp().changeStudent_icon
         self.rootdir = wx.GetApp().rootdir # base diractory to save any db
-        self.IDyear = None # db school year
-        self.schoolName = None # name of school
         self.path_db = None # path name of current file .drtDB
-        self.IDprofile = None # identifier
-        self.nameSur = None # name/surname of pupil
+        self.IDyear = None # db school year id
+        self.schoolName = None # name of school
+        self.IDprofile = None # identifier (IDclass integear) 
+        self.nameSur = None # name/surname of a student
         ####################
         wx.Frame.__init__(self, None, -1, style=wx.DEFAULT_FRAME_STYLE)
         
         self.InitUI()
         
     def InitUI(self):
+        """
+        start with widgets and setup
+        """
         panel = wx.Panel(self, wx.ID_ANY)
         self.tool_bar()
         self.menu_bar()
@@ -130,7 +134,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.open_school, import_btn)
         self.cmbx_year.Bind(wx.EVT_COMBOBOX, self.on_year)
         
-    ################ COMMON METHODS USEFUL
+    #-------------------------------------------------------#
     def statusbar_msg(self, msg, color):
         """
         set the status-bar with messages and color types
@@ -142,12 +146,12 @@ class MainFrame(wx.Frame):
             
         self.sb.SetStatusText(msg)
         self.sb.Refresh()
-    ################ COMMON METHODS USEFUL
+    #-------------------------------------------------------#
     def set_listctrl(self):
         """
         Populate the list_ctrl with data or new data. Before to use this
         method first must be use self.list_ctrl.DeleteAllItems() method 
-        otherwise append result in the list_ctrl
+        otherwise append result upon in the list_ctrl
         """
         profiles = School_Class().displayclass(self.path_db, self.IDyear)
         if profiles == []:
@@ -176,7 +180,9 @@ class MainFrame(wx.Frame):
             else:
                  self.list_ctrl.SetItemBackgroundColour(index, greenolive)
             index += 1
-    #-----------------------EVENTS--------------------------------------#
+            
+    ########################### START WITH EVENTS HANDLER
+    #------------------------------------------------------------------#
     def on_select(self, event): # list_ctrl
         """
         Event emitted when selecting item only.
@@ -324,7 +330,8 @@ class MainFrame(wx.Frame):
         
         if ret == wx.ID_OK:
             data = dialog.GetValue()
-            check = School_Class().checkstudent(data[0],data[1],self.path_db, self.IDyear)
+            check = School_Class().checkstudent(data[0],data[1],
+                                                self.path_db, self.IDyear)
         else:
             return
             

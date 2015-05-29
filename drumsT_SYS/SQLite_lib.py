@@ -126,20 +126,45 @@ class School_Class(object):
         """
         Insert a new day lesson into Lesson table
         """
-        conn = sqlite3.connect('%s' % path)
-        cursor = conn.cursor()
+        try:
+            conn = sqlite3.connect('%s' % path)
+            cursor = conn.cursor()
+            
+            #cursor.execute('SELECT max(IDyear) FROM School')# by index
+            #max_id = cursor.fetchone()[0] # by index
+            cursor.execute("""INSERT INTO Lesson (IDclass, Attendance, Date, 
+                            Reading, Setting, Rudiments, Coordination, Styles,
+                            Minusone, Other1, Other2, Other3, Votes, Notes) 
+                            VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                        """, [lisT[0],lisT[1],lisT[2],lisT[3],lisT[4],
+                                lisT[5],lisT[6],lisT[7],lisT[8],lisT[9],
+                                lisT[10],lisT[11],lisT[12],lisT[13]])
+            conn.commit()
+            conn.close()
         
-        #cursor.execute('SELECT max(IDyear) FROM School')# by index
-        #max_id = cursor.fetchone()[0] # by index
-        cursor.execute("""INSERT INTO Lesson (IDclass, Attendance, Date, 
-                          Reading, Setting, Rudiments, Coordination, Styles,
-                          Minusone, Other1, Other2, Other3, Votes, Notes) 
-                          VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-                       """, [lisT[0],lisT[1],lisT[2],lisT[3],lisT[4],
-                             lisT[5],lisT[6],lisT[7],lisT[8],lisT[9],
-                             lisT[10],lisT[11],lisT[12],lisT[13]])
-        conn.commit()
+        except sqlite3.OperationalError as err:
+            self.error = True
+            self.exception = ("DrumsT: Failed to lesson method\n\n"
+                                "sqlite3.OperationalError: %s" % err)
+
+        return self.error, self.exception
+    
+    def showInTable(self, IDclass, path):
+        """
+        Show all items class by selecting school year
+        """
+        conn = sqlite3.connect('%s' % (path))
+        cursor = conn.cursor()
+
+        n = cursor.execute("""SELECT * FROM Lesson WHERE IDclass=?""", [IDclass])
+        
+        lesson = []
+        for row in n:
+            lesson.append(row)
+
         conn.close()
+
+        return lesson
         
     #-------------------------------------------------------------------------#
     def displayclass(self, path, IDyear):

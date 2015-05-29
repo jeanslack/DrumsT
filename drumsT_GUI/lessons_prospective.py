@@ -3,7 +3,7 @@
 #
 #########################################################
 # Name: lesson_prospective.py
-# Porpose: Show a data list of all lessons
+# Porpose: Show some data lessons of a one student
 # Author: Gianluca Pernigoto <jeanlucperni@gmail.com>
 # Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
 # license: GNU GENERAL PUBLIC LICENSE (see LICENSE)
@@ -12,48 +12,53 @@
 
 import wx
 import wx.grid as  gridlib
+from drumsT_SYS.SQLite_lib import School_Class
 
 class PanelTwo(wx.Panel):
-    
-    def __init__(self, parent):
+    """
+    Show a grid with tabular data
+    """
+    def __init__(self, parent, nameSur, IDclass, path_db):
+        """
+        Display a list with general data of all previous lessons
+        of the student in object and relating only to selected 
+        the school year
+        """
         wx.Panel.__init__(self, parent, -1, style=wx.TAB_TRAVERSAL)
+        
+        lessons = School_Class().showInTable(IDclass, path_db)
+
         myGrid = gridlib.Grid(self)
-        myGrid.CreateGrid(365, 6)
+        myGrid.EnableEditing(False)
+        myGrid.CreateGrid(200, 6)
+        myGrid.SetColLabelValue(0, "ID class")
+        myGrid.SetColLabelValue(1, "Name/Surname")
+        myGrid.SetColLabelValue(2, "Attendaces")
+        myGrid.SetColLabelValue(3, "Lesson Date")
+        myGrid.SetColLabelValue(4, "Note")
+        myGrid.SetColLabelValue(5, "Votes")
+        myGrid.AutoSizeColLabelSize(1)
+        myGrid.AutoSizeColLabelSize(2)
+        myGrid.AutoSizeColLabelSize(3)
         
-        myGrid.SetCellValue(0,0, "Hello")
-        myGrid.SetCellFont(0, 0, wx.Font(12, wx.ROMAN, wx.ITALIC, wx.NORMAL))
-        #print myGrid.GetCellValue(0,0)
-        
-        myGrid.SetCellValue(1,1, "I'm in red!")
-        myGrid.SetCellTextColour(1, 1, wx.RED)
-        
-        myGrid.SetCellBackgroundColour(2, 2, wx.CYAN)
-        
-        myGrid.SetCellValue(3, 3, "This cell is read-only")
-        myGrid.SetReadOnly(3, 3, True)
-        
-        myGrid.SetCellEditor(5, 0, gridlib.GridCellNumberEditor(1,1000))
-        myGrid.SetCellValue(5, 0, "123")
-        myGrid.SetCellEditor(6, 0, gridlib.GridCellFloatEditor())
-        myGrid.SetCellValue(6, 0, "123.34")
-        myGrid.SetCellEditor(7, 0, gridlib.GridCellNumberEditor())
-        
-        myGrid.SetCellSize(11, 1, 3, 3)
-        myGrid.SetCellAlignment(11, 1, wx.ALIGN_CENTRE, wx.ALIGN_CENTRE)
-        myGrid.SetCellValue(11, 1, "This cell is set to span 3 rows and 3 columns")
-        
+        for n, item in enumerate(lessons):
+            #print n, item[0]
+            myGrid.SetCellValue(n , 0, str(item[1])) # id
+            myGrid.SetCellAlignment(n, 0, wx.ALIGN_CENTRE, wx.ALIGN_CENTRE)
+            myGrid.SetCellFont(n, 0, wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD))
+            myGrid.SetCellValue(n , 1, nameSur) # name
+            myGrid.SetCellBackgroundColour(n, 1, '#deffb4')
+            myGrid.SetCellValue(n , 2, item[2]) # presences
+            myGrid.SetCellTextColour(n, 2, wx.RED)
+            myGrid.SetCellValue(n , 3, item[3])# date
+            myGrid.SetCellValue(n , 4, item[14]) # note
+            myGrid.SetCellValue(n , 5, item[13]) # votes
+
+        myGrid.AutoSizeColumns(setAsMin=True) # resize all columns
+        myGrid.AutoSizeRows(setAsMin=True) # resize all rows
+
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(myGrid, 1, wx.EXPAND, 5)
         self.SetSizer(sizer)
         sizer.Fit(self)
-        
-        
-        
-        #self.grid = gridlib.Grid(self)
-        #self.grid.CreateGrid(200,8)
-        
-        #sizer = wx.BoxSizer(wx.VERTICAL)
-        #sizer.Add(self.grid, 1, wx.EXPAND, 5)
-        #self.SetSizer(sizer)
-        #sizer.Fit(self)
         

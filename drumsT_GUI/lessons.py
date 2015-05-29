@@ -16,25 +16,36 @@ from lessons_prospective import PanelTwo
 
 class Lesson(wx.Frame):
     """
-    Implement a wx frame window for others panels
+    Implement a wx.frame window for others panels
     """
  
     def __init__(self, namesur, IDclass, path_db):
-        """Constructor"""
-        
-        # set attributes:
+        """
+        This frame has not parent (is None) and is independence from
+        others windows. This is effort for more istances of same windows 
+        """
+        # set need attributes:
         self.drumsT_ico = wx.GetApp().drumsT_icon
         self.tab_ico = wx.GetApp().tab_icon
         self.lesson_ico = wx.GetApp().lesson_icon
         self.nameSur = namesur # name surname on title
+        self.IDclass = IDclass
+        self.path_db = path_db
         
         wx.Frame.__init__(self, None, -1, style=wx.DEFAULT_FRAME_STYLE)
+        
+        self.InitUI()
+        
+    def InitUI(self):
+        """
+        start with widgets and setup
+        """
         self.tool_bar()
         
-        self.panel_one = PanelOne(self, self.nameSur, IDclass, path_db)
-        self.panel_two = PanelTwo(self)
+        self.panel_one = PanelOne(self, self.nameSur, self.IDclass, self.path_db)
+        self.panel_two = PanelTwo(self, self.nameSur, self.IDclass, self.path_db)
         self.panel_two.Hide()
-        
+        ################### layout
         self.sizer = wx.FlexGridSizer(1, 1, 0, 0)
         self.sizer.Add(self.panel_one, 1, wx.EXPAND)
         self.sizer.Add(self.panel_two, 1, wx.EXPAND|wx.ALL, 10)
@@ -52,17 +63,15 @@ class Lesson(wx.Frame):
         self.CentreOnScreen()
         self.SetSizer(self.sizer)
         self.Layout()
-        
         #self.Show()# for stand-alone case only
-        
         self.toolbar.EnableTool(wx.ID_FILE2, False)
         
+        ################### Binding
         self.Bind(wx.EVT_CLOSE, self.on_close)
         
-    #-----------------------HANDLING------------------------------------#
+    ################ event handler
     def on_close(self, event):
         self.Destroy()
-    #-------------------------------------------------------------------#
         
     ######################################################################
     #------------------------Build the Tool Bar--------------------------#
@@ -96,6 +105,9 @@ class Lesson(wx.Frame):
     #-------------------------EVENTS-----------------------------------#
     #------------------------------------------------------------------#
     def panTab(self, event):
+        """
+        Show a interface for record new day lesson
+        """
         if self.panel_two.IsShown():
             self.SetTitle("Day Lesson - %s" % self.nameSur)
             self.panel_one.Show()
@@ -106,7 +118,7 @@ class Lesson(wx.Frame):
     #------------------------------------------------------------------#
     def panLesson(self, event):
         """
-        Add one new record to Class table
+        Show a table with list of all lessons
         """
         if self.panel_one.IsShown():
             self.SetTitle("Panoramic Table - %s" % self.nameSur)

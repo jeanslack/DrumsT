@@ -3,7 +3,7 @@
 #
 #########################################################
 # Name: add_lesson.py
-# Porpose: Add a new lesson record
+# Porpose: Add a new lesson recording
 # Author: Gianluca Pernigoto <jeanlucperni@gmail.com>
 # Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
 # license: GNU GENERAL PUBLIC LICENSE (see LICENSE)
@@ -14,23 +14,27 @@ import wx
 from drumsT_SYS.SQLite_lib import School_Class
 
 class PanelOne(wx.Panel):
-    """Record lesson panel"""
+    """
+    Record lesson panel 
+    """
     def __init__(self, parent, nameSur, IDclass, path_db):
         """
-        Shows the interface for data entry on the current lesson
+        Shows the interface for data entry on the current lesson.
         """
         wx.Panel.__init__(self, parent, -1, style=wx.TAB_TRAVERSAL)
         self.currdate = None # current date
         self.switch = False # switch for check absences
-        self.nameSur = nameSur
-        self.IDclass = IDclass
-        self.path_db = path_db
-        self.parent = parent
+        self.nameSur = nameSur # name/surname of student
+        self.IDclass = IDclass # Id of Class table
+        self.path_db = path_db # database filename
+        self.parent = parent 
         
         self.InitUI()
 
     def InitUI(self):
-        """"""
+        """
+        Start with widget and panel setup
+        """
         self.datepk = wx.DatePickerCtrl(self, wx.ID_ANY, style=wx.DP_DEFAULT)
         boxDate = wx.StaticBox(self, wx.ID_ANY, ("Setting Date lesson"))
         self.rdb = wx.RadioBox(self, wx.ID_ANY, ("Attendances Register"), 
@@ -54,7 +58,7 @@ class PanelOne(wx.Panel):
                                 wx.TE_PROCESS_ENTER)
         self.lab4 = wx.StaticText(bookOne, wx.ID_ANY, ("Independance/Coordination"))
         self.lab5 = wx.StaticText(bookOne, wx.ID_ANY, ("Elements of Style Rhythm"))
-        self.lab6 = wx.StaticText(bookOne, wx.ID_ANY, ("Linear Phrasing"))
+        self.lab6 = wx.StaticText(bookOne, wx.ID_ANY, ("Minus One"))
         self.txt4 = wx.TextCtrl(bookOne, wx.ID_ANY, "", style=wx.TE_MULTILINE|
                                 wx.TE_PROCESS_ENTER)
         self.txt5 = wx.TextCtrl(bookOne, wx.ID_ANY, "", style=wx.TE_MULTILINE|
@@ -80,8 +84,8 @@ class PanelOne(wx.Panel):
                                  wx.TE_PROCESS_ENTER)
         #### notebook 3
         #bookThree = wx.Panel(notebook, wx.ID_ANY) #NOTE for third notebook table
-        btnExit = wx.Button(self, wx.ID_CANCEL, (""))
-        btnOk = wx.Button(self, wx.ID_OK, (""))
+        btnExit = wx.Button(self, wx.ID_EXIT, (""))
+        self.btnOk = wx.Button(self, wx.ID_OK, (""))
 
         #---------------------------------------------- PROPERTIES
         self.datepk.SetMinSize((120, 30))
@@ -165,20 +169,23 @@ class PanelOne(wx.Panel):
         #### 
         sizBase.Add(sizTables, 1, wx.EXPAND, 0)
         sizBottom.Add(btnExit, 0, wx.ALIGN_LEFT | wx.ALL, 15)
-        sizBottom.Add(btnOk, 0, wx.ALIGN_RIGHT | wx.ALL, 15)
+        sizBottom.Add(self.btnOk, 0, wx.ALIGN_RIGHT | wx.ALL, 15)
         sizBase.Add(sizBottom, 1, wx.EXPAND, 0)#####
         self.SetSizer(sizBase)
         sizBase.Fit(self)
         sizBase.AddGrowableRow(1)
         sizBase.AddGrowableCol(0)
         
-        self.currdate = self.datepk.GetValue()
-        #------------------------------------------------------- BINDING
+        self.currdate = self.datepk.GetValue() 
+        
+        ######################## binding #####################
         self.Bind(wx.EVT_DATE_CHANGED, self.onDate, self.datepk)
         self.Bind(wx.EVT_RADIOBOX, self.onAbsences, self.rdb)
         btnExit.Bind(wx.EVT_BUTTON, self.on_close)
-        self.Bind(wx.EVT_BUTTON, self.onOk, btnOk)
-    #-----------------------HANDLING----------------------------------------#
+        self.Bind(wx.EVT_BUTTON, self.onOk, self.btnOk)
+        
+    ######################## Events Handler
+    #-----------------------------------------------------------------------#
     def on_close(self, event):
         self.parent.Destroy()
         #event.Skip()
@@ -220,7 +227,18 @@ class PanelOne(wx.Panel):
                 self.lab7.Disable(), self.lab8.Disable(), self.lab9.Disable()
     #-----------------------------------------------------------------------#
     def onOk(self, event):
-
+        """
+        
+        """
+        msg = ("Are you sure to record this lesson ?")
+        warn = wx.MessageDialog(self, msg, "Question", wx.YES_NO | 
+                                    wx.CANCEL | wx.ICON_QUESTION)
+            
+        if warn.ShowModal() == wx.ID_YES:
+            pass
+        else:
+            return
+        
         absences = u"%s" % (self.rdb.GetItemLabel(self.rdb.GetSelection()))
         date = u"%s" % (self.currdate)
         arg1 = u"""%s""" % (self.txt1.GetValue().strip())
@@ -238,8 +256,17 @@ class PanelOne(wx.Panel):
         listObj = [self.IDclass, absences, date, arg1, arg2, arg3, arg4, 
                    arg5, arg6, arg7, arg8, arg9, arg10, arg11, 
                    ]
-        for n, item in enumerate(listObj):
+        for n, item in enumerate(listObj):# if empty str fill out with NONE str
             if item == '':
                 listObj[n] = 'NONE'
 
         lesson = School_Class().lessons(listObj, self.path_db)
+        
+        if lesson[0]:
+            wx.MessageBox(lesson[1], 'ERROR', wx.ICON_ERROR, self)
+            self.btnOk.Disable()
+            return
+        
+        wx.MessageBox("Successfull storing !", "Info", wx.OK, self)
+        
+        self.btnOk.Disable()
