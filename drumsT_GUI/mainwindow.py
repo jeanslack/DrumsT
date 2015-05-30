@@ -281,7 +281,7 @@ class MainFrame(wx.Frame):
         self.toolbar.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
 
         # ------- See student data
-        pupil = self.toolbar.AddLabelTool(wx.ID_FILE2, 'Open Selected Student',
+        pupil = self.toolbar.AddLabelTool(wx.ID_FILE2, 'Open lesson in selection',
                                           wx.Bitmap(self.openStudent_ico))
         self.toolbar.AddSeparator()
         
@@ -313,13 +313,10 @@ class MainFrame(wx.Frame):
     #------------------------------------------------------------------#
 
     def Pupil(self, event):
+        """
+        open a Lesson
+        """
         self.on_enter(self)
-        #attendance = 'presente allievo e insegnante'
-        #date = '12 genn 2014'
-        #studies = (u"""bla bla bla""")
-        #lesson = School_Class().lessons(attendance, date, studies, self.path_db, self.IDprofile)
-        
-        
     #------------------------------------------------------------------#
     def Addpupil(self, event):
         """
