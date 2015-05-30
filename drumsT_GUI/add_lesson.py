@@ -88,7 +88,7 @@ class PanelOne(wx.Panel):
         self.btnOk = wx.Button(self, wx.ID_OK, (""))
 
         #---------------------------------------------- PROPERTIES
-        self.datepk.SetMinSize((120, 30))
+        self.datepk.SetMinSize((150, 24))
         self.lab1.SetFont(wx.Font(9, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
         self.lab2.SetFont(wx.Font(9, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
         self.lab3.SetFont(wx.Font(9, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
@@ -119,9 +119,9 @@ class PanelOne(wx.Panel):
         sizBookTwo = wx.FlexGridSizer(2, 2, 0, 0)
         #boxDate.Lower()
         boxDate = wx.StaticBoxSizer(boxDate, wx.VERTICAL)
-        boxDate.Add(self.datepk, 0, wx.ALIGN_CENTER | wx.ALL, 5)
+        boxDate.Add(self.datepk, 0, wx.ALIGN_CENTER | wx.ALL, 0)
         sizTop.Add(boxDate, 1, wx.EXPAND|wx.ALL, 5)
-        sizTop.Add(self.rdb, 0, wx.EXPAND|wx.ALIGN_CENTER|wx.ALL, 5)
+        sizTop.Add(self.rdb, 0, wx.ALIGN_CENTER|wx.ALL, 5)
         sizBase.Add(sizTop, 1, 0, 0)
         #### Set first table of notebook
         sizBookOne.Add(self.lab1, 0, wx.ALIGN_CENTER, 0)

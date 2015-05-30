@@ -47,14 +47,14 @@ class Lesson(wx.Frame):
         self.panel_two.Hide()
         ################### layout
         self.sizer = wx.FlexGridSizer(1, 1, 0, 0)
-        self.sizer.Add(self.panel_one, 1, wx.EXPAND)
+        self.sizer.Add(self.panel_one, 1, wx.EXPAND|wx.ALL, 10)
         self.sizer.Add(self.panel_two, 1, wx.EXPAND|wx.ALL, 10)
         self.sizer.AddGrowableRow(0)
         self.sizer.AddGrowableCol(0)
         
         
         #################### Properties
-        self.SetTitle(("Day Lesson - %s" % self.nameSur))
+        self.SetTitle(("Record a new lesson for %s" % self.nameSur))
         icon = wx.EmptyIcon()
         icon.CopyFromBitmap(wx.Bitmap(self.drumsT_ico, wx.BITMAP_TYPE_ANY))
         self.SetIcon(icon)
@@ -86,12 +86,12 @@ class Lesson(wx.Frame):
         self.toolbar.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
         
         # ------- See student data
-        pantab = self.toolbar.AddLabelTool(wx.ID_FILE2, "Day lesson",
+        pantab = self.toolbar.AddLabelTool(wx.ID_FILE2, " Record a new lesson",
                                            wx.Bitmap(self.lesson_ico))
         self.toolbar.AddSeparator()
         
         # ------- Add new student
-        panlesson = self.toolbar.AddLabelTool(wx.ID_FILE3, "Open Tables" , 
+        panlesson = self.toolbar.AddLabelTool(wx.ID_FILE3, " Overall view" , 
                                               wx.Bitmap(self.tab_ico))
         self.toolbar.AddSeparator()
         
@@ -109,7 +109,7 @@ class Lesson(wx.Frame):
         Show a interface for record new day lesson
         """
         if self.panel_two.IsShown():
-            self.SetTitle("Day Lesson - %s" % self.nameSur)
+            self.SetTitle("Record a new lesson for %s" % self.nameSur)
             self.panel_one.Show()
             self.panel_two.Hide()
             self.toolbar.EnableTool(wx.ID_FILE3, True)
@@ -121,7 +121,7 @@ class Lesson(wx.Frame):
         Show a table with list of all lessons
         """
         if self.panel_one.IsShown():
-            self.SetTitle("Panoramic Table - %s" % self.nameSur)
+            self.SetTitle("Overall view of %s" % self.nameSur)
             self.panel_one.Hide()
             self.panel_two.Show()
             self.toolbar.EnableTool(wx.ID_FILE3, False)

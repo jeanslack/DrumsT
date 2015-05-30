@@ -210,7 +210,8 @@ class MainFrame(wx.Frame):
     #-------------------------------------------------------------------#
     def on_enter(self, event): # list_ctrl
         """
-        Type enter key or double clicked mouse event
+        If type enter key or double clicked mouse, the event 
+        open a Lesson
         """
         frame = lessons.Lesson(self.nameSur, self.IDprofile, self.path_db)
         frame.Show()
@@ -312,7 +313,7 @@ class MainFrame(wx.Frame):
     #------------------------------------------------------------------#
 
     def Pupil(self, event):
-        print 'apri scheda alunno'
+        self.on_enter(self)
         #attendance = 'presente allievo e insegnante'
         #date = '12 genn 2014'
         #studies = (u"""bla bla bla""")

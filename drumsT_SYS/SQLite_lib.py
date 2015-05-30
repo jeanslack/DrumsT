@@ -148,7 +148,7 @@ class School_Class(object):
                                 "sqlite3.OperationalError: %s" % err)
 
         return self.error, self.exception
-    
+    #----------------------------------------------------------------------#
     def showInTable(self, IDclass, path):
         """
         Show all items class by selecting school year
