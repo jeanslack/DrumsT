@@ -11,7 +11,7 @@
 #########################################################
 #
 import wx
-import add_student, add_school, add_newyear, lessons
+import add_student, add_school, add_newyear, lessons, infoprg
 from drumsT_SYS.os_filesystem import create_rootdir
 from drumsT_SYS.SQLite_lib import School_Class
 
@@ -493,6 +493,12 @@ class MainFrame(wx.Frame):
         
         menuBar.Append(pupilsButton,"Alumns")
         
+        ####------------------ help buton
+        helpButton = wx.Menu()
+        helpItem = helpButton.Append( wx.ID_HELP, "User Guide", "Program Guide")
+        infoItem = helpButton.Append(wx.ID_ABOUT, "About DrumsT", "About the program")
+        menuBar.Append(helpButton,"Help")
+        
         # ...and set, finally .
         self.SetMenuBar(menuBar)
 
@@ -502,6 +508,9 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.Addschool, addschool)
         self.Bind(wx.EVT_MENU, self.Addate, addate)
         self.Bind(wx.EVT_MENU, self.Addlesson, addlesson)
+        #----HELP----
+        #self.Bind(wx.EVT_MENU, self.Helpme, helpItem)
+        self.Bind(wx.EVT_MENU, self.Info, infoItem)
 
         
     #-----------------Callback menu bar (event handler)------------------#
@@ -558,3 +567,13 @@ class MainFrame(wx.Frame):
     def Addlesson(self, event):
         frame = lesson.InsertLesson(self)
         frame.Show()
+        
+    #------------------------------------------------------------------#
+    def Info(self, event):
+        """
+        Display the program informations and developpers
+        
+        """
+        infoprg.info(self.drumsT_ico)
+        
+    #------------------------BUILD THE TOOL BAR--------------------------#
