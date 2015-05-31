@@ -39,12 +39,20 @@ class MainFrame(wx.Frame):
         self.openStudent_ico = wx.GetApp().openStudent_icon
         self.delStudent_ico = wx.GetApp().delStudent_icon
         self.changeStudent_ico = wx.GetApp().changeStudent_icon
+        ####
         self.rootdir = wx.GetApp().rootdir # base diractory to save any db
         self.path_db = None # path name of current file .drtDB
         self.IDyear = None # db school year id
         self.schoolName = None # name of school
         self.IDprofile = None # identifier (IDclass integear) 
-        self.nameSur = None # name/surname of a student
+        self.name = None # name of a student
+        self.surname = None # surname of a student
+        self.phone = None
+        self.address = None
+        self.birthDate = None
+        self.joinDate = None
+        self.level = None
+        
         ####################
         wx.Frame.__init__(self, None, -1, style=wx.DEFAULT_FRAME_STYLE)
         
@@ -191,9 +199,20 @@ class MainFrame(wx.Frame):
         item_ID = self.list_ctrl.GetItem(index,0)
         item_name = self.list_ctrl.GetItem(index,2)
         item_surname = self.list_ctrl.GetItem(index,3)
+        item_phone = self.list_ctrl.GetItem(index,4)
+        item_addr = self.list_ctrl.GetItem(index,5)
+        item_birth = self.list_ctrl.GetItem(index,6)
+        item_join = self.list_ctrl.GetItem(index,7)
+        item_lev = self.list_ctrl.GetItem(index,8)
         
         self.IDprofile = item_ID.GetText()
-        self.nameSur = "%s %s" % (item_name.GetText(),item_surname.GetText())
+        self.name = "%s" % (item_name.GetText())
+        self.surname = "%s" % (item_surname.GetText())
+        self.phone = "%s" % (item_phone.GetText())
+        self.address = "%s" % (item_addr.GetText())
+        self.birthDate = "%s" % (item_birth.GetText())
+        self.joinDate = "%s" % (item_join.GetText())
+        self.level = "%s" % (item_lev.GetText())
         
         self.toolbar.EnableTool(wx.ID_FILE2, True)
         self.toolbar.EnableTool(wx.ID_FILE4, True)
@@ -213,7 +232,8 @@ class MainFrame(wx.Frame):
         If type enter key or double clicked mouse, the event 
         open a Lesson
         """
-        frame = lessons.Lesson(self.nameSur, self.IDprofile, self.path_db)
+        nameSur = "%s %s" % (self.name,self.surname)
+        frame = lessons.Lesson(nameSur, self.IDprofile, self.path_db)
         frame.Show()
         #schools = School_Class().displaystudent(self.IDprofile ,self.path_db)
     #-------------------------------------------------------------------#
@@ -323,7 +343,9 @@ class MainFrame(wx.Frame):
         Add one new record to Class table
         """
         dialog = add_student.AddRecords(self,
-                                        "Add new identity profile to database")
+                                        "Add new identity profile to database",
+                                        None,None,None,None,None,None, None
+                                        )
         ret = dialog.ShowModal()
         
         if ret == wx.ID_OK:
@@ -351,8 +373,43 @@ class MainFrame(wx.Frame):
         self.statusbar_msg('', None)
     #------------------------------------------------------------------#
     def Modify(self, event):
-        print 'modifica alunno'
+        """
+        change data identity of the selected item
+        """
         
+        dialog = add_student.AddRecords(self,
+                                 "Change data into selected identity profile",
+                                 self.name,self.surname, self.phone, 
+                                 self.address,self.birthDate,self.joinDate,
+                                 self.level
+                                        )
+        ret = dialog.ShowModal()
+        if ret == wx.ID_OK:
+            data = dialog.GetValue()
+            check = School_Class().checkstudent(data[0],data[1],
+                                                self.path_db, self.IDyear)
+        else:
+            return
+            
+        if check[0]:
+            warn = wx.MessageDialog(self, check[1], "Warning", wx.YES_NO | 
+                                    wx.CANCEL | wx.ICON_EXCLAMATION)
+            
+            if warn.ShowModal() == wx.ID_YES:
+                pass
+            else:
+                return
+            
+        change = School_Class().change_class_item(data[0],data[1],data[2],
+                                                  data[3],data[4],data[5],
+                                                  data[6], self.IDprofile,
+                                                  self.path_db
+                                                  )
+        wx.MessageBox("Successfull storing !", "Success", wx.OK, self)
+
+        self.list_ctrl.DeleteAllItems() # clear all items in list_ctrl
+        self.set_listctrl() # re-charging list_ctrl with newer
+        self.statusbar_msg('Update new profile', None)
     #------------------------------------------------------------------#
     def Delete(self, event):
         print 'cancella alunno'

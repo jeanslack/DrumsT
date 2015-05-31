@@ -11,13 +11,18 @@
 #########################################################
 
 IDclass = 1
-path_db = '/home/gianluca/annuncio/drumsT_DB/Cinzano_music/Cinzano_music.drtDB'
+path_db = '/home/gianluca/annuncio/drumsT_DB/drums_co/drums_co.drtDB'
 from drumsT_SYS.SQLite_lib import School_Class 
 
-lessons = School_Class().showInTable(IDclass, path_db)
+Name = u'gino'
+Surname = u'kurletto'
+Phone = u'234'
+Address = u'via margera'
+BirthDate = u'de febbraio dai'
+LevelCourse = u'basilare'
+JoinDate = u'el sette'
+IDclass = u'1'
 
-#print lessons
-
-for n, item in enumerate(lessons):
-    print n, item[0]
+lessons = School_Class().change_class_item(Name,Surname,Phone,Address,BirthDate,
+                                     LevelCourse,JoinDate, IDclass,path_db)
 

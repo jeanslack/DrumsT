@@ -74,49 +74,60 @@ class PanelTwo(wx.Panel):
             myGrid.SetCellValue(n , 3, item[3])# date
             myGrid.SetCellBackgroundColour(n, 3, '#deffb4')
             #-----------
-            myGrid.SetCellValue(n , 4, item[4]) # reading
+            
             if item[4] == 'NONE':
                 myGrid.SetCellValue(n, 4, '')
+            else:
+                myGrid.SetCellValue(n , 4, item[4]) # reading
             
-            myGrid.SetCellValue(n , 5, item[5]) # setting
             if item[5] == 'NONE':
                 myGrid.SetCellValue(n, 5, '')
+            else:
+                myGrid.SetCellValue(n , 5, item[5]) # setting
                 
-            myGrid.SetCellValue(n , 6, item[6]) # rudiments
             if item[6] == 'NONE':
                 myGrid.SetCellValue(n, 6, '')
+            else:
+                myGrid.SetCellValue(n , 6, item[6]) # rudiments
                 
-            myGrid.SetCellValue(n , 7, item[7]) # coordination
             if item[7] == 'NONE':
                 myGrid.SetCellValue(n, 7, '')
+            else:
+                myGrid.SetCellValue(n , 7, item[7]) # coordination
                 
-            myGrid.SetCellValue(n , 8, item[8]) # styles
             if item[8] == 'NONE':
                 myGrid.SetCellValue(n, 8, '')
+            else:
+                myGrid.SetCellValue(n , 8, item[8]) # styles
                 
-            myGrid.SetCellValue(n , 9, item[9]) # minusone
             if item[9] == 'NONE':
                 myGrid.SetCellValue(n, 9, '')
+            else:
+                myGrid.SetCellValue(n , 9, item[9]) # minusone
                 
-            myGrid.SetCellValue(n , 10, item[10]) # other1
             if item[10] == 'NONE':
                 myGrid.SetCellValue(n, 10, '')
+            else:
+                myGrid.SetCellValue(n , 10, item[10]) # other1
                 
-            myGrid.SetCellValue(n , 11, item[11]) # other2
             if item[11] == 'NONE':
                 myGrid.SetCellValue(n, 11, '')
+            else:
+                myGrid.SetCellValue(n , 11, item[11]) # other2
                 
             myGrid.SetCellValue(n , 12, item[12]) # other3
             if item[12] == 'NONE':
                 myGrid.SetCellValue(n, 12, '')
                 
-            myGrid.SetCellValue(n , 13, item[13]) # votes
             if item[13] == 'NONE':
                 myGrid.SetCellValue(n, 13, '')
+            else:
+                myGrid.SetCellValue(n , 13, item[13]) # votes
                 
-            myGrid.SetCellValue(n , 14, item[14]) # notes
             if item[14] == 'NONE':
                 myGrid.SetCellValue(n , 14, '')
+            else:
+                myGrid.SetCellValue(n , 14, item[14]) # notes
             myGrid.SetCellBackgroundColour(n, 14, '#fffa9a')
 
         myGrid.AutoSizeColumns(setAsMin=True) # resize all columns

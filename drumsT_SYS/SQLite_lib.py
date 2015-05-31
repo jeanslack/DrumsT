@@ -276,23 +276,27 @@ class School_Class(object):
         cursor.execute(sql)
         conn.commit()
     
-    def update_name(self, path):
+    def change_class_item(self, Name, Surname, Phone, Address, BirthDate,
+                          LevelCourse, JoinDate, IDclass, path):
         """
         aggiorna records già esistenti
         """
-        conn = sqlite3.connect('%s/schools.drtDB' % path) # or use :memory: to put it in RAM
+        print path
+        conn = sqlite3.connect('%s' % path) # or use :memory: to put it in RAM
         cursor = conn.cursor()
         
-        choice1 = raw_input('Name school to change: ')
-        choice2 = raw_input('New name of the school: ')
+        #sql = """
+        #UPDATE Class
+        #SET (Name=?,Surname=?,Phone=?,
+        #Address=?,BirthDate=?,LevelCourse=?, JoinDate=?) 
+        #WHERE (IDclass=?)""", [Name,Surname,Phone,Address,BirthDate,
+                               #LevelCourse,JoinDate, IDclass]
         
-        sql = """
-        UPDATE schools 
-        SET name = '%s' 
-        WHERE name = '%s'
-        """ % (choice1, choice2)
-        
-        cursor.execute(sql)
+        cursor.execute("""UPDATE Class SET Name=?,Surname=?,Phone=?,
+                          Address=?,BirthDate=?,LevelCourse=?, JoinDate=? 
+                          WHERE (IDclass=?)
+                       """, [Name,Surname,Phone,Address,BirthDate,
+                               LevelCourse,JoinDate, IDclass])
         conn.commit()
     
     def delete(self, path):

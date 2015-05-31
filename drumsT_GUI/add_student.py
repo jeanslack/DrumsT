@@ -17,15 +17,16 @@ class AddRecords(wx.Dialog):
     """
     Show a dialog window for recording new students profiles.
     """
-    def __init__(self, parent, title):
+    def __init__(self, parent, title, name, surname, phone, address, 
+                 birthDate, joinDate, level):
         """
         It is set need attributes to filter only some text fields
         """
         wx.Dialog.__init__(self, parent, -1, title, style=wx.DEFAULT_DIALOG_STYLE)
         
         # set attributes
-        self.name = None
-        self.surname = None
+        self.name = name
+        self.surname = name
         self.listret = []
         
         # widgets:
@@ -114,6 +115,15 @@ class AddRecords(wx.Dialog):
         self.SetSizer(base)
         base.Fit(self)
         self.Layout()
+        
+        if self.name != None: # evaluates whether it is in insert or update mode
+            self.txt_name.AppendText(self.name)
+            self.txt_surname.AppendText(self.surname)
+            self.txt_phones.AppendText(phone)
+            self.txt_address.AppendText(address)
+            self.txt_birth.AppendText(birthDate)
+            self.txt_date.AppendText(joinDate)
+            self.txt_level.AppendText(level)
 
         #----------------------Binder (EVT)----------------------#
         self.Bind(wx.EVT_BUTTON, self.on_close, close_btn)
