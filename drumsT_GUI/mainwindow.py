@@ -225,7 +225,15 @@ class MainFrame(wx.Frame):
         self.toolbar.EnableTool(wx.ID_FILE2, False)
         self.toolbar.EnableTool(wx.ID_FILE4, False)
         self.toolbar.EnableTool(wx.ID_FILE5, False)
-        self.IDprofile = None
+        
+        self.IDprofile = None # identifier (IDclass integear) 
+        self.name = None # name of a student
+        self.surname = None # surname of a student
+        self.phone = None
+        self.address = None
+        self.birthDate = None
+        self.joinDate = None
+        self.level = None
     #-------------------------------------------------------------------#
     def on_enter(self, event): # list_ctrl
         """
@@ -334,13 +342,16 @@ class MainFrame(wx.Frame):
 
     def Pupil(self, event):
         """
-        open a Lesson
+        open a new Lesson and a Overall view program
         """
         self.on_enter(self)
     #------------------------------------------------------------------#
     def Addpupil(self, event):
         """
-        Add one new record to Class table
+        Add one new record to Class table.
+        Also, this method call a reset to 'None' 
+        any previous setting attributes (see self.on_select) 
+        and disable some buttons into toolbar:
         """
         dialog = add_student.AddRecords(self,
                                         "Add new identity profile to database",
@@ -370,13 +381,18 @@ class MainFrame(wx.Frame):
 
         self.list_ctrl.DeleteAllItems() # clear all items in list_ctrl
         self.set_listctrl() # re-charging list_ctrl with newer
-        self.statusbar_msg('', None)
+        self.statusbar_msg('It was added a new profile', greenolive)
+        self.on_deselect(self) # reset attributes and disable buttons 
+        
     #------------------------------------------------------------------#
     def Modify(self, event):
         """
-        change data identity of the selected item
+        change data identity of the selected item.
+        If a name/surname already exist a raise message will 
+        be display. Also, this method call a reset to 'None' 
+        any previous setting attributes (see self.on_select) 
+        and disable some buttons into toolbar:
         """
-        
         dialog = add_student.AddRecords(self,
                                  "Change data into selected identity profile",
                                  self.name,self.surname, self.phone, 
@@ -409,11 +425,37 @@ class MainFrame(wx.Frame):
 
         self.list_ctrl.DeleteAllItems() # clear all items in list_ctrl
         self.set_listctrl() # re-charging list_ctrl with newer
-        self.statusbar_msg('Update new profile', None)
+        self.statusbar_msg('Update new profile', greenolive)
+        self.on_deselect(self) # reset attributes and disable buttons 
     #------------------------------------------------------------------#
     def Delete(self, event):
-        print 'cancella alunno'
-
+        """
+        Cancel the selected item and all its information stored 
+        into table db. Also, this method call a reset to 'None' 
+        any previous setting attributes (see self.on_select) 
+        and disable some buttons into toolbar:
+        """
+        msg = ("Are you sure to delete selected student?\n\n"
+               "Note that this process remove all stored\n"
+               "information, included all stored lessons."
+               )
+        warn = wx.MessageDialog(self, msg, "Warning", wx.YES_NO | 
+                                wx.CANCEL | wx.ICON_INFORMATION
+                                )
+        if warn.ShowModal() == wx.ID_YES:
+            pass
+        else:
+            return
+        
+        cancel = School_Class().delete(self.IDprofile, self.path_db)
+        wx.MessageBox("%s %s with ID class %s was deleted" %(self.name,
+                      self.surname, self.IDprofile), "Success", wx.OK, self
+                      )
+        self.list_ctrl.DeleteAllItems() # clear all items in list_ctrl
+        self.set_listctrl() # re-charging list_ctrl with newer
+        self.statusbar_msg("%s %s with ID class %s was deleted" % (self.name,
+                           self.surname, self.IDprofile), yellow)
+        self.on_deselect(self) # reset attributes and disable buttons 
 
     ######################################################################
     #------------------------Build Menu Bar-----------------------------#

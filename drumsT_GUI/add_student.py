@@ -26,7 +26,7 @@ class AddRecords(wx.Dialog):
         
         # set attributes
         self.name = name
-        self.surname = name
+        self.surname = surname
         self.listret = []
         
         # widgets:

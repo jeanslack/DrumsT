@@ -239,6 +239,36 @@ class School_Class(object):
         
         return self.error
     #----------------------------------------------------------------------#
+    def change_class_item(self, Name, Surname, Phone, Address, BirthDate,
+                          LevelCourse, JoinDate, IDclass, path):
+        """
+        aggiorna records già esistenti
+        """
+        conn = sqlite3.connect('%s' % path) # or use :memory: to put it in RAM
+        cursor = conn.cursor()
+        
+        cursor.execute("""UPDATE Class SET Name=?,Surname=?,Phone=?,
+                          Address=?,BirthDate=?,LevelCourse=?, JoinDate=? 
+                          WHERE (IDclass=?)
+                       """, [Name,Surname,Phone,Address,BirthDate,
+                               LevelCourse,JoinDate, IDclass])
+        conn.commit()
+        conn.close()
+    #----------------------------------------------------------------------#
+    def delete(self, IDclass, path):
+        """
+        cancella records già esistenti
+        """
+        conn = sqlite3.connect('%s' % path) # or use :memory: to put it in RAM
+        cursor = conn.cursor()
+        
+        
+        cursor.execute("""DELETE FROM Class WHERE (IDclass=?)""", [IDclass])
+        cursor.execute("""DELETE FROM Lesson WHERE (IDclass=?)""", [IDclass])
+        
+        conn.commit()
+        conn.close()
+    #----------------------------------------------------------------------#
     def search_all(self, long_name, path_db):
         conn = sqlite3.connect('%s/students.drtDB' % path_db) # or use :memory: to put it in RAM
         cursor = conn.cursor()
@@ -257,62 +287,9 @@ class School_Class(object):
         ret = cursor.fetchall()
         return re
     ########################################################################
-    def update(self, path):
-        """
-        aggiorna records già esistenti
-        """
-        conn = sqlite3.connect('%s/schools.drtDB' % path) # or use :memory: to put it in RAM
-        cursor = conn.cursor()
-        
-        choice1 = raw_input('Name school to change: ')
-        choice2 = raw_input('New name of the school: ')
-        
-        sql = """
-        UPDATE schools 
-        SET year = '%s' 
-        WHERE year = '%s'
-        """ % (choice1, choice2)
-        
-        cursor.execute(sql)
-        conn.commit()
     
-    def change_class_item(self, Name, Surname, Phone, Address, BirthDate,
-                          LevelCourse, JoinDate, IDclass, path):
-        """
-        aggiorna records già esistenti
-        """
-        print path
-        conn = sqlite3.connect('%s' % path) # or use :memory: to put it in RAM
-        cursor = conn.cursor()
-        
-        #sql = """
-        #UPDATE Class
-        #SET (Name=?,Surname=?,Phone=?,
-        #Address=?,BirthDate=?,LevelCourse=?, JoinDate=?) 
-        #WHERE (IDclass=?)""", [Name,Surname,Phone,Address,BirthDate,
-                               #LevelCourse,JoinDate, IDclass]
-        
-        cursor.execute("""UPDATE Class SET Name=?,Surname=?,Phone=?,
-                          Address=?,BirthDate=?,LevelCourse=?, JoinDate=? 
-                          WHERE (IDclass=?)
-                       """, [Name,Surname,Phone,Address,BirthDate,
-                               LevelCourse,JoinDate, IDclass])
-        conn.commit()
     
-    def delete(self, path):
-        """
-        cancella records già esistenti
-        """
-        conn = sqlite3.connect('%s/schools.drtDB' % path) # or use :memory: to put it in RAM
-        cursor = conn.cursor()
-        
-        choice_del = raw_input('School name to delete: ')
-        sql = """
-        DELETE FROM schools
-        WHERE name = '%s'
-        """ % (choice_del)
-        cursor.execute(sql)
-        conn.commit()
+    
         
         
     def query(self, path_db, name):
