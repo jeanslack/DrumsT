@@ -3,7 +3,7 @@
 #
 #########################################################
 # Name: lesson_prospective.py
-# Porpose: Show some data lessons of a one student
+# Porpose: Show data of all lessons of a one student
 # Author: Gianluca Pernigoto <jeanlucperni@gmail.com>
 # Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
 # license: GNU GENERAL PUBLIC LICENSE (see LICENSE)
@@ -16,14 +16,22 @@ from drumsT_SYS.SQLite_lib import School_Class
 
 class PanelTwo(wx.Panel):
     """
-    Show a grid with tabular data
+    Show a grid with tabular data.
+    It was inspired on codes from:
+    http://www.blog.pythonlibrary.org/2013/10/31/wxpython-how-to-get-selected-cells-in-a-grid/
+    http://www.blog.pythonlibrary.org/2010/04/04/wxpython-grid-tips-and-tricks/
+    http://www.blog.pythonlibrary.org/2010/03/18/wxpython-an-introduction-to-grids/
+    Official Documents:
+    http://wxpython.org/Phoenix/docs/html/grid.Grid.html
     """
     def __init__(self, parent, nameSur, IDclass, path_db):
         """
-        Display a list with general data of all previous lessons
-        of the student in object and relating only to selected 
-        the school year
+        Display a list with data of all previous lessons of
+        the student in object and relating to school
+        year selected only 
         """
+        wx.Panel.__init__(self, parent, -1, style=wx.TAB_TRAVERSAL)
+        #### set attributes:
         self.currentlySelectedCell = (0, 0)
         self.rowEdit = None
         self.commNew = []
@@ -31,11 +39,19 @@ class PanelTwo(wx.Panel):
         self.index = 0
         self.path_db = path_db
         self.IDclass = IDclass
-        wx.Panel.__init__(self, parent, -1, style=wx.TAB_TRAVERSAL)
+        self.IDlesson = None
+        
+        self.InitUI()
+        
+    def InitUI(self):
+        """
+        Start with widget and panel setup
+        """
         self.comBtn = wx.Button(self, wx.ID_ANY, ("Commit Change"))
         self.uncomBtn = wx.Button(self, wx.ID_ANY, ("Uncommit Last"))
         self.applyBtn = wx.Button(self, wx.ID_ANY, ("Apply Commit"))
         self.myGrid = gridlib.Grid(self)
+        #### properties:
         self.myGrid.EnableEditing(False) # make all in read only
         self.myGrid.CreateGrid(150, 15)
         self.myGrid.SetColLabelValue(0, "ID lesson")
@@ -54,33 +70,14 @@ class PanelTwo(wx.Panel):
         self.myGrid.SetColLabelValue(13, "Votes")
         self.myGrid.SetColLabelValue(14, "Note/Reminder")
         #### set columns 0-1-2 in read only
+        # see above address: www.../wxpython-an-introduction-to-grids/
         #attr = gridlib.GridCellAttr()
         #attr.SetReadOnly(True)
         #self.myGrid.SetColAttr(0, attr)
         #self.myGrid.SetColAttr(1, attr)
         #self.myGrid.SetColAttr(2, attr)
         ## oppure: self.myGrid.SetReadOnly(3, 3, True)
-        self.setting()
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        box = wx.GridSizer(1,3,0,40)
-        sizer.Add(self.myGrid, 1, wx.EXPAND, 5)
-        #sizer.Add(self.comBtn, 0, wx.ALL, 5)
-        #sizer.Add(self.uncomBtn, 0, wx.ALL, 5)
-        sizer.Add(box, 0, wx.ALL, 5)
-        box.Add(self.comBtn, 0, wx.ALL, 5)
-        box.Add(self.uncomBtn, 0, wx.ALL, 5)
-        box.Add(self.applyBtn, 0, wx.ALL, 5)
-        
-        self.SetSizer(sizer)
-        sizer.Fit(self)
-        
-        # binding
-        self.myGrid.Bind(gridlib.EVT_GRID_SELECT_CELL, self.onSingleSelect)
-        self.Bind(wx.EVT_BUTTON, self.commit, self.comBtn)
-        self.Bind(wx.EVT_BUTTON, self.uncommit, self.uncomBtn)
-        self.Bind(wx.EVT_BUTTON, self.makeChange, self.applyBtn)
-        
-        # properties
+        #### properties
         self.comBtn.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
         self.comBtn.SetForegroundColour('#49a03b')
         self.uncomBtn.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
@@ -90,110 +87,31 @@ class PanelTwo(wx.Panel):
         self.comBtn.Disable()
         self.uncomBtn.Disable()
         self.applyBtn.Disable()
-        
-    #-------------------------------------------------------------------#
-    def commit(self, event):
-        
-        row = self.currentlySelectedCell[0]
-        col = self.currentlySelectedCell[1]
-        val = self.myGrid.GetCellValue(row,col)
-        
-        dlg = wx.TextEntryDialog(self, 'Insert a new string:',
-                                 "Change cell value",val,
-                                 style=wx.TE_MULTILINE|wx.OK|wx.CANCEL
-                                 )
-        choices = ["All Present","Student is absent",
-                   "Teacher is absent"
-                   ]
-        choiceDlg = wx.SingleChoiceDialog(self, "Change Attendance", 
-                                          "Choices",choices
-                                          )
-        if self.rowEdit is None or self.rowEdit == row:
-            if col == 0 or col == 1:
-                wx.MessageBox("This column can not be changed", 
-                'Change Not Allowed', wx.ICON_EXCLAMATION, self)
-                return
-            
-            for n in range(15):
-                a = self.myGrid.GetCellValue(row, n)
-                self.commLast.append(a)
-            
-            if col == 2:
-                if choiceDlg.ShowModal() == wx.ID_OK:
-                    ret = choiceDlg.GetStringSelection()
-                    dlg.Destroy()
-                else:
-                    return
-            else:
-                if dlg.ShowModal() == wx.ID_OK:
-                    ret = dlg.GetValue()
-                    dlg.Destroy()
-                else:
-                    return
-                    
-            self.myGrid.SetCellValue(row , col, ret)
-            for n in range(15):
-                a = self.myGrid.GetCellValue(row, n)
-                self.commNew.append(a)
-                
-            self.myGrid.SelectRow(row, addToSelected=True)
-            self.rowEdit = row
-            self.uncomBtn.Enable()
-            self.applyBtn.Enable()
-            print self.commNew
-        else:
-            msg = ("Before to edit cells in others rows you must\n"
-                   "push  'Apply Commit' button for render changes\n"
-                   "into the columns marked in red.\n\n"
-                   "Instead, if you want to remove any change push\n"
-                   "'Uncommit Last' button")
-            wx.MessageBox(msg, 'Change Not Allowed', wx.ICON_EXCLAMATION, self)
-    #----------------------------------------------------------------------
-    def uncommit(self, event):
-        """
-        Reprise last change and reset attributes
-        """
-        for n, item in enumerate(self.commLast):
-            self.myGrid.SetCellValue(self.rowEdit , n, self.commLast[n])
-            
-        self.comBtn.Disable()
-        self.uncomBtn.Disable()
-        self.applyBtn.Disable()
-        self.rowEdit = None
-        self.commNew = []
-        self.commLast = []
-    #----------------------------------------------------------------------
-    def makeChange(self, event):
-        
-        self.comBtn.Disable()
-        self.uncomBtn.Disable()
-        self.applyBtn.Disable()
-        
-        self.rowEdit = None
-        self.commNew = []
-        self.commLast = []
-        #----------------------------------------------------------------------
-    
-    def onSingleSelect(self, event):
-        """
-        Get the selection of a single cell by clicking or 
-        moving the selection with the arrow keys
-        """
-        self.currentlySelectedCell = (event.GetRow(),
-                                    event.GetCol())
-        #if self.myGrid.GetGridCursorRow() >= self.index:
-        if event.GetRow() >= self.index:
-            self.comBtn.Disable()
-            return
-        else:
-            self.comBtn.Enable()
-        event.Skip()
-    #----------------------------------------------------------------------
+        #### go to popular the grid:
+        self.setting()
+        #### Build Layout:
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        gridSiz = wx.GridSizer(1,3,0,40)
+        sizer.Add(self.myGrid, 1, wx.EXPAND, 5)
+        sizer.Add(gridSiz, 0, wx.ALL, 5)
+        gridSiz.Add(self.comBtn, 0, wx.ALL, 5)
+        gridSiz.Add(self.uncomBtn, 0, wx.ALL, 5)
+        gridSiz.Add(self.applyBtn, 0, wx.ALL, 5)
+        self.SetSizer(sizer)
+        sizer.Fit(self)
+        #### binding
+        self.myGrid.Bind(gridlib.EVT_GRID_SELECT_CELL, self.onSingleSelect)
+        self.Bind(wx.EVT_BUTTON, self.commit, self.comBtn)
+        self.Bind(wx.EVT_BUTTON, self.unCommit, self.uncomBtn)
+        self.Bind(wx.EVT_BUTTON, self.makeChange, self.applyBtn)
+    #-------------------------
     def setting(self):
+        """
+        Set properties and set the grid cells with values
+        of the query.
+        """
         lessons = School_Class().showInTable(self.IDclass, self.path_db)
-
         for n, item in enumerate(lessons):
-            #self.myGrid.AppendRows(n, updateLabels=False)
             self.index += 1
             #------------IDlesson
             self.myGrid.SetCellValue(n , 0, str(item[0]))
@@ -215,7 +133,6 @@ class PanelTwo(wx.Panel):
             self.myGrid.SetCellValue(n , 3, item[3])# date
             self.myGrid.SetCellBackgroundColour(n, 3, '#deffb4')
             #-----------
-            
             if item[4] == 'NONE':
                 self.myGrid.SetCellValue(n, 4, '')
             else:
@@ -273,6 +190,122 @@ class PanelTwo(wx.Panel):
             
         self.myGrid.AutoSizeColumns(setAsMin=True) # resize all columns
         self.myGrid.AutoSizeRows(setAsMin=True) # resize all rows
+    #--------------------------------------------------------------------#
+    #--------------------------------EVENT-------------------------------#
+    def commit(self, event):
+        """
+        Make editable the columns in the row where the 
+        cell is selected only
+        """
         
+        row = self.currentlySelectedCell[0]
+        col = self.currentlySelectedCell[1]
+        val = self.myGrid.GetCellValue(row,col)
         
+        dlg = wx.TextEntryDialog(self, 'Insert a new string:',
+                                 "Change cell value",val,
+                                 style=wx.TE_MULTILINE|wx.OK|wx.CANCEL
+                                 )
+        choices = ["All Present","Student is absent",
+                   "Teacher is absent"
+                   ]
+        choiceDlg = wx.SingleChoiceDialog(self, "Change Attendance", 
+                                          "Choices",choices
+                                          )
+        if self.rowEdit is None or self.rowEdit == row:
+            if col == 0 or col == 1:
+                wx.MessageBox("This column can not be changed", 
+                'Change Not Allowed', wx.ICON_EXCLAMATION, self)
+                return
+            
+            if self.IDlesson not in self.commLast:
+                del self.commLast[:] # first clear list
+                for n in range(15):
+                    i = self.myGrid.GetCellValue(row, n)
+                    self.commLast.append(i)
+            
+            if col == 2:
+                if choiceDlg.ShowModal() == wx.ID_OK:
+                    ret = choiceDlg.GetStringSelection()
+                    dlg.Destroy()
+                else:
+                    return
+            else:
+                if dlg.ShowModal() == wx.ID_OK:
+                    ret = dlg.GetValue()
+                    dlg.Destroy()
+                else:
+                    return
+                    
+            self.myGrid.SetCellValue(row , col, ret)
+            
+            del self.commNew[:] # first clear list 
+            for n in range(15):
+                i = self.myGrid.GetCellValue(row, n)
+                self.commNew.append(i)
+                
+            self.myGrid.SelectRow(row, addToSelected=True)
+            self.rowEdit = row
+            self.uncomBtn.Enable()
+            self.applyBtn.Enable()
+        else:
+            msg = ("Before to edit cells in others rows you must\n"
+                   "push  'Apply Commit' button for render changes\n"
+                   "into the columns marked in red.\n\n"
+                   "Instead, if you want to remove any change push\n"
+                   "'Uncommit Last' button")
+            wx.MessageBox(msg, 'Change Not Allowed', wx.ICON_EXCLAMATION, self)
+    #----------------------------------------------------------------------
+    def unCommit(self, event):
+        """
+        Retrieve last change and reset attributes. The data 
+        retrieving of previous setting it is restored
+        """
+        for n, item in enumerate(self.commLast):
+            self.myGrid.SetCellValue(self.rowEdit , n, self.commLast[n])
+        self.comBtn.Disable()
+        self.uncomBtn.Disable()
+        self.applyBtn.Disable()
+        self.rowEdit = None
+        del self.commNew[:]
+        del self.commLast[:]
+        self.IDlesson = None
+    #----------------------------------------------------------------------
+    def makeChange(self, event):
+        """
+        Allow to save changes in db (table Lesson) 
+        """
+        self.comBtn.Disable()
+        self.uncomBtn.Disable()
+        self.applyBtn.Disable()
         
+        for n, item in enumerate(self.commNew):# if empty str fill out with NONE str
+            if item.strip() == '':
+                self.commNew[n] = 'NONE'
+        change = School_Class().change_lesson_items(self.commNew, self.path_db)
+        self.rowEdit = None
+        del self.commNew[:]
+        del self.commLast[:]
+        self.IDlesson = None
+        
+        self.index = 0 
+        self.setting()
+        wx.MessageBox("Successfull storing !", "Success", wx.OK, self)
+        #----------------------------------------------------------------------
+    def onSingleSelect(self, event):
+        """
+        Get the selection of a single cell by clicking or 
+        moving the selection with the arrow keys
+        """
+        self.currentlySelectedCell = (event.GetRow(),
+                                    event.GetCol())
+        self.IDlesson = self.myGrid.GetCellValue(self.currentlySelectedCell[0], 
+                                                 0)
+        if event.GetRow() >= self.index:
+            self.comBtn.Disable()
+            return
+        else:
+            self.comBtn.Enable()
+        event.Skip()
+    #----------------------------------------------------------------------
+    

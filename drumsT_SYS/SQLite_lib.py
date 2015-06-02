@@ -15,6 +15,7 @@ import sqlite3
 class School_Class(object):
     """
     Records to a main databases index.
+    Query
     """
     def __init__(self):
         """
@@ -242,7 +243,7 @@ class School_Class(object):
     def change_class_item(self, Name, Surname, Phone, Address, BirthDate,
                           LevelCourse, JoinDate, IDclass, path):
         """
-        aggiorna records già esistenti
+        Updates existing records in the Class table
         """
         conn = sqlite3.connect('%s' % path) # or use :memory: to put it in RAM
         cursor = conn.cursor()
@@ -255,6 +256,24 @@ class School_Class(object):
         conn.commit()
         conn.close()
     #----------------------------------------------------------------------#
+    def change_lesson_items(self, lisT, path):
+        """
+        Updates existing records in the Lesson table
+        """
+        conn = sqlite3.connect('%s' % path) # or use :memory: to put it in RAM
+        cursor = conn.cursor()
+
+        cursor.execute("""UPDATE Lesson SET Attendance=?, Date=?, Reading=?,
+                          Setting=?, Rudiments=?, Coordination=?, Styles=?,
+                          Minusone=?, Other1=?, Other2=?, Other3=?, Votes=?, 
+                          Notes=? 
+                          WHERE (IDlesson=?)
+                       """, [lisT[2],lisT[3],lisT[4],lisT[5],lisT[6],lisT[7],
+                             lisT[8],lisT[9],lisT[10],lisT[11],lisT[12],
+                             lisT[13],lisT[14],lisT[0]])
+        conn.commit()
+        conn.close()
+        #----------------------------------------------------------------------#
     def delete(self, IDclass, path):
         """
         cancella records già esistenti
@@ -287,17 +306,4 @@ class School_Class(object):
         ret = cursor.fetchall()
         return re
     ########################################################################
-    
-    
-    
-        
-        
-    def query(self, path_db, name):
-        conn = sqlite3.connect('%s' % path_db) # or use :memory: to put it in RAM
-        
-        schools = []
-        cursor = conn.execute("SELECT Id, name from Students_%s" % name)
-        for row in cursor:
-            schools.append(row)
-        conn.close()
-        return schools
+
