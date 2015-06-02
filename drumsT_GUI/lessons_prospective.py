@@ -122,10 +122,14 @@ class PanelTwo(wx.Panel):
                 if choiceDlg.ShowModal() == wx.ID_OK:
                     ret = choiceDlg.GetStringSelection()
                     dlg.Destroy()
+                else:
+                    return
             else:
                 if dlg.ShowModal() == wx.ID_OK:
                     ret = dlg.GetValue()
                     dlg.Destroy()
+                else:
+                    return
                     
             self.myGrid.SetCellValue(row , col, ret)
             for n in range(15):
