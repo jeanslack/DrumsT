@@ -77,7 +77,7 @@ class MainFrame(wx.Frame):
                                      wx.SUNKEN_BORDER
                                      )
         #################### Properties
-        self.SetTitle(("Management School of Drums Course"))
+        self.SetTitle(("Management School of Drums Course - DrumsT"))
         icon = wx.EmptyIcon()
         icon.CopyFromBitmap(wx.Bitmap(self.drumsT_ico, wx.BITMAP_TYPE_ANY))
         self.SetIcon(icon)
@@ -90,7 +90,9 @@ class MainFrame(wx.Frame):
         self.import_txt.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
         self.import_txt.SetForegroundColour(greendeph)
         self.import_txt.Disable()
-        self.list_ctrl.SetToolTipString("Double click to open a individual profile")
+        self.list_ctrl.SetToolTipString("Double click or type enter or push "
+                                        "'Open lesson in selection' to open "
+                                        "a individual profile")
         
         self.list_ctrl.InsertColumn(0, 'ID', width=30)
         self.list_ctrl.InsertColumn(1, 'School Year', width=100)
@@ -142,6 +144,8 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.open_school, import_btn)
         self.cmbx_year.Bind(wx.EVT_COMBOBOX, self.on_year)
         
+        self.statusbar_msg("Welcome, before to use you must import "
+                           "a database or create new schools location", yellow)
     #-------------------------------------------------------#
     def statusbar_msg(self, msg, color):
         """
@@ -471,13 +475,9 @@ class MainFrame(wx.Frame):
         schoolButton = wx.Menu()
         
         addschool = schoolButton.Append(wx.ID_ANY, "Add new school", 
-                                            "Create a new record for school")
-        addate = schoolButton.Append(wx.ID_ANY, "Add new year to selected school", 
-                                           "Create a new record for school")
-        modifyschool = schoolButton.Append(wx.ID_ANY, "Modify school name", 
-                                     "Create a new record for school")
-        deleteschool = schoolButton.Append(wx.ID_ANY, "Delete a school", 
-                                     "Create a new record for school")
+                                            "Create a new school location")
+        addate = schoolButton.Append(wx.ID_ANY, "Add new school year", 
+                                           "Record a new school year to imported database")
         
         menuBar.Append(schoolButton,"Schools")
         
