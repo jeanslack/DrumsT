@@ -114,7 +114,7 @@ class PanelOne(wx.Panel):
         sizBase = wx.FlexGridSizer(3, 1, 0, 0)
         sizBottom = wx.GridSizer(1, 2, 0, 0)
         sizTables = wx.FlexGridSizer(1, 1, 0, 0)
-        sizTop = wx.FlexGridSizer(1, 2, 0, 20)
+        sizTop = wx.FlexGridSizer(1, 2, 0, 40)
         sizBookOne = wx.FlexGridSizer(6, 3, 0, 0)
         sizBookTwo = wx.FlexGridSizer(2, 2, 0, 0)
         #boxDate.Lower()

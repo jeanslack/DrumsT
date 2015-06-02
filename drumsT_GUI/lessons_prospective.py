@@ -24,11 +24,17 @@ class PanelTwo(wx.Panel):
         of the student in object and relating only to selected 
         the school year
         """
+        self.currentlySelectedCell = (0, 0)
+        self.rowEdit = None
+        self.commNew = []
+        self.commLast = []
         self.index = 0
         self.path_db = path_db
         self.IDclass = IDclass
         wx.Panel.__init__(self, parent, -1, style=wx.TAB_TRAVERSAL)
-        self.btn = wx.Button(self, wx.ID_ANY, ("Modifica"))
+        self.comBtn = wx.Button(self, wx.ID_ANY, ("Commit Change"))
+        self.uncomBtn = wx.Button(self, wx.ID_ANY, ("Uncommit Last"))
+        self.applyBtn = wx.Button(self, wx.ID_ANY, ("Apply Commit"))
         self.myGrid = gridlib.Grid(self)
         self.myGrid.EnableEditing(False) # make all in read only
         self.myGrid.CreateGrid(150, 15)
@@ -56,76 +62,129 @@ class PanelTwo(wx.Panel):
         ## oppure: self.myGrid.SetReadOnly(3, 3, True)
         self.setting()
         sizer = wx.BoxSizer(wx.VERTICAL)
+        box = wx.GridSizer(1,3,0,40)
         sizer.Add(self.myGrid, 1, wx.EXPAND, 5)
-        sizer.Add(self.btn, 0, wx.ALL, 5)
+        #sizer.Add(self.comBtn, 0, wx.ALL, 5)
+        #sizer.Add(self.uncomBtn, 0, wx.ALL, 5)
+        sizer.Add(box, 0, wx.ALL, 5)
+        box.Add(self.comBtn, 0, wx.ALL, 5)
+        box.Add(self.uncomBtn, 0, wx.ALL, 5)
+        box.Add(self.applyBtn, 0, wx.ALL, 5)
+        
         self.SetSizer(sizer)
         sizer.Fit(self)
         
         # binding
-        #self.Bind(gridlib.EVT_GRID_LABEL_LEFT_CLICK, self.sel)
-        self.Bind(gridlib.EVT_GRID_LABEL_LEFT_DCLICK, self.sel)
-        #self.Bind(wx.EVT_BUTTON, self.puls, self.btn)
-
-        self.btn.Disable()
-    #-------------------------------------------------------------------#
-    def puls(self, event):
-        print self.myGrid.GetGridCursorRow(), self.index
-        if self.myGrid.GetGridCursorRow() >= self.index:
-            return
-        else:
-            print 'posso andare avanti'
+        self.myGrid.Bind(gridlib.EVT_GRID_SELECT_CELL, self.onSingleSelect)
+        self.Bind(wx.EVT_BUTTON, self.commit, self.comBtn)
+        self.Bind(wx.EVT_BUTTON, self.uncommit, self.uncomBtn)
+        self.Bind(wx.EVT_BUTTON, self.makeChange, self.applyBtn)
         
-    def sel(self, event):
-        print self.myGrid.GetSelectedRows()[0], self.index, self.myGrid.GetGridCursorRow()
-        #if self.myGrid.GetGridCursorRow() >= self.index:
-            #self.btn.Disable()
-            #print 'GetGridCursorRow'
-            #return
-        if self.myGrid.GetSelectedRows()[0] >= self.index:
-            self.btn.Disable()
-            print 'GetSelectedRows'
-            return
-        else:
-            self.btn.Enable()
-            print 'posso andare avanti'
-
-        row_sel = event.GetRow() # get int
-        sel = event.GetCol() == -1 # print 1 if False, -1 if True
-
-        if sel:
-            # GetRowLabelValue get str(int) of selected row label
-            #if int(self.myGrid.GetRowLabelValue(row_sel)) > self.index:
-            if row_sel+1 > self.index:
-                print 'get too out'
-                return
-            else:
-                lista = []
-                for n in range(15):
-                    a = self.myGrid.GetCellValue(row_sel, n)
-                    lista.append(a)
-                self.myGrid.Bind(gridlib.EVT_GRID_SELECT_CELL, self.onSingleSelect)
-        else:
-            print 'nulla di selezionato'
-    #--------------------------------------------------------------------#
-    def onSingleSelect(self, event):
-        if self.myGrid.GetGridCursorRow() >= self.index:
-            self.btn.Disable()
-            print 'GetGridCursorRow'
-            return
-        row = event.GetRow()
-        col = event.GetCol()
+        # properties
+        self.comBtn.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.comBtn.SetForegroundColour('#49a03b')
+        self.uncomBtn.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.uncomBtn.SetForegroundColour('#4f4dcf')
+        self.applyBtn.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.applyBtn.SetForegroundColour('#ff3f15')
+        self.comBtn.Disable()
+        self.uncomBtn.Disable()
+        self.applyBtn.Disable()
+        
+    #-------------------------------------------------------------------#
+    def commit(self, event):
+        
+        row = self.currentlySelectedCell[0]
+        col = self.currentlySelectedCell[1]
         val = self.myGrid.GetCellValue(row,col)
         
         dlg = wx.TextEntryDialog(self, 'Insert a new string:',
                                  "Change cell value",val,
                                  style=wx.TE_MULTILINE|wx.OK|wx.CANCEL
                                  )
-        if dlg.ShowModal() == wx.ID_OK:
-            ret = dlg.GetValue()
-            dlg.Destroy()
+        choices = ["All Present","Student is absent",
+                   "Teacher is absent"
+                   ]
+        choiceDlg = wx.SingleChoiceDialog(self, "Change Attendance", 
+                                          "Choices",choices
+                                          )
+        if self.rowEdit is None or self.rowEdit == row:
+            if col == 0 or col == 1:
+                wx.MessageBox("This column can not be changed", 
+                'Change Not Allowed', wx.ICON_EXCLAMATION, self)
+                return
             
+            for n in range(15):
+                a = self.myGrid.GetCellValue(row, n)
+                self.commLast.append(a)
+            
+            if col == 2:
+                if choiceDlg.ShowModal() == wx.ID_OK:
+                    ret = choiceDlg.GetStringSelection()
+                    dlg.Destroy()
+            else:
+                if dlg.ShowModal() == wx.ID_OK:
+                    ret = dlg.GetValue()
+                    dlg.Destroy()
+                    
             self.myGrid.SetCellValue(row , col, ret)
+            for n in range(15):
+                a = self.myGrid.GetCellValue(row, n)
+                self.commNew.append(a)
+                
+            self.myGrid.SelectRow(row, addToSelected=True)
+            self.rowEdit = row
+            self.uncomBtn.Enable()
+            self.applyBtn.Enable()
+            print self.commNew
+        else:
+            msg = ("Before to edit cells in others rows you must\n"
+                   "push  'Apply Commit' button for render changes\n"
+                   "into the columns marked in red.\n\n"
+                   "Instead, if you want to remove any change push\n"
+                   "'Uncommit Last' button")
+            wx.MessageBox(msg, 'Change Not Allowed', wx.ICON_EXCLAMATION, self)
+    #----------------------------------------------------------------------
+    def uncommit(self, event):
+        """
+        Reprise last change and reset attributes
+        """
+        for n, item in enumerate(self.commLast):
+            self.myGrid.SetCellValue(self.rowEdit , n, self.commLast[n])
             
+        self.comBtn.Disable()
+        self.uncomBtn.Disable()
+        self.applyBtn.Disable()
+        self.rowEdit = None
+        self.commNew = []
+        self.commLast = []
+    #----------------------------------------------------------------------
+    def makeChange(self, event):
+        
+        self.comBtn.Disable()
+        self.uncomBtn.Disable()
+        self.applyBtn.Disable()
+        
+        self.rowEdit = None
+        self.commNew = []
+        self.commLast = []
+        #----------------------------------------------------------------------
+    
+    def onSingleSelect(self, event):
+        """
+        Get the selection of a single cell by clicking or 
+        moving the selection with the arrow keys
+        """
+        self.currentlySelectedCell = (event.GetRow(),
+                                    event.GetCol())
+        #if self.myGrid.GetGridCursorRow() >= self.index:
+        if event.GetRow() >= self.index:
+            self.comBtn.Disable()
+            return
+        else:
+            self.comBtn.Enable()
+        event.Skip()
+    #----------------------------------------------------------------------
     def setting(self):
         lessons = School_Class().showInTable(self.IDclass, self.path_db)
 
