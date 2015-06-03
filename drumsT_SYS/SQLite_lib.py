@@ -241,18 +241,18 @@ class School_Class(object):
         return self.error
     #----------------------------------------------------------------------#
     def change_class_item(self, Name, Surname, Phone, Address, BirthDate,
-                          LevelCourse, JoinDate, IDclass, path):
+                          JoinDate, LevelCourse, IDclass, path):
         """
         Updates existing records in the Class table
         """
         conn = sqlite3.connect('%s' % path) # or use :memory: to put it in RAM
         cursor = conn.cursor()
         
-        cursor.execute("""UPDATE Class SET Name=?,Surname=?,Phone=?,
-                          Address=?,BirthDate=?,LevelCourse=?, JoinDate=? 
+        cursor.execute("""UPDATE Class SET Name=?, Surname=?, Phone=?,
+                          Address=?, BirthDate=?, JoinDate=?, LevelCourse=?
                           WHERE (IDclass=?)
                        """, [Name,Surname,Phone,Address,BirthDate,
-                               LevelCourse,JoinDate, IDclass])
+                               JoinDate, LevelCourse, IDclass])
         conn.commit()
         conn.close()
     #----------------------------------------------------------------------#

@@ -1,7 +1,3 @@
-- issue on macOsX in the OnInit: if return False exit and do not 
-  show message dialog
-  
-- the wx.DatePickerCtrl append wrong hour
 
 - create lessons calendar
 
