@@ -1,2 +1,18 @@
-- On macOsX in OnInit exit if return False
+- issue on macOsX in the OnInit: if return False exit and do not 
+  show message dialog
+  
+- the wx.DatePickerCtrl append wrong hour
+
+- create lessons calendar
+
+- create a notes/reminder for any school
+
+- create a back-up function with restore mode for databases
+
+- function PDF or HTML printing of all lessons of a one student
+
+- must improve management python exceptions on SQLite_lib.py
         
+- create beautiful icons (?)
+
+- management traslates (?)

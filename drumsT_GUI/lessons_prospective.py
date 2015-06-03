@@ -32,11 +32,11 @@ class PanelTwo(wx.Panel):
         """
         wx.Panel.__init__(self, parent, -1, style=wx.TAB_TRAVERSAL)
         #### set attributes:
-        self.currentlySelectedCell = (0, 0)
-        self.rowEdit = None
-        self.commNew = []
-        self.commLast = []
-        self.index = 0
+        self.currentlySelectedCell = (0, 0) # row, col default
+        self.rowEdit = None # tracking what row is was edited
+        self.newsEdit = [] # list of all item edited
+        self.backUp = [] # last backup for recovery
+        self.index = 0 # how many items (rows) 
         self.path_db = path_db
         self.IDclass = IDclass
         self.IDlesson = None
@@ -47,8 +47,8 @@ class PanelTwo(wx.Panel):
         """
         Start with widget and panel setup
         """
-        self.comBtn = wx.Button(self, wx.ID_ANY, ("Commit Change"))
-        self.uncomBtn = wx.Button(self, wx.ID_ANY, ("Uncommit Last"))
+        self.editBtn = wx.Button(self, wx.ID_ANY, ("Changes"))
+        self.rollbackBtn = wx.Button(self, wx.ID_ANY, ("Rollback"))
         self.applyBtn = wx.Button(self, wx.ID_ANY, ("Apply Commit"))
         self.myGrid = gridlib.Grid(self)
         #### properties:
@@ -78,14 +78,20 @@ class PanelTwo(wx.Panel):
         #self.myGrid.SetColAttr(2, attr)
         ## oppure: self.myGrid.SetReadOnly(3, 3, True)
         #### properties
-        self.comBtn.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.comBtn.SetForegroundColour('#49a03b')
-        self.uncomBtn.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.uncomBtn.SetForegroundColour('#4f4dcf')
+        #self.editBtn.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        #self.editBtn.SetForegroundColour('#49a03b')
+        self.editBtn.SetToolTipString("Changes text or value into the "
+                                     "cells and append")
+        #self.rollbackBtn.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        #self.rollbackBtn.SetForegroundColour('#4f4dcf')
+        self.rollbackBtn.SetToolTipString("Rollback to the last state or first "
+                                     "to the last 'Apply-Commit'")
         self.applyBtn.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
         self.applyBtn.SetForegroundColour('#ff3f15')
-        self.comBtn.Disable()
-        self.uncomBtn.Disable()
+        self.applyBtn.SetToolTipString("Make an update and commit new "
+                                       "changes into database")
+        self.editBtn.Disable()
+        self.rollbackBtn.Disable()
         self.applyBtn.Disable()
         #### go to popular the grid:
         self.setting()
@@ -94,15 +100,15 @@ class PanelTwo(wx.Panel):
         gridSiz = wx.GridSizer(1,3,0,40)
         sizer.Add(self.myGrid, 1, wx.EXPAND, 5)
         sizer.Add(gridSiz, 0, wx.ALL, 5)
-        gridSiz.Add(self.comBtn, 0, wx.ALL, 5)
-        gridSiz.Add(self.uncomBtn, 0, wx.ALL, 5)
+        gridSiz.Add(self.editBtn, 0, wx.ALL, 5)
+        gridSiz.Add(self.rollbackBtn, 0, wx.ALL, 5)
         gridSiz.Add(self.applyBtn, 0, wx.ALL, 5)
         self.SetSizer(sizer)
         sizer.Fit(self)
         #### binding
         self.myGrid.Bind(gridlib.EVT_GRID_SELECT_CELL, self.onSingleSelect)
-        self.Bind(wx.EVT_BUTTON, self.commit, self.comBtn)
-        self.Bind(wx.EVT_BUTTON, self.unCommit, self.uncomBtn)
+        self.Bind(wx.EVT_BUTTON, self.editCells, self.editBtn)
+        self.Bind(wx.EVT_BUTTON, self.restroreLast, self.rollbackBtn)
         self.Bind(wx.EVT_BUTTON, self.makeChange, self.applyBtn)
     #-------------------------
     def setting(self):
@@ -192,12 +198,11 @@ class PanelTwo(wx.Panel):
         self.myGrid.AutoSizeRows(setAsMin=True) # resize all rows
     #--------------------------------------------------------------------#
     #--------------------------------EVENT-------------------------------#
-    def commit(self, event):
+    def editCells(self, event):
         """
         Make editable the columns in the row where the 
         cell is selected only
         """
-        
         row = self.currentlySelectedCell[0]
         col = self.currentlySelectedCell[1]
         val = self.myGrid.GetCellValue(row,col)
@@ -218,11 +223,11 @@ class PanelTwo(wx.Panel):
                 'Change Not Allowed', wx.ICON_EXCLAMATION, self)
                 return
             
-            if self.IDlesson not in self.commLast:
-                del self.commLast[:] # first clear list
+            if self.IDlesson not in self.backUp:
+                del self.backUp[:] # first clear list
                 for n in range(15):
                     i = self.myGrid.GetCellValue(row, n)
-                    self.commLast.append(i)
+                    self.backUp.append(i)
             
             if col == 2:
                 if choiceDlg.ShowModal() == wx.ID_OK:
@@ -239,53 +244,54 @@ class PanelTwo(wx.Panel):
                     
             self.myGrid.SetCellValue(row , col, ret)
             
-            del self.commNew[:] # first clear list 
+            del self.newsEdit[:] # first clear list 
             for n in range(15):
                 i = self.myGrid.GetCellValue(row, n)
-                self.commNew.append(i)
+                self.newsEdit.append(i)
                 
             self.myGrid.SelectRow(row, addToSelected=True)
             self.rowEdit = row
-            self.uncomBtn.Enable()
+            self.rollbackBtn.Enable()
             self.applyBtn.Enable()
         else:
             msg = ("Before to edit cells in others rows you must\n"
                    "push  'Apply Commit' button for render changes\n"
-                   "into the columns marked in red.\n\n"
+                   "into the edited columns.\n\n"
                    "Instead, if you want to remove any change push\n"
                    "'Uncommit Last' button")
             wx.MessageBox(msg, 'Change Not Allowed', wx.ICON_EXCLAMATION, self)
     #----------------------------------------------------------------------
-    def unCommit(self, event):
+    def restroreLast(self, event):
         """
         Retrieve last change and reset attributes. The data 
-        retrieving of previous setting it is restored
+        retrieving of previous setting it is restored. 
+        WARNING: this not restore after a apply-commit
         """
-        for n, item in enumerate(self.commLast):
-            self.myGrid.SetCellValue(self.rowEdit , n, self.commLast[n])
-        self.comBtn.Disable()
-        self.uncomBtn.Disable()
+        for n, item in enumerate(self.backUp):
+            self.myGrid.SetCellValue(self.rowEdit , n, self.backUp[n])
+        self.editBtn.Disable()
+        self.rollbackBtn.Disable()
         self.applyBtn.Disable()
         self.rowEdit = None
-        del self.commNew[:]
-        del self.commLast[:]
+        del self.newsEdit[:]
+        del self.backUp[:]
         self.IDlesson = None
     #----------------------------------------------------------------------
     def makeChange(self, event):
         """
         Allow to save changes in db (table Lesson) 
         """
-        self.comBtn.Disable()
-        self.uncomBtn.Disable()
+        self.editBtn.Disable()
+        self.rollbackBtn.Disable()
         self.applyBtn.Disable()
         
-        for n, item in enumerate(self.commNew):# if empty str fill out with NONE str
+        for n, item in enumerate(self.newsEdit):# if empty str fill out with NONE str
             if item.strip() == '':
-                self.commNew[n] = 'NONE'
-        change = School_Class().change_lesson_items(self.commNew, self.path_db)
+                self.newsEdit[n] = 'NONE'
+        change = School_Class().change_lesson_items(self.newsEdit, self.path_db)
         self.rowEdit = None
-        del self.commNew[:]
-        del self.commLast[:]
+        del self.newsEdit[:]
+        del self.backUp[:]
         self.IDlesson = None
         
         self.index = 0 
@@ -302,10 +308,10 @@ class PanelTwo(wx.Panel):
         self.IDlesson = self.myGrid.GetCellValue(self.currentlySelectedCell[0], 
                                                  0)
         if event.GetRow() >= self.index:
-            self.comBtn.Disable()
+            self.editBtn.Disable()
             return
         else:
-            self.comBtn.Enable()
+            self.editBtn.Enable()
         event.Skip()
     #----------------------------------------------------------------------
     

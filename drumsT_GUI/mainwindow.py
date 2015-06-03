@@ -144,8 +144,8 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.open_school, import_btn)
         self.cmbx_year.Bind(wx.EVT_COMBOBOX, self.on_year)
         
-        self.statusbar_msg("Welcome, before to use you must import "
-                           "a database or create new schools location", yellow)
+        self.statusbar_msg("To use DrumsT, you must import a database "
+                           "or create new schools location", yellow)
     #-------------------------------------------------------#
     def statusbar_msg(self, msg, color):
         """
@@ -167,7 +167,7 @@ class MainFrame(wx.Frame):
         """
         profiles = School_Class().displayclass(self.path_db, self.IDyear)
         if profiles == []:
-            msg = ("Info - Empty database: There isn't any list to load. "
+            msg = ("Empty database: There isn't any list to load. "
                 "You must add new students now")
             self.statusbar_msg(msg, yellow)
             self.toolbar.EnableTool(wx.ID_FILE2, False)
