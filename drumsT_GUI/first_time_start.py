@@ -25,10 +25,10 @@ class FirstStart(wx.Dialog):
         
         # variables or attributes:
         msg = ("This is the first time you start DrumsT.\n\n"
-               "DrumsT is a management school designed for drums teachers.\n\n"
+               "DrumsT makes use of a predetermined path to save the databases.\n\n"
                "- If you want to create a new database now press the "
-               "create button.\n\n- If a database already exists press "
-               "the import button.\n\n- Press the exit button to exit simply")
+               "create button.\n- If a database already exists press "
+               "the import button.\n- Press the exit button to exit simply")
         
         # widget:
         bitmap_drumsT = wx.StaticBitmap(self, wx.ID_ANY, wx.Bitmap(
@@ -36,7 +36,7 @@ class FirstStart(wx.Dialog):
         lab_welc2 = wx.StaticText(self, wx.ID_ANY, (msg))
         lab_welc1 = wx.StaticText(self, wx.ID_ANY, ("Welcome !"))
         lab_create = wx.StaticText(self, wx.ID_ANY, ("Create a new database:"))
-        lab_import = wx.StaticText(self, wx.ID_ANY, ("Show me an drumsT_DB existing directory for database:"))
+        lab_import = wx.StaticText(self, wx.ID_ANY, ("Import a 'drumsT_DB' existing folder:"))
         lab_exit = wx.StaticText(self, wx.ID_ANY, ("Exit and do nothing:"))
         create_btn = wx.Button(self, wx.ID_ANY, ("Create"))
         import_btn = wx.Button(self, wx.ID_ANY, ("Import"))
@@ -125,9 +125,7 @@ class FirstStart(wx.Dialog):
     #-------------------------------------------------------------------#
     def import_now(self, event):
         
-        dialdir = wx.DirDialog(self, "Where is the database folder "
-                                     "'DrumsT_DataBases' ?"
-                                     )
+        dialdir = wx.DirDialog(self, "Where is the 'DrumsT_DB' folder?")
         if dialdir.ShowModal() == wx.ID_OK:
             path = dialdir.GetPath()
             dialdir.Destroy()

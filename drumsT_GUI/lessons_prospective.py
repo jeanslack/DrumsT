@@ -78,12 +78,8 @@ class PanelTwo(wx.Panel):
         #self.myGrid.SetColAttr(2, attr)
         ## oppure: self.myGrid.SetReadOnly(3, 3, True)
         #### properties
-        #self.editBtn.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        #self.editBtn.SetForegroundColour('#49a03b')
         self.editBtn.SetToolTipString("Changes text or value into the "
                                      "cells and append")
-        #self.rollbackBtn.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        #self.rollbackBtn.SetForegroundColour('#4f4dcf')
         self.rollbackBtn.SetToolTipString("Rollback to the last state or first "
                                      "to the last 'Apply-Commit'")
         self.applyBtn.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
@@ -249,16 +245,16 @@ class PanelTwo(wx.Panel):
                 i = self.myGrid.GetCellValue(row, n)
                 self.newsEdit.append(i)
                 
-            self.myGrid.SelectRow(row, addToSelected=True)
             self.rowEdit = row
             self.rollbackBtn.Enable()
             self.applyBtn.Enable()
         else:
             msg = ("Before to edit cells in others rows you must\n"
                    "push  'Apply Commit' button for render changes\n"
-                   "into the edited columns.\n\n"
+                   "into the edited columns selected in gray.\n\n"
                    "Instead, if you want to remove any change push\n"
                    "'Uncommit Last' button")
+            self.myGrid.SelectRow(self.rowEdit, addToSelected=True)
             wx.MessageBox(msg, 'Change Not Allowed', wx.ICON_EXCLAMATION, self)
     #----------------------------------------------------------------------
     def restroreLast(self, event):

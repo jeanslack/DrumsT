@@ -304,6 +304,6 @@ class School_Class(object):
         cursor.execute(sql)
         #print cursor.fetchall()
         ret = cursor.fetchall()
-        return re
+        return ret
     ########################################################################
 
