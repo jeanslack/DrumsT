@@ -554,11 +554,10 @@ class MainFrame(wx.Frame):
             return
         
         schools = School_Class().updateyear(self.path_db, data)
-        if schools:
-            wx.MessageBox("DrumsT: This school year already exist, is not "
-                          "possible add this record", 'WARNING', 
-                          wx.ICON_EXCLAMATION, self)
+        if schools[0]:
+            wx.MessageBox(schools[1], 'Error', wx.ICON_ERROR, self)
             return
+        
         wx.MessageBox('DrumsT: Success on create new year', 'Info', 
                       wx.ICON_INFORMATION, self)
         self.cmbx_year.Append(data)
