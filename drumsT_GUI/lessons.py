@@ -22,7 +22,8 @@ class Lesson(wx.Frame):
     def __init__(self, namesur, IDclass, path_db):
         """
         This frame has not parent (is None) and is independence from
-        others windows. This is effort for more istances of same windows 
+        others windows. This is confortable for more istances of same 
+        windows for more management of students
         """
         # set need attributes:
         self.drumsT_ico = wx.GetApp().drumsT_icon

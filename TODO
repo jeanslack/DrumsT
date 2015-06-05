@@ -7,8 +7,11 @@
 
 - function PDF or HTML printing of all lessons of a one student
 
-- must improve management python exceptions on SQLite_lib.py
+- must improve management python exceptions on SQLite_lib.py (+)
         
 - create beautiful icons (?)
 
 - management traslates (?)
+
+- when open mainwindow.py, disable 'add new school year' in the menu bar
+  because there is not nothing db imported for.

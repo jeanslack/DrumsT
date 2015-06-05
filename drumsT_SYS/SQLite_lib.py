@@ -15,21 +15,25 @@ import sqlite3
 
 class School_Class(object):
     """
-    Records to a main databases index.
-    Query
+    Run processes for working with sqlite3: creating, updating, 
+    deleting, quering, etc. in a db.
+
     NOTES: if you want handling last id:
     #cursor.execute('SELECT max(IDyear) FROM School')# by index
     #max_id = cursor.fetchone()[0] # by index
     """
     def __init__(self):
         """
-        
+        almost all methods that follow, they use a manage of errors. 
+        These attributes are used to check this process:
+        self.error is simply boolean. 
+        self.msg contains a message if self.error is True
         """
         self.error = False
         self.msg = None
         
     #-------------------------------------------------------------------------#
-    def newSchoolyear(self, path, name, year):
+    def newSchoolyear(self, db_filename, name, year):
         """
         Create new School and Class tables: 
         The 'School' table has one only column with IDyear.
@@ -37,7 +41,7 @@ class School_Class(object):
         Also, this method is used when run DrumsT for first time and there 
         is nothing database/path-name configured, this method set a new one.
         """
-        db_filename = '%s/%s/%s.drtDB' % (path,name,name)
+        db_filename = '%s/%s/%s.drtDB' % (db_filename, name, name)
         try:
             with sqlite3.connect(db_filename) as conn:
                 cursor = conn.cursor()
@@ -70,13 +74,13 @@ class School_Class(object):
         return self.error, self.msg
     
     #-----------------------------------------------------------------------#
-    def checkstudent(self, Name, Surname, path, IDyear):
+    def checkstudent(self, Name, Surname, db_filename, IDyear):
         """
         This method must be used before the insertstudent() method to 
         test if there are existance profiles with same match by 
         name and surname.
         """
-        conn = sqlite3.connect('%s' % path)
+        conn = sqlite3.connect('%s' % db_filename)
         cursor = conn.cursor()
         
         ctrl = cursor.execute("SELECT * FROM Class WHERE (IDyear=?)", [IDyear])
@@ -91,41 +95,41 @@ class School_Class(object):
                             "\n\nWant you to save anyway?" % (
                             m[2],m[3],m[4],m[5],m[6],m[7],m[8]))
                 break
+                
         conn.close()
-        return self.error ,self.msg
+        return self.error, self.msg
     
     #-----------------------------------------------------------------------#
-    def insertstudent(self, Name, Surname, Phone, Address, BirthDate, 
-                      JoinDate, LevelCourse, path, IDyear):
+    def insertstudent(self, data, db_filename, IDyear):
         """
         Insert new student profile into Class table.
         """
-        db_filename = ('%s' % path)
         try:
             with sqlite3.connect(db_filename) as conn:
                 cursor = conn.cursor()
                 cursor.execute("""INSERT INTO Class 
-                               (IDyear, Name, Surname, Phone, Address,
-                               BirthDate, LevelCourse, JoinDate) 
-                               VALUES(?,?,?,?,?,?,?,?)
-                               """, [IDyear, Name, Surname, Phone, Address,
-                                     BirthDate, LevelCourse, JoinDate])
+                                  (IDyear, Name, Surname, Phone, Address,
+                                  BirthDate, JoinDate, LevelCourse) 
+                                  VALUES(?,?,?,?,?,?,?,?)
+                               """, [IDyear, data[0], data[1], data[2], 
+                                     data[3], data[4], data[5], data[6]])
         except Exception, err:
             self.error = True
             self.msg = ("DrumsT: Failed to insert student in Class table\n\n"
                         "ERROR: %s" % err)
             conn.rollback()
+            #raise # WARNING: use raise statement for debug only
             
         else:
             conn.commit()
 
         return self.error, self.msg
     #----------------------------------------------------------------------#
-    def lessons(self, lisT, path):
+    def lessons(self, lisT, db_filename):
         """
         Insert a new day lesson into Lesson table
         """
-        db_filename = ('%s' % path)
+        db_filename = ('%s' % db_filename)
         try:
             with sqlite3.connect(db_filename) as conn:
                 cursor = conn.cursor()
@@ -143,17 +147,18 @@ class School_Class(object):
             self.msg = ("DrumsT: Failed to add lesson in Lesson table\n\n"
                         "ERROR: %s" % err)
             conn.rollback()
+            #raise # WARNING: use raise statement for debug only
             
         else:
             conn.commit()
 
         return self.error, self.msg
     #----------------------------------------------------------------------#
-    def showInTable(self, IDclass, path):
+    def showInTable(self, IDclass, db_filename):
         """
         Show all student lessons by selecting IDclass
         """
-        conn = sqlite3.connect('%s' % (path))
+        conn = sqlite3.connect('%s' % (db_filename))
         cursor = conn.cursor()
 
         n = cursor.execute("""SELECT * FROM Lesson 
@@ -166,11 +171,11 @@ class School_Class(object):
         return lesson
         
     #-------------------------------------------------------------------------#
-    def displayclass(self, path, IDyear):
+    def displayclass(self, db_filename, IDyear):
         """
         Show all class items  by selecting school year
         """
-        conn = sqlite3.connect('%s' % (path))
+        conn = sqlite3.connect('%s' % (db_filename))
         cursor = conn.cursor()
 
         n = cursor.execute("""SELECT * FROM Class 
@@ -183,11 +188,11 @@ class School_Class(object):
         return student
 
     #----------------------------------------------------------------------#
-    def displayschool(self, path):
+    def displayschool(self, db_filename):
         """
         Show all school year by select in the combobox
         """
-        conn = sqlite3.connect('%s' % (path))
+        conn = sqlite3.connect('%s' % (db_filename))
         
         schools = []
         cursor = conn.execute("SELECT * from School")
@@ -199,18 +204,17 @@ class School_Class(object):
         return schools
 
     #----------------------------------------------------------------------#
-    def updateyear(self, path, year):
+    def updateyear(self, db_filename, year):
         """
         Insert new date in School if not still exist. If exist raise
         a exception RuntimeError. In all other cases, the exceptions 
         are always reported.
         """
-        db_filename = ('%s' % path)
         list_years = []
         try:
             with sqlite3.connect(db_filename) as conn:
                 cursor = conn.cursor()
-                # find a match error
+                # find a match error:
                 ctrl = cursor.execute("""SELECT * FROM School 
                                       WHERE IDyear=?""", [year])
                 for m in ctrl:
@@ -218,7 +222,7 @@ class School_Class(object):
                 if year in list_years:
                     raise RuntimeError('This school year already exist.')
                 else:
-                    # insert year in school
+                    # insert year in school:
                     cursor.execute("""INSERT INTO School (IDyear) 
                                    VALUES(?)""", [year])
         except Exception, err:
@@ -226,56 +230,89 @@ class School_Class(object):
             self.msg = ("DrumsT: Failed to add new school year\n\n"
                         "ERROR: %s" % err)
             conn.rollback()
+            #raise # WARNING: use raise statement for debug only
         else:
             conn.commit()
 
         return self.error, self.msg
+    
     #----------------------------------------------------------------------#
-    def change_class_item(self, Name, Surname, Phone, Address, BirthDate,
-                          JoinDate, LevelCourse, IDclass, path):
+    def change_class_item(self, data, IDclass, db_filename):
         """
         Updates existing records in the Class table
         """
-        conn = sqlite3.connect('%s' % path) # or use :memory: to put it in RAM
-        cursor = conn.cursor()
-        
-        cursor.execute("""UPDATE Class SET Name=?, Surname=?, Phone=?,
-                          Address=?, BirthDate=?, JoinDate=?, LevelCourse=?
-                          WHERE (IDclass=?)
-                       """, [Name,Surname,Phone,Address,BirthDate,
-                               JoinDate, LevelCourse, IDclass])
-        conn.commit()
-        conn.close()
-    #----------------------------------------------------------------------#
-    def change_lesson_items(self, lisT, path):
-        """
-        Updates existing records in the Lesson table
-        """
-        conn = sqlite3.connect('%s' % path) # or use :memory: to put it in RAM
-        cursor = conn.cursor()
+        try:
+            with sqlite3.connect(db_filename) as conn:
+                cursor = conn.cursor()
+                cursor.execute("""UPDATE Class SET 
+                                  Name=?, Surname=?, Phone=?, Address=?, 
+                                  BirthDate=?, JoinDate=?, LevelCourse=? 
+                                  WHERE (IDclass=?)
+                               """, [data[0], data[1], data[2], data[3],
+                                     data[4], data[5], data[6], IDclass])
+        except Exception, err:
+            self.error = True
+            self.msg = ("DrumsT: Failed to update student in Class table\n\n"
+                        "ERROR: %s" % err)
+            conn.rollback()
+            #raise # WARNING: use raise statement for debug only
+        else:
+            conn.commit()
 
-        cursor.execute("""UPDATE Lesson SET Attendance=?, Date=?, Reading=?,
-                          Setting=?, Rudiments=?, Coordination=?, Styles=?,
-                          Minusone=?, Other1=?, Other2=?, Other3=?, Votes=?, 
-                          Notes=? 
-                          WHERE (IDlesson=?)
-                       """, [lisT[2],lisT[3],lisT[4],lisT[5],lisT[6],lisT[7],
-                             lisT[8],lisT[9],lisT[10],lisT[11],lisT[12],
-                             lisT[13],lisT[14],lisT[0]])
-        conn.commit()
-        conn.close()
-        #----------------------------------------------------------------------#
-    def delete(self, IDclass, path):
+        return self.error, self.msg
+    
+    #----------------------------------------------------------------------#
+    def delete_profile(self, IDclass, db_filename):
         """
         cancella records già esistenti
         """
-        conn = sqlite3.connect('%s' % path) # or use :memory: to put it in RAM
-        cursor = conn.cursor()
-        
-        
-        cursor.execute("""DELETE FROM Class WHERE (IDclass=?)""", [IDclass])
-        cursor.execute("""DELETE FROM Lesson WHERE (IDclass=?)""", [IDclass])
-        
-        conn.commit()
-        conn.close()
+        try:
+            with sqlite3.connect(db_filename) as conn:
+                cursor = conn.cursor()
+                cursor.execute("""DELETE FROM Class 
+                                  WHERE (IDclass=?)""", [IDclass])
+                cursor.execute("""DELETE FROM Lesson 
+                                  WHERE (IDclass=?)""", [IDclass])
+        except Exception, err:
+            self.error = True
+            self.msg = ("DrumsT: Failed to delete student and its lesson "
+                        "in Class table and Lesson table\n\n"
+                        "ERROR: %s" % err)
+            conn.rollback()
+            #raise # WARNING: use raise statement for debug only
+        else:
+            conn.commit()
+
+        return self.error, self.msg
+    
     #----------------------------------------------------------------------#
+    def change_lesson_items(self, lisT, db_filename):
+        """
+        Updates existing records in the Lesson table
+        """
+        try:
+            with sqlite3.connect(db_filename) as conn:
+                cursor = conn.cursor()
+                cursor.execute("""UPDATE Lesson SET 
+                                  Attendance=?, Date=?, Reading=?, Setting=?, 
+                                  Rudiments=?, Coordination=?, Styles=?,
+                                  Minusone=?, Other1=?, Other2=?, Other3=?, 
+                                  Votes=?, Notes=? 
+                                  WHERE (IDlesson=?)
+                               """, [lisT[2], lisT[3], lisT[4], lisT[5], 
+                                     lisT[6], lisT[7], lisT[8], lisT[9], 
+                                     lisT[10], lisT[11], lisT[12], lisT[13], 
+                                     lisT[14], lisT[0]])
+        except Exception, err:
+            self.error = True
+            self.msg = ("DrumsT: Failed to update lesson in Lesson table\n\n"
+                        "ERROR: %s" % err)
+            conn.rollback()
+            #raise # WARNING: use raise statement for debug only
+        else:
+            conn.commit()
+
+        return self.error, self.msg
+
+        #----------------------------------------------------------------------#
+        

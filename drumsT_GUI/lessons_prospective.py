@@ -277,14 +277,19 @@ class PanelTwo(wx.Panel):
         """
         Allow to save changes in db (table Lesson) 
         """
-        self.editBtn.Disable()
-        self.rollbackBtn.Disable()
-        self.applyBtn.Disable()
-        
         for n, item in enumerate(self.newsEdit):# if empty str fill out with NONE str
             if item.strip() == '':
                 self.newsEdit[n] = 'NONE'
+                
         change = School_Class().change_lesson_items(self.newsEdit, self.path_db)
+        
+        if change[0]:
+            wx.MessageBox(change[1], 'Error', wx.ICON_ERROR, self)
+            return
+        
+        self.editBtn.Disable()
+        self.rollbackBtn.Disable()
+        self.applyBtn.Disable()
         self.rowEdit = None
         del self.newsEdit[:]
         del self.backUp[:]

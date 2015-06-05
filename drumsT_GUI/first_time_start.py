@@ -124,7 +124,9 @@ class FirstStart(wx.Dialog):
             return
     #-------------------------------------------------------------------#
     def import_now(self, event):
-        
+        """
+        Import one directory with saved db
+        """
         dialdir = wx.DirDialog(self, "Where is the 'DrumsT_DB' folder?")
         if dialdir.ShowModal() == wx.ID_OK:
             path = dialdir.GetPath()

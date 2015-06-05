@@ -15,11 +15,16 @@ from drumsT_SYS.SQLite_lib import School_Class
 
 class PanelOne(wx.Panel):
     """
-    Record lesson panel 
+    Shows the interface for data entry on the current lesson. 
+    When make a new day lesson is more comfortable to use this 
+    panel than using a grid (i think)
     """
     def __init__(self, parent, nameSur, IDclass, path_db):
         """
-        Shows the interface for data entry on the current lesson.
+        NOTE: 
+        you can only record a lesson time. when you save a lesson, 
+        to record a next sequence it is necessary to close 
+        this window, that is its parent (frame)
         """
         wx.Panel.__init__(self, parent, -1, style=wx.TAB_TRAVERSAL)
         self.currdate = None # current date
@@ -85,7 +90,7 @@ class PanelOne(wx.Panel):
         #### notebook 3
         #bookThree = wx.Panel(notebook, wx.ID_ANY) #NOTE for third notebook table
         btnExit = wx.Button(self, wx.ID_EXIT, (""))
-        self.btnOk = wx.Button(self, wx.ID_OK, (""))
+        self.btnApply = wx.Button(self, wx.ID_APPLY, (""))
 
         #---------------------------------------------- PROPERTIES
         self.datepk.SetMinSize((150, 24))
@@ -169,7 +174,7 @@ class PanelOne(wx.Panel):
         #### 
         sizBase.Add(sizTables, 1, wx.EXPAND, 0)
         sizBottom.Add(btnExit, 0, wx.ALIGN_LEFT | wx.ALL, 15)
-        sizBottom.Add(self.btnOk, 0, wx.ALIGN_RIGHT | wx.ALL, 15)
+        sizBottom.Add(self.btnApply, 0, wx.ALIGN_RIGHT | wx.ALL, 15)
         sizBase.Add(sizBottom, 1, wx.EXPAND, 0)#####
         self.SetSizer(sizBase)
         sizBase.Fit(self)
@@ -182,7 +187,7 @@ class PanelOne(wx.Panel):
         self.Bind(wx.EVT_DATE_CHANGED, self.onDate, self.datepk)
         self.Bind(wx.EVT_RADIOBOX, self.onAbsences, self.rdb)
         btnExit.Bind(wx.EVT_BUTTON, self.on_close)
-        self.Bind(wx.EVT_BUTTON, self.onOk, self.btnOk)
+        self.Bind(wx.EVT_BUTTON, self.onApply, self.btnApply)
         
     ######################## Events Handler
     #-----------------------------------------------------------------------#
@@ -226,9 +231,9 @@ class PanelOne(wx.Panel):
                 self.lab4.Disable(), self.lab5.Disable(), self.lab6.Disable() 
                 self.lab7.Disable(), self.lab8.Disable(), self.lab9.Disable()
     #-----------------------------------------------------------------------#
-    def onOk(self, event):
+    def onApply(self, event):
         """
-        
+        Save the lesson to db in Lesson table.
         """
         msg = ("Are you sure to record this lesson ?")
         warn = wx.MessageDialog(self, msg, "Question", wx.YES_NO | 
@@ -264,9 +269,9 @@ class PanelOne(wx.Panel):
         
         if lesson[0]:
             wx.MessageBox(lesson[1], 'ERROR', wx.ICON_ERROR, self)
-            self.btnOk.Disable()
+            self.btnApply.Disable()
             return
         
         wx.MessageBox("Successfull storing !", "Info", wx.OK, self)
         
-        self.btnOk.Disable()
+        self.btnApply.Disable()

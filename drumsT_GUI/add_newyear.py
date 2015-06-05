@@ -14,11 +14,10 @@ import wx
 
 class AddYear(wx.Dialog):
     """
-    Show a dialog window.
+    Show a dialog window for return new school year data
     """
     def __init__(self, parent, title):
         """
-        Mask dialog for add new school and school year
         """
         wx.Dialog.__init__(self, parent, -1, title, style=wx.DEFAULT_DIALOG_STYLE)
         

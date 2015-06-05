@@ -15,11 +15,11 @@ from drumsT_SYS.os_filesystem import urlify
 
 class AddSchool(wx.Dialog):
     """
-    Show a dialog window.
+    Show a dialog window for return new school and school year.
+    This dialog can be open even if still nothing imported db.
     """
     def __init__(self, parent, title):
         """
-        Mask dialog for add new school and school year
         """
         wx.Dialog.__init__(self, parent, -1, title, style=wx.DEFAULT_DIALOG_STYLE)
         

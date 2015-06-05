@@ -379,8 +379,11 @@ class MainFrame(wx.Frame):
             else:
                 return
             
-        add = School_Class().insertstudent(data[0],data[1],data[2],data[3],
-                          data[4],data[5],data[6],self.path_db, self.IDyear)
+        add = School_Class().insertstudent(data, self.path_db, self.IDyear)
+        if add[0]:
+            wx.MessageBox(add[1], 'Error', wx.ICON_ERROR, self)
+            return
+        
         wx.MessageBox("Successfull storing !", "Success", wx.OK, self)
 
         self.list_ctrl.DeleteAllItems() # clear all items in list_ctrl
@@ -420,11 +423,13 @@ class MainFrame(wx.Frame):
             else:
                 return
             
-        change = School_Class().change_class_item(data[0],data[1],data[2],
-                                                  data[3],data[4],data[5],
-                                                  data[6], self.IDprofile,
+        change = School_Class().change_class_item(data, self.IDprofile,
                                                   self.path_db
                                                   )
+        if change[0]:
+            wx.MessageBox(change[1], 'Error', wx.ICON_ERROR, self)
+            return
+        
         wx.MessageBox("Successfull storing !", "Success", wx.OK, self)
 
         self.list_ctrl.DeleteAllItems() # clear all items in list_ctrl
@@ -451,7 +456,11 @@ class MainFrame(wx.Frame):
         else:
             return
         
-        cancel = School_Class().delete(self.IDprofile, self.path_db)
+        cancel = School_Class().delete_profile(self.IDprofile, self.path_db)
+        if cancel[0]:
+            wx.MessageBox(cancel[1], 'Error', wx.ICON_ERROR, self)
+            return
+        
         wx.MessageBox("%s %s with ID class %s was deleted" %(self.name,
                       self.surname, self.IDprofile), "Success", wx.OK, self
                       )
@@ -571,7 +580,6 @@ class MainFrame(wx.Frame):
     def Info(self, event):
         """
         Display the program informations and developpers
-        
         """
         infoprg.info(self.drumsT_ico)
         
