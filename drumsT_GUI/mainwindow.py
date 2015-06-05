@@ -108,6 +108,7 @@ class MainFrame(wx.Frame):
         self.toolbar.EnableTool(wx.ID_FILE3, False)
         self.toolbar.EnableTool(wx.ID_FILE4, False)
         self.toolbar.EnableTool(wx.ID_FILE5, False)
+        self.addate.Enable(False)
         
         ####################  Set layout
 
@@ -143,6 +144,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.on_enter, self.list_ctrl)
         self.Bind(wx.EVT_BUTTON, self.open_school, import_btn)
         self.cmbx_year.Bind(wx.EVT_COMBOBOX, self.on_year)
+        self.Bind(wx.EVT_CLOSE, self.Exit)
         
         self.statusbar_msg("To use DrumsT, you must import a database "
                            "or create new schools location", yellow)
@@ -281,6 +283,7 @@ class MainFrame(wx.Frame):
                 self.toolbar.EnableTool(wx.ID_FILE4, False)
                 self.toolbar.EnableTool(wx.ID_FILE5, False)
             self.statusbar_msg('', None)
+            self.addate.Enable(True)# enable add new year menu
     #-------------------------------------------------------------------#
     def on_year(self, event): # combobox
         """
@@ -479,44 +482,38 @@ class MainFrame(wx.Frame):
 
         """
         menuBar = wx.MenuBar()
+        
+        #------------------- File
+        fileMenu = wx.Menu()
+        exitItem = fileMenu.Append(wx.ID_EXIT, "Exit", 
+                                   "Exit the application")
+        menuBar.Append(fileMenu, "&File")
 
-        #------------------- Strumenti
+        #------------------- Tools
         schoolButton = wx.Menu()
         
         addschool = schoolButton.Append(wx.ID_ANY, "Add new school", 
                                             "Create a new school location")
-        addate = schoolButton.Append(wx.ID_ANY, "Add new school year", 
+        schoolButton.AppendSeparator()
+        self.addate = schoolButton.Append(wx.ID_ANY, "Add new school year", 
                                            "Record a new school year to imported database")
         
-        menuBar.Append(schoolButton,"Schools")
-        
-        pupilsButton = wx.Menu()
-        addlesson = pupilsButton.Append(wx.ID_ANY, "Add new pupil", 
-                                       "Create a new record for school")
-        addmorepupil = pupilsButton.Append(wx.ID_ANY, "Add more one new pupil", 
-                                      "Create a new record for school")
-        modifypupil = pupilsButton.Append(wx.ID_ANY, "Modify data pupil", 
-                                       "Create a new record for school")
-        deletepupil = pupilsButton.Append(wx.ID_ANY, "Delete a pupil", 
-                                          "Create a new record for school")
-        
-        menuBar.Append(pupilsButton,"Alumns")
-        
-        ####------------------ help buton
+        menuBar.Append(schoolButton,"&Schools")
+
+        #------------------ help buton
         helpButton = wx.Menu()
         helpItem = helpButton.Append( wx.ID_HELP, "User Guide", "Program Guide")
         infoItem = helpButton.Append(wx.ID_ABOUT, "About DrumsT", "About the program")
-        menuBar.Append(helpButton,"Help")
+        menuBar.Append(helpButton,"&Help")
         
         # ...and set, finally .
         self.SetMenuBar(menuBar)
 
-
         #-----------------------Binding menu bar-------------------------#
         # menu tools
         self.Bind(wx.EVT_MENU, self.Addschool, addschool)
-        self.Bind(wx.EVT_MENU, self.Addate, addate)
-        self.Bind(wx.EVT_MENU, self.Addlesson, addlesson)
+        self.Bind(wx.EVT_MENU, self.Addate, self.addate)
+        self.Bind(wx.EVT_MENU, self.Exit, exitItem)
         #----HELP----
         #self.Bind(wx.EVT_MENU, self.Helpme, helpItem)
         self.Bind(wx.EVT_MENU, self.Info, infoItem)
@@ -572,9 +569,10 @@ class MainFrame(wx.Frame):
         self.cmbx_year.Append(data)
         
         
-    def Addlesson(self, event):
-        frame = lesson.InsertLesson(self)
-        frame.Show()
+    def Exit(self, event):
+        print 'exit'
+        self.Destroy()
+        
         
     #------------------------------------------------------------------#
     def Info(self, event):
@@ -582,5 +580,3 @@ class MainFrame(wx.Frame):
         Display the program informations and developpers
         """
         infoprg.info(self.drumsT_ico)
-        
-    #------------------------BUILD THE TOOL BAR--------------------------#
