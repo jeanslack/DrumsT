@@ -105,19 +105,17 @@ class FirstStart(wx.Dialog):
             if schools[0]:
                 wx.MessageBox(schools[1], 'ERROR', wx.ICON_ERROR, self)
                 return
-            
-            #students = Students_Id().first_start(path,data[0],data[1])
-            #if students[0]:
-                #wx.MessageBox(students[1], 'ERROR', wx.ICON_ERROR, self)
-                #return
-            
-            write_newpath(path) # writing drumsT.conf
-            
-            wx.MessageBox("A new drumsT rootdir has been created successfully in:"
-                          "\n\n%s/DrumsT_Databases\n\nYou must re-start the "
-                          "DrumsT application now.\n\nGood Work !" % path, 
-                          'Success !', wx.ICON_INFORMATION, self)
-            self.Destroy()
+
+            setPath = write_newpath(path) # writing drumsT.conf
+            if setPath[0]:
+                wx.MessageBox(setPath[1], 'ERROR', wx.ICON_ERROR, self)
+                return
+            else:
+                wx.MessageBox("A new drumsT rootdir has been created:"
+                              "\n\n%s\n\nYou must re-start the DrumsT "
+                              "application now.\n\nGood Work !" % path, 
+                              'Success !', wx.ICON_INFORMATION, self)
+                self.Destroy()
         else:
             wx.MessageBox("You could not set anything", 'Warning', 
                           wx.ICON_EXCLAMATION, self)
@@ -132,12 +130,16 @@ class FirstStart(wx.Dialog):
             path = dialdir.GetPath()
             dialdir.Destroy()
             
-            write_newpath(path)
-            wx.MessageBox("A database has been imported successfully in:"
-                          "\n\n%s\n\nYou must re-start the "
-                          "DrumsT application now.\n\nGood Work !" % path, 
-                          'Success !', wx.ICON_INFORMATION, self)
-            self.Destroy()
+            setPath = write_newpath(path) # writing drumsT.conf
+            if setPath[0]:
+                wx.MessageBox(setPath[1], 'ERROR', wx.ICON_ERROR, self)
+                return
+            else:
+                wx.MessageBox("A database has been imported successfully:"
+                              "\n\n%s\n\nYou must re-start the DrumsT "
+                              "application now.\n\nGood Work !" % path, 
+                              'Success !', wx.ICON_INFORMATION, self)
+                self.Destroy()
         else:
             wx.MessageBox("You could not set anything", 
                           'Warning', wx.ICON_EXCLAMATION, self)

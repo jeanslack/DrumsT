@@ -22,22 +22,34 @@ def write_newpath(path):
     This function is called when first time run or if 
     user change path-name for database
     """
-    F = open('%s/.drumsT/drumsT.conf' %(DIRNAME),'r').readlines()
-    data = F
-    F = open('%s/.drumsT/drumsT.conf' %(DIRNAME),'r').close()
-
-    for a in data:
-        if a.startswith('DATABASE_PATH_NAME='):
-            match = a
-    data = [w.replace(match, 'DATABASE_PATH_NAME=%s\n' % (path)) 
-            for w in data
-            ]
+    #err = False
+    msg = ("A new drumsT rootdir has been created:"
+           "\n\n%s\n\nYou must re-start the "
+           "DrumsT application now.\n\nGood Work !" % path)
+    try:
+        F = open('%s/.drumsT/drumsT.conf' %(DIRNAME),'r').readlines()
+    except IOError as error:
+        #raise # WARNING: use raise statement for debug only
+        print error
+        #err = True
+        msg = ("DrumsT: Failed to write drumsT.conf:\n\n"
+               "ERROR: %s" % error)
+        return True, msg
+    else:
+        data = F
+        for a in data:
+            if a.startswith('DATABASE_PATH_NAME='):
+                match = a
+                data = [w.replace(match, 'DATABASE_PATH_NAME=%s\n' % (path)) 
+                        for w in data
+                        ]
+    finally:
+        F = open('%s/.drumsT/drumsT.conf' %(DIRNAME),'r').close()
     
-    F = open('%s/.drumsT/drumsT.conf' %(DIRNAME),'w')
-    for i in data:
-        overwrite = F.write('%s' % i)
-
-    F.close()
+    with open('%s/.drumsT/drumsT.conf' %(DIRNAME),'w') as Fw:
+        for i in data:
+            overwrite = Fw.write('%s' % i)
+    return False, msg
 #--------------------------------------------------------------------------#
 def create_rootdir(path,name):
     """
@@ -45,17 +57,21 @@ def create_rootdir(path,name):
     or when create another school
     """
     err = False
-    exc = None
+    msg = None
+    if os.path.exists('%s' % path):
+        err = True
+        msg = ("DrumsT: Already exist : %s" % path)
+        return err, msg
     try:
         os.makedirs('%s/%s' % (path,name))
-        
+
     except OSError as error:
         err = True
-        exc = ("DrumsT: Failed to make database root dir\n\nOSError: %s" % error)
+        msg = ("DrumsT: Failed to make database root dir\n\nOSError: %s" % error)
         print error
         
-    return err, exc
-
+    return err, msg
+#--------------------------------------------------------------------------#
 def urlify(string):
     """
     Convert any string with white spaces, tabs, digits, question marks,  
