@@ -15,13 +15,15 @@ from drumsT_SYS.boot import control_config, parser_fileconf, rootdirControl
 
 class DrumsTeacher(wx.App):
     """
-    This is a bootstrap interface
+    This is a bootstrap interface that is needed to do 
+    application initialization to ensure that the system, 
+    toolkit and wxWidgets are fully initialized.
     """
-    def OnInit(self):
+    def __init__(self):
         """
-        Main initilize ctrl
+        Creating attributes that will be used after in other class
+        with GetApp()
         """
-        #----------------------Main assignements------------------------#
         ctrl = control_config() #system control
         self.drumsT_icon = ctrl[0]
         self.openStudent_icon = ctrl[1]
@@ -30,11 +32,18 @@ class DrumsTeacher(wx.App):
         self.delStudent_icon = ctrl[4]
         self.OS = ctrl[5]
         self.main_path = ctrl[6]
-        copyerr = ctrl[7]
+        self.copyerr = ctrl[7]
         self.tab_icon = ctrl[8]
         self.lesson_icon = ctrl[9]
+        wx.App.__init__(self) # Call the base class constructor
         
-        if copyerr: # if source dir is corrupt
+    def OnInit(self):
+        """
+        Determine if everything works: return True
+        or if something is wrong: return False
+        """
+        
+        if self.copyerr: # if source dir is corrupt
             message = ("Can not find the configuration file. "
                        "Please, reinstall the drumsT application")
             print "DrumsT: Fatal Error, %s" % message
@@ -91,5 +100,5 @@ class DrumsTeacher(wx.App):
         
     
 if __name__ == "__main__":
-    app = DrumsTeacher(False)
+    app = DrumsTeacher()
     app.MainLoop()
