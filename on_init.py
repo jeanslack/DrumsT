@@ -19,11 +19,12 @@ class DrumsTeacher(wx.App):
     application initialization to ensure that the system, 
     toolkit and wxWidgets are fully initialized.
     """
-    def __init__(self):
+    def __init__(self, redirect=True, filename=None):
         """
         Creating attributes that will be used after in other class
         with GetApp()
         """
+        print "App __init__"
         ctrl = control_config() #system control
         self.drumsT_icon = ctrl[0]
         self.openStudent_icon = ctrl[1]
@@ -35,7 +36,7 @@ class DrumsTeacher(wx.App):
         self.copyerr = ctrl[7]
         self.tab_icon = ctrl[8]
         self.lesson_icon = ctrl[9]
-        wx.App.__init__(self) # Call the base class constructor
+        wx.App.__init__(self, redirect, filename) # Call the base class constructor
         
     def OnInit(self):
         """
@@ -97,8 +98,12 @@ class DrumsTeacher(wx.App):
         main_frame.Show()
         self.SetTopWindow(main_frame)
         return True
+    
+    def OnExit(self):
+        print "OnExit"
         
     
 if __name__ == "__main__":
-    app = DrumsTeacher()
-    app.MainLoop()
+    app = DrumsTeacher(redirect=True)
+    fred = app.MainLoop()
+    print "after MainLoop", fred
