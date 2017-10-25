@@ -1,0 +1,7 @@
++------------------------------------+
+Oct 25, 2017  V.0.2.0
++------------------------------------+
+- I seem to have solved some compatibility issues with wxPython 3.?.?
+
+- solved problem with the "add new school and date" creation window: forbidden 
+  to overwrite the database directory, a fake problem! :-)

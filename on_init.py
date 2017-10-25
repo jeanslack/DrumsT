@@ -104,6 +104,16 @@ class DrumsTeacher(wx.App):
         
     
 if __name__ == "__main__":
-    app = DrumsTeacher(redirect=True)
+    """
+    redirect standard out to a separate window:
+        app = DrumsTeacher(redirect=True)
+    redirect standard out to a terminal:
+        app = DrumsTeacher(False)
+    If () is empty default is redirect=True:
+        app = DrumsTeacher()
+    If None is same at True:
+        app = DrumsTeacher(None)
+    """
+    app = DrumsTeacher(False)
     fred = app.MainLoop()
     print "after MainLoop", fred

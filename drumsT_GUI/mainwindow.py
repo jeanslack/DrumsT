@@ -65,7 +65,7 @@ class MainFrame(wx.Frame):
         panel = wx.Panel(self, wx.ID_ANY)
         self.tool_bar()
         self.menu_bar()
-        self.sb = self.CreateStatusBar(0)
+        self.sb = self.CreateStatusBar(1)
         import_btn = wx.Button(panel, wx.ID_ANY, ("Import"))
         self.cmbx_year = wx.ComboBox(panel,wx.ID_ANY, choices=['not selected'],
                                      style=wx.CB_DROPDOWN | wx.CB_READONLY

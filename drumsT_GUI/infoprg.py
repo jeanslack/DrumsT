@@ -43,11 +43,11 @@ def info(drumsT_icon):
         
         info.SetName('DrumsT')
         
-        info.SetVersion(' v0.1.0')
+        info.SetVersion(' v0.2.0')
         
         info.SetDescription(description)
         
-        info.SetCopyright(u'(C) 2015-2016 Gianluca Pernigotto (aka jeanslack)')
+        info.SetCopyright(u'(C) 2015-2017 Gianluca Pernigotto (aka jeanslack)')
         
         info.SetWebSite(u'https://github.com/jeanslack/DrumsT')
         

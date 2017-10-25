@@ -47,7 +47,7 @@ class Lesson(wx.Frame):
         self.panel_two = PanelTwo(self, self.nameSur, self.IDclass, self.path_db)
         self.panel_two.Hide()
         ################### layout
-        self.sizer = wx.FlexGridSizer(1, 1, 0, 0)
+        self.sizer = wx.FlexGridSizer()
         self.sizer.Add(self.panel_one, 1, wx.EXPAND|wx.ALL, 10)
         self.sizer.Add(self.panel_two, 1, wx.EXPAND|wx.ALL, 10)
         self.sizer.AddGrowableRow(0)

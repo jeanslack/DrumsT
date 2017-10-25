@@ -58,7 +58,8 @@ def create_rootdir(path,name):
     """
     err = False
     msg = None
-    if os.path.exists('%s' % path):
+    #if os.path.exists('%s' % path):
+    if os.path.exists('%s/%s' % (path,name)):
         err = True
         msg = ("DrumsT: Already exist : %s" % path)
         return err, msg
