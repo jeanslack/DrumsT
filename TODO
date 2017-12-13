@@ -1,14 +1,18 @@
 
+--------------------------------------------------------------------
+leggend: (?) not in working, (*) Needed soon, (DONE) already working
+--------------------------------------------------------------------
+
 - create lessons calendar
 
-- create a notes/reminder for any school
+- create a notes/reminder for any school (*)
 
-- create a back-up function with restore mode for databases
+- create a back-up function with restore mode for databases (*)
 
 - function PDF or HTML printing of all lessons of a one student
 
 - must improve management python exceptions on SQLite_lib.py (DONE)
-        
+
 - create beautiful icons (?)
 
 - management traslates (?)

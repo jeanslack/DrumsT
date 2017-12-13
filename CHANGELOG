@@ -1,5 +1,12 @@
 +------------------------------------+
-Oct 25, 2017  V.0.2.0
+Dec 13, 2017  V.0.2.1 Alpha release
++------------------------------------+
+- Add separate info module for set informations
+
+- update readme.md
+
++------------------------------------+
+Oct 25, 2017  V.0.2.0 Alpha release
 +------------------------------------+
 - I seem to have solved some compatibility issues with wxPython 3.?.?
 

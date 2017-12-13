@@ -44,7 +44,6 @@ WxPython >= 2.8
 
 - Databases can be imported on future drums installations
 
-- The lesson tables are pre-formatted with the following cells:
-
-ID class, Attendances, Lesson Date, Chart Reading, Hands/foots Setting, Rudiments, 
-Coordination, Styles, Minus One, Other-1, Other-2, Other-3, Votes, Note/Reminder.
+- The lesson tables are pre-formatted with the following cells: Attendances, 
+  Lesson Date, Chart Reading, Hands/foots Setting, Rudiments, Coordination, 
+  Styles, Minus One, Votes and Note/Reminder.
