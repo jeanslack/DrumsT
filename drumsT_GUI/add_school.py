@@ -5,7 +5,7 @@
 # Name: add_school.py
 # Porpose: Add new school and school year
 # Author: Gianluca Pernigoto <jeanlucperni@gmail.com>
-# Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
+# Copyright: Gianluca Pernigoto <jeanlucperni@gmail.com>
 # license: GPL3
 # Rev (00) 17/05/2015
 #########################################################

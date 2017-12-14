@@ -5,9 +5,9 @@
 # Name: add_lesson.py
 # Porpose: Add a new lesson recording
 # Author: Gianluca Pernigoto <jeanlucperni@gmail.com>
-# Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
+# Copyright: Gianluca Pernigoto <jeanlucperni@gmail.com>
 # license: GNU GENERAL PUBLIC LICENSE (see LICENSE)
-# Rev (00) 28/05/2015
+# Rev (00) 28/05/2015 - 14/12/2017
 #########################################################
 
 import wx
@@ -148,12 +148,7 @@ class PanelOne(wx.Panel):
         sizBookOne.Add(self.txt8, 0, wx.ALIGN_CENTER, 0)
         sizBookOne.Add(self.txt9, 0, wx.ALIGN_CENTER|wx.RIGHT, 5)
         bookOne.SetSizer(sizBookOne)
-        sizBookOne.AddGrowableRow(0)
-        sizBookOne.AddGrowableRow(1)
-        sizBookOne.AddGrowableRow(2)
-        sizBookOne.AddGrowableRow(3)
-        sizBookOne.AddGrowableRow(4)
-        sizBookOne.AddGrowableRow(5)
+        [sizBookOne.AddGrowableRow(a) for a in range(0,6)]# list comprehension
         sizBookOne.AddGrowableCol(1)
         #### Set second table of notebook
         sizBookTwo.Add(self.lab10, 0, wx.ALL, 5)
@@ -205,31 +200,26 @@ class PanelOne(wx.Panel):
         Disable() methods i have not been able (or I did not want) 
         to find better solution that self.switch
         """
+        #14/12/2017 Ho aggiunto le list comprehension per ridurre 
+        #le linee fisiche di codice
+        txt = [self.txt1, self.txt2, self.txt3, self.txt4, self.txt5, self.txt6,
+               self.txt7, self.txt8, self.txt9 ]
+        lab = [self.lab1, self.lab2, self.lab3, self.lab4, self.lab5, self.lab6,
+               self.lab7, self.lab8, self.lab9 ]
+        
         if self.rdb.GetSelection() == 0:
             if self.switch:
                 self.switch = False
-                self.txt1.Enable(), self.txt2.Enable(), self.txt3.Enable()
-                self.txt4.Enable(), self.txt5.Enable(), self.txt6.Enable() 
-                self.txt7.Enable(), self.txt8.Enable(), self.txt9.Enable()
-                self.lab1.Enable(), self.lab2.Enable(), self.lab3.Enable()
-                self.lab4.Enable(), self.lab5.Enable(), self.lab6.Enable() 
-                self.lab7.Enable(), self.lab8.Enable(), self.lab9.Enable()
+                [a.Enable() for a in txt]# da 1 a 9
+                [a.Enable() for a in lab]# da 1 a 9
 
         elif self.rdb.GetSelection() == 1 or self.rdb.GetSelection() == 2:
             if not self.switch:
                 self.switch = True
-                self.txt1.SetValue(''), self.txt2.SetValue('')
-                self.txt3.SetValue(''), self.txt4.SetValue('')
-                self.txt5.SetValue(''), self.txt6.SetValue('')
-                self.txt7.SetValue(''), self.txt8.SetValue('')
-                self.txt9.SetValue('')
-                self.txt1.Disable(), self.txt2.Disable(), self.txt3.Disable()
-                self.txt4.Disable(), self.txt5.Disable(), self.txt6.Disable() 
-                self.txt7.Disable(), self.txt8.Disable(), self.txt9.Disable()
+                [a.SetValue('') for a in txt]# da 1 a 9
+                [a.Disable() for a in txt]# da 1 a 9
+                [a.Disable() for a in lab]# da 1 a 9
                 
-                self.lab1.Disable(), self.lab2.Disable(), self.lab3.Disable()
-                self.lab4.Disable(), self.lab5.Disable(), self.lab6.Disable() 
-                self.lab7.Disable(), self.lab8.Disable(), self.lab9.Disable()
     #-----------------------------------------------------------------------#
     def onApply(self, event):
         """

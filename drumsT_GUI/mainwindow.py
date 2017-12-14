@@ -5,9 +5,9 @@
 # Name: mainwindow.py
 # Porpose: main_frame
 # Author: Gianluca Pernigoto <jeanlucperni@gmail.com>
-# Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
+# Copyright: Gianluca Pernigoto <jeanlucperni@gmail.com>
 # license: GNU GENERAL PUBLIC LICENSE (see LICENSE)
-# Rev (00) 15/05/2015
+# Rev (00) 15/05/2015 - 14/12/2017
 #########################################################
 #
 import wx
@@ -82,17 +82,17 @@ class MainFrame(wx.Frame):
         icon.CopyFromBitmap(wx.Bitmap(self.drumsT_ico, wx.BITMAP_TYPE_ANY))
         self.SetIcon(icon)
         self.SetSize((1100, 600))
-        import_btn.SetMinSize((180, 20))
+        import_btn.SetMinSize((180, 25))
         import_btn.SetBackgroundColour(greenlight)
         self.cmbx_year.SetSelection(0)
         self.cmbx_year.Disable()
-        self.import_txt.SetMinSize((270, 20))
+        self.import_txt.SetMinSize((270, 25))
         self.import_txt.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
         self.import_txt.SetForegroundColour(greendeph)
         self.import_txt.Disable()
         self.list_ctrl.SetToolTipString("Double click or type enter or push "
                                         "'Open lesson in selection' to open "
-                                        "a individual profile")
+                                        "a individual profile displayed in list")
         
         self.list_ctrl.InsertColumn(0, 'ID', width=30)
         self.list_ctrl.InsertColumn(1, 'School Year', width=100)

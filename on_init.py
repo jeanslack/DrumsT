@@ -37,38 +37,37 @@ class DrumsTeacher(wx.App):
         self.tab_icon = ctrl[8]
         self.lesson_icon = ctrl[9]
         wx.App.__init__(self, redirect, filename) # Call the base class constructor
-        
+
     def OnInit(self):
         """
-        Determine if everything works: return True
-        or if something is wrong: return False
+        Return True if everything works.
+        Return False if something is wrong.
         """
-        
         if self.copyerr: # if source dir is corrupt
             message = ("Can not find the configuration file. "
                        "Please, reinstall the drumsT application")
             print "DrumsT: Fatal Error, %s" % message
             wx.MessageBox(message, 'drumsT: Fatal Error', wx.ICON_STOP)
             return False
-        
+
         #---------------------Parsing file-conf-------------------------#
         conf = parser_fileconf() #parsing drumsT.conf
         self.rootdir = conf
-        
+
         if self.rootdir == 'empty': # not set
             self.reprise()
             return True
-        
+
         elif self.rootdir == 'error': # is corrupt
             message = ("The configuration file is wrong. "
                        "Please, reinstall the drumsT application")
             print "DrumsT: Fatal Error, %s" % message
             wx.MessageBox(message, 'DrumsT: Fatal Error', wx.ICON_STOP)
             return False
-        
+
         #--------------------Check paths--------------------------------#
         ret = rootdirControl(self.rootdir) #control existing 
-        
+
         if not ret:
             message = ("The root directory for saving databases no longer\n"
                        "exists.\n\n"
@@ -91,8 +90,12 @@ class DrumsTeacher(wx.App):
             main_frame.Show()
             self.SetTopWindow(main_frame)
             return True
-        
-    def reprise(self): # start a temporary dialog
+
+    def reprise(self):
+        """
+        Start a temporary dialog: this is showing during first time 
+        start the DrumsT application.
+        """
         from drumsT_GUI.first_time_start import FirstStart
         main_frame = FirstStart(self.drumsT_icon)
         main_frame.Show()

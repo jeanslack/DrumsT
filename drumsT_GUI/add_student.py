@@ -5,7 +5,7 @@
 # Name: add_student.py
 # Porpose: students profile storing dialog
 # Author: Gianluca Pernigoto <jeanlucperni@gmail.com>
-# Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
+# Copyright: Gianluca Pernigoto <jeanlucperni@gmail.com>
 # license: GPL3
 # Rev (00) 16/05/2015
 #########################################################

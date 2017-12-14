@@ -5,7 +5,7 @@
 # Name: lesson_prospective.py
 # Porpose: Show data of all lessons of a one student
 # Author: Gianluca Pernigoto <jeanlucperni@gmail.com>
-# Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
+# Copyright: Gianluca Pernigoto <jeanlucperni@gmail.com>
 # license: GNU GENERAL PUBLIC LICENSE (see LICENSE)
 # Rev (00) 28/05/2015
 #########################################################
@@ -249,7 +249,7 @@ class PanelTwo(wx.Panel):
             self.rollbackBtn.Enable()
             self.applyBtn.Enable()
         else:
-            msg = ("Before to edit cells in others rows you must\n"
+            msg = ("Before to edit cells in others rows, you must\n"
                    "push  'Apply Commit' button for render changes\n"
                    "into the edited columns selected in gray.\n\n"
                    "Instead, if you want to remove any change push\n"

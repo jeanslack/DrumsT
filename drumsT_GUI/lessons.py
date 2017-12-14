@@ -5,7 +5,7 @@
 # Name: lessons.py
 # Porpose: Frame content for panels of lessons record
 # Author: Gianluca Pernigoto <jeanlucperni@gmail.com>
-# Copyright: (c) 2015 Gianluca Pernigoto <jeanlucperni@gmail.com>
+# Copyright: Gianluca Pernigoto <jeanlucperni@gmail.com>
 # license: GNU GENERAL PUBLIC LICENSE (see LICENSE)
 # Rev (00) 28/05/2015
 #########################################################
