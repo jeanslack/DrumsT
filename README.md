@@ -2,19 +2,20 @@
 DrumsT
 ====
 
-Management program for Drums teachers
+Management program for Drums teachers (with wxPython Graphic interface)
 
 ## Description
 
 DrumsT is a management school application designed for drums teachers. 
-It can handle independently multiple school locations and more school years.
+It can handle independently multiple school locations with an unlimited 
+number of students.
 It is used to store data lists of students and manage the lessons of each 
 student who learns the art of drumming.
 DrumsT is open-source and cross-platform; it works on Windows, Linux and MacOsx.
 
 ## License and Copyright
 
-Copyright © 2010 - 2017 Gianluca Pernigotto   
+Copyright © 2010 - 2018 Gianluca Pernigotto   
 Author and Developer: Gianluca Pernigotto   
 Mail: <jeanlucperni@gmail.com>   
 License: GPL3 (see LICENSE file in the docs folder)
@@ -34,7 +35,7 @@ WxPython >= 2.8
 
 ## Features
 
-- Creating school locations with school years
+- Creating school locations with chronology
 
 - Storing students profile data
 
@@ -42,7 +43,7 @@ WxPython >= 2.8
 
 - Notes, votes and others small features
 
-- Databases can be imported on future drums installations
+- Databases can be imported on future drumsT installations
 
 - The lesson tables are pre-formatted with the following cells: Attendances, 
   Lesson Date, Chart Reading, Hands/foots Setting, Rudiments, Coordination, 
