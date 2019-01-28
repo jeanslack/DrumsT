@@ -17,9 +17,9 @@ def prg_info():
     """
     Release_Name = 'DrumsT'
     Program_Name = 'drumsT'
-    Version = ' v0.2.1'
+    Version = ' v0.2.2a2'
     Release = 'Alpha'
-    Copyright = u'© 2013-2017'
+    Copyright = u'© 2013-2019'
     Website = 'https://github.com/jeanslack/DrumsT'
     Author = 'Gianluca Pernigotto (aka jeanslack)'
     Mail = '<jeanlucperni@gmail.com>'

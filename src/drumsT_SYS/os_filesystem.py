@@ -30,7 +30,7 @@ def write_newpath(path):
         F = open('%s/.drumsT/drumsT.conf' %(DIRNAME),'r').readlines()
     except IOError as error:
         #raise # WARNING: use raise statement for debug only
-        print error
+        print (error)
         #err = True
         msg = ("DrumsT: Failed to write drumsT.conf:\n\n"
                "ERROR: %s" % error)
@@ -69,7 +69,7 @@ def create_rootdir(path,name):
     except OSError as error:
         err = True
         msg = ("DrumsT: Failed to make database root dir\n\nOSError: %s" % error)
-        print error
+        print (error)
         
     return err, msg
 #--------------------------------------------------------------------------#

@@ -11,7 +11,7 @@
 #########################################################
 
 import wx
-from drumsT_SYS.os_filesystem import urlify
+from src.drumsT_SYS.os_filesystem import urlify
 
 class AddSchool(wx.Dialog):
     """

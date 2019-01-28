@@ -54,7 +54,7 @@ def control_config():
     Assignment path where there is videomass.conf
     This depends if portable mode or installable mode:
     """
-    if os.path.exists('%s/drumsT_GUI' % (PWD)) or sys.platform.startswith('darwin'):
+    if os.path.exists('%s/src' % (PWD)) or sys.platform.startswith('darwin'):
         """
         This paths are for portable mode in ?NIX Systems
         """

@@ -11,8 +11,8 @@
 #########################################################
 
 import wx
-from add_lesson import PanelOne
-from lessons_prospective import PanelTwo
+from src.drumsT_GUI.add_lesson import PanelOne
+from src.drumsT_GUI.lessons_prospective import PanelTwo
 
 class Lesson(wx.Frame):
     """

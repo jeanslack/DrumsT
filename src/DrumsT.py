@@ -11,7 +11,7 @@
 #########################################################
 #
 import wx
-from drumsT_SYS.boot import control_config, parser_fileconf, rootdirControl
+from src.drumsT_SYS.boot import control_config, parser_fileconf, rootdirControl
 
 class DrumsTeacher(wx.App):
     """
@@ -24,7 +24,7 @@ class DrumsTeacher(wx.App):
         Creating attributes that will be used after in other class
         with GetApp()
         """
-        print "App __init__"
+        print ("App __init__")
         ctrl = control_config() #system control
         self.drumsT_icon = ctrl[0]
         self.openStudent_icon = ctrl[1]
@@ -46,7 +46,7 @@ class DrumsTeacher(wx.App):
         if self.copyerr: # if source dir is corrupt
             message = ("Can not find the configuration file. "
                        "Please, reinstall the drumsT application")
-            print "DrumsT: Fatal Error, %s" % message
+            print ("DrumsT: Fatal Error, %s" % message)
             wx.MessageBox(message, 'drumsT: Fatal Error', wx.ICON_STOP)
             return False
 
@@ -61,7 +61,7 @@ class DrumsTeacher(wx.App):
         elif self.rootdir == 'error': # is corrupt
             message = ("The configuration file is wrong. "
                        "Please, reinstall the drumsT application")
-            print "DrumsT: Fatal Error, %s" % message
+            print ("DrumsT: Fatal Error, %s" % message)
             wx.MessageBox(message, 'DrumsT: Fatal Error', wx.ICON_STOP)
             return False
 
@@ -85,7 +85,7 @@ class DrumsTeacher(wx.App):
                 return False
        #-----------------------------------------------------------------#
         else: # run main frame
-            from drumsT_GUI.mainwindow import MainFrame
+            from src.drumsT_GUI.mainwindow import MainFrame
             main_frame = MainFrame()
             main_frame.Show()
             self.SetTopWindow(main_frame)
@@ -96,17 +96,18 @@ class DrumsTeacher(wx.App):
         Start a temporary dialog: this is showing during first time 
         start the DrumsT application.
         """
-        from drumsT_GUI.first_time_start import FirstStart
+        from src.drumsT_GUI.first_time_start import FirstStart
         main_frame = FirstStart(self.drumsT_icon)
         main_frame.Show()
         self.SetTopWindow(main_frame)
         return True
     
     def OnExit(self):
-        print "OnExit"
+        print ("OnExit")
+        return True
         
     
-if __name__ == "__main__":
+def main():
     """
     redirect standard out to a separate window:
         app = DrumsTeacher(redirect=True)
@@ -119,4 +120,4 @@ if __name__ == "__main__":
     """
     app = DrumsTeacher(False)
     fred = app.MainLoop()
-    print "after MainLoop", fred
+    print ("after MainLoop", fred)

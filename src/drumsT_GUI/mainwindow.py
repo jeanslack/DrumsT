@@ -11,9 +11,13 @@
 #########################################################
 #
 import wx
-import add_student, add_school, add_newyear, lessons, infoprg
-from drumsT_SYS.os_filesystem import create_rootdir
-from drumsT_SYS.SQLite_lib import School_Class
+from src.drumsT_GUI import add_student
+from src.drumsT_GUI import add_school
+from src.drumsT_GUI import add_newyear
+from src.drumsT_GUI import lessons
+from src.drumsT_GUI import infoprg
+from src.drumsT_SYS.os_filesystem import create_rootdir
+from src.drumsT_SYS.SQLite_lib import School_Class
 
 ## COLORS:
 azure = '#d9ffff' # rgb form (wx.Colour(217,255,255))
@@ -78,7 +82,7 @@ class MainFrame(wx.Frame):
                                      )
         #################### Properties
         self.SetTitle(("Management School of Drums Course - DrumsT"))
-        icon = wx.EmptyIcon()
+        icon = wx.Icon()
         icon.CopyFromBitmap(wx.Bitmap(self.drumsT_ico, wx.BITMAP_TYPE_ANY))
         self.SetIcon(icon)
         self.SetSize((1100, 600))
@@ -90,9 +94,9 @@ class MainFrame(wx.Frame):
         self.import_txt.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
         self.import_txt.SetForegroundColour(greendeph)
         self.import_txt.Disable()
-        self.list_ctrl.SetToolTipString("Double click or type enter or push "
-                                        "'Open lesson in selection' to open "
-                                        "a individual profile displayed in list")
+        self.list_ctrl.SetToolTip("Double click or type enter or push "
+                                  "'Open lesson in selection' to open "
+                                  "a individual profile displayed in list")
         
         self.list_ctrl.InsertColumn(0, 'ID', width=30)
         self.list_ctrl.InsertColumn(1, 'School Year', width=100)
@@ -316,22 +320,22 @@ class MainFrame(wx.Frame):
         self.toolbar.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
 
         # ------- See student data
-        pupil = self.toolbar.AddLabelTool(wx.ID_FILE2, 'Open lesson in selection',
+        pupil = self.toolbar.AddTool(wx.ID_FILE2, 'Open lesson in selection',
                                           wx.Bitmap(self.openStudent_ico))
         self.toolbar.AddSeparator()
         
         # ------- Add new student
-        addpupil = self.toolbar.AddLabelTool(wx.ID_FILE3, 'Add New Student', 
+        addpupil = self.toolbar.AddTool(wx.ID_FILE3, 'Add New Student', 
                                                wx.Bitmap(self.addStudent_ico))
         self.toolbar.AddSeparator()
         
         # ------- Modify student data
-        modifypupil = self.toolbar.AddLabelTool(wx.ID_FILE4, 'data change student', 
+        modifypupil = self.toolbar.AddTool(wx.ID_FILE4, 'data change student', 
                                              wx.Bitmap(self.changeStudent_ico))
         self.toolbar.AddSeparator()
         
         # ------- DSelete tudent
-        deletepupil = self.toolbar.AddLabelTool(wx.ID_FILE5, 'data delete student', 
+        deletepupil = self.toolbar.AddTool(wx.ID_FILE5, 'data delete student', 
                                              wx.Bitmap(self.delStudent_ico))
         self.toolbar.AddSeparator()
         
@@ -496,14 +500,18 @@ class MainFrame(wx.Frame):
                                             "Create a new school location")
         schoolButton.AppendSeparator()
         self.addate = schoolButton.Append(wx.ID_ANY, "Add new school year", 
-                                           "Record a new school year to imported database")
+                            "Record a new school year to imported database")
         
         menuBar.Append(schoolButton,"&Schools")
 
         #------------------ help buton
         helpButton = wx.Menu()
-        helpItem = helpButton.Append( wx.ID_HELP, "User Guide", "Program Guide")
-        infoItem = helpButton.Append(wx.ID_ABOUT, "About DrumsT", "About the program")
+        helpItem = helpButton.Append( wx.ID_HELP, "User Guide", 
+                                                  "Program Guide"
+                                     )
+        infoItem = helpButton.Append(wx.ID_ABOUT, "About DrumsT", 
+                                                  "About the program"
+                                    )
         menuBar.Append(helpButton,"&Help")
         
         # ...and set, finally .
@@ -570,7 +578,7 @@ class MainFrame(wx.Frame):
         
         
     def Exit(self, event):
-        print 'exit'
+        print ('exit')
         self.Destroy()
         
         

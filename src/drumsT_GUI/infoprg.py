@@ -13,7 +13,7 @@
 #########################################################
 
 import wx
-from drumsT_DATA.data_info import prg_info
+from src.drumsT_DATA.data_info import prg_info
 
 info_rls = prg_info()# calling
 #-----------------#

@@ -11,7 +11,7 @@
 #########################################################
 
 import wx
-from drumsT_SYS.SQLite_lib import School_Class
+from src.drumsT_SYS.SQLite_lib import School_Class
 
 class PanelOne(wx.Panel):
     """

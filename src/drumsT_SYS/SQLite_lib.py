@@ -65,7 +65,7 @@ class School_Class(object):
                                Other1 TEXT, Other2 TEXT, Other3 TEXT,
                                Votes TEXT, Notes TEXT)
                                """)
-        except Exception, err:
+        except Exception as err:
             self.error = True
             self.msg = ("DrumsT: Failed to create new database\n\n"
                         "ERROR: %s" % err)
@@ -113,7 +113,7 @@ class School_Class(object):
                                   VALUES(?,?,?,?,?,?,?,?)
                                """, [IDyear, data[0], data[1], data[2], 
                                      data[3], data[4], data[5], data[6]])
-        except Exception, err:
+        except Exception as err:
             self.error = True
             self.msg = ("DrumsT: Failed to insert student in Class table\n\n"
                         "ERROR: %s" % err)
@@ -142,7 +142,7 @@ class School_Class(object):
                                     lisT[5],lisT[6],lisT[7],lisT[8],lisT[9],
                                     lisT[10],lisT[11],lisT[12],lisT[13]])
         
-        except Exception, err:
+        except Exception as err:
             self.error = True
             self.msg = ("DrumsT: Failed to add lesson in Lesson table\n\n"
                         "ERROR: %s" % err)
@@ -225,7 +225,7 @@ class School_Class(object):
                     # insert year in school:
                     cursor.execute("""INSERT INTO School (IDyear) 
                                    VALUES(?)""", [year])
-        except Exception, err:
+        except Exception as err:
             self.error = True
             self.msg = ("DrumsT: Failed to add new school year\n\n"
                         "ERROR: %s" % err)
@@ -250,7 +250,7 @@ class School_Class(object):
                                   WHERE (IDclass=?)
                                """, [data[0], data[1], data[2], data[3],
                                      data[4], data[5], data[6], IDclass])
-        except Exception, err:
+        except Exception as err:
             self.error = True
             self.msg = ("DrumsT: Failed to update student in Class table\n\n"
                         "ERROR: %s" % err)
@@ -273,7 +273,7 @@ class School_Class(object):
                                   WHERE (IDclass=?)""", [IDclass])
                 cursor.execute("""DELETE FROM Lesson 
                                   WHERE (IDclass=?)""", [IDclass])
-        except Exception, err:
+        except Exception as err:
             self.error = True
             self.msg = ("DrumsT: Failed to delete student and its lesson "
                         "in Class table and Lesson table\n\n"
@@ -303,7 +303,7 @@ class School_Class(object):
                                      lisT[6], lisT[7], lisT[8], lisT[9], 
                                      lisT[10], lisT[11], lisT[12], lisT[13], 
                                      lisT[14], lisT[0]])
-        except Exception, err:
+        except Exception as err:
             self.error = True
             self.msg = ("DrumsT: Failed to update lesson in Lesson table\n\n"
                         "ERROR: %s" % err)

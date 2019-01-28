@@ -12,11 +12,11 @@
 #
 import wx
 from add_school import AddSchool
-from drumsT_SYS.SQLite_lib import School_Class
-from drumsT_SYS.os_filesystem import write_newpath, create_rootdir
+from src.drumsT_SYS.SQLite_lib import School_Class
+from src.drumsT_SYS.os_filesystem import write_newpath, create_rootdir
 
-#from drumsT_SYS.SQLite_lib import School_Class
-#from drumsT_SYS.boot import write_fileconf
+#from src.drumsT_SYS.SQLite_lib import School_Class
+#from src.drumsT_SYS.boot import write_fileconf
 class FirstStart(wx.Dialog):
     
     def __init__(self, img):
