@@ -12,7 +12,7 @@
 # Rev (00)
 #########################################################
 
-import wx
+import wx.adv
 from src.drumsT_DATA.data_info import prg_info
 
 info_rls = prg_info()# calling
@@ -37,7 +37,7 @@ def info(drumsT_icon):
         create a dialogue on the program information
         """
 
-        info = wx.AboutDialogInfo()
+        info =  wx.adv.AboutDialogInfo()
 
         info.SetIcon(wx.Icon(drumsT_icon, wx.BITMAP_TYPE_PNG))
 
@@ -71,5 +71,5 @@ def info(drumsT_icon):
                         #u"Se siete interessati a tradurre il programma\n"
                         #u"in altre lingue, contattare l'autore.")
 
-        wx.AboutBox(info)
+        wx.adv.AboutBox(info)
         #event.Skip()

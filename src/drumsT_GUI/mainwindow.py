@@ -85,14 +85,14 @@ class MainFrame(wx.Frame):
         icon = wx.Icon()
         icon.CopyFromBitmap(wx.Bitmap(self.drumsT_ico, wx.BITMAP_TYPE_ANY))
         self.SetIcon(icon)
-        self.SetSize((1100, 600))
-        import_btn.SetMinSize((180, 25))
+        self.SetSize((1250, 750))
+        import_btn.SetMinSize((180, -1))
         import_btn.SetBackgroundColour(greenlight)
         self.cmbx_year.SetSelection(0)
         self.cmbx_year.Disable()
-        self.import_txt.SetMinSize((270, 25))
+        self.import_txt.SetMinSize((270, -1))
         self.import_txt.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.import_txt.SetForegroundColour(greendeph)
+        #self.import_txt.SetForegroundColour(greendeph)
         self.import_txt.Disable()
         self.list_ctrl.SetToolTip("Double click or type enter or push "
                                   "'Open lesson in selection' to open "

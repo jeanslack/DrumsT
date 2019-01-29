@@ -4,11 +4,11 @@
 #########################################################
 # Name: launcher.py
 # Porpose: main launch script of drumsT
-# Compatibility: Python2, Python3
+# Compatibility: Python3
 # Author: Gianluca Pernigoto <jeanlucperni@gmail.com>
 # Copyright: (c) 2018/2019 Gianluca Pernigoto <jeanlucperni@gmail.com>
 # license: GPL3
-# Rev (11) Gennary 14 2019
+# Rev (11) Gennary 29 2019
 #########################################################
 
 # This file is part of DrumsT.
@@ -38,10 +38,11 @@ if __name__ == '__main__':
             import wx
         
         except ImportError:
-            sys.stderr.write("[ERROR] 'wx' module is required.\n"
-                             "DrumsT for Python3 need wxPython-Phoenix.\n"
-                             "You could install it with 'pip' tool:\n"
-                             "or visit the wxPython web page for more info\n"
+            sys.stderr.write("\n\n[ERROR] 'wx' module is required.\n"
+                        "DrumsT for Python3 need wxPython-Phoenix.\n"
+                        "You could install it with 'pip' tool,\n"
+                        "visit the wxPython web page for more info: "
+                        "<https://wxpython.org>\n\n"
                             )
             sys.exit(1)
         
@@ -49,9 +50,9 @@ if __name__ == '__main__':
         DrumsT.main()
     
     else:
-        sys.stderr.write(
-                    "[ERROR] Not a supported Python version. Need Python3\n"
-                    "You are using Python version %s\n" % sys.version
+        sys.stderr.write("\n\n[ERROR] Not a supported Python version.\n"
+                         "Need Python3, you are using Python version "
+                         "%s\n\n" % sys.version
                          )
         sys.exit(1)
         
