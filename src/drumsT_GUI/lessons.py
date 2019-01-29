@@ -47,7 +47,7 @@ class Lesson(wx.Frame):
         self.panel_two = PanelTwo(self, self.nameSur, self.IDclass, self.path_db)
         self.panel_two.Hide()
         ################### layout
-        self.sizer = wx.FlexGridSizer()
+        self.sizer = wx.FlexGridSizer(1, 7, 0, 0)
         self.sizer.Add(self.panel_one, 1, wx.EXPAND|wx.ALL, 10)
         self.sizer.Add(self.panel_two, 1, wx.EXPAND|wx.ALL, 10)
         self.sizer.AddGrowableRow(0)
@@ -56,7 +56,7 @@ class Lesson(wx.Frame):
         
         #################### Properties
         self.SetTitle(("Record a new lesson for %s" % self.nameSur))
-        icon = wx.EmptyIcon()
+        icon = wx.Icon()
         icon.CopyFromBitmap(wx.Bitmap(self.drumsT_ico, wx.BITMAP_TYPE_ANY))
         self.SetIcon(icon)
         
@@ -87,12 +87,12 @@ class Lesson(wx.Frame):
         self.toolbar.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
         
         # ------- See student data
-        pantab = self.toolbar.AddLabelTool(wx.ID_FILE2, " Record a new lesson",
+        pantab = self.toolbar.AddTool(wx.ID_FILE2, " Record a new lesson",
                                            wx.Bitmap(self.lesson_ico))
         self.toolbar.AddSeparator()
         
         # ------- Add new student
-        panlesson = self.toolbar.AddLabelTool(wx.ID_FILE3, " Overall view" , 
+        panlesson = self.toolbar.AddTool(wx.ID_FILE3, " Overall view" , 
                                               wx.Bitmap(self.tab_ico))
         self.toolbar.AddSeparator()
         

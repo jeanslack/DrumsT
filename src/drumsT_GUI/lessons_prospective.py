@@ -78,13 +78,13 @@ class PanelTwo(wx.Panel):
         #self.myGrid.SetColAttr(2, attr)
         ## oppure: self.myGrid.SetReadOnly(3, 3, True)
         #### properties
-        self.editBtn.SetToolTipString("Changes text or value into the "
+        self.editBtn.SetToolTip("Changes text or value into the "
                                      "cells and append")
-        self.rollbackBtn.SetToolTipString("Rollback to the last state or first "
+        self.rollbackBtn.SetToolTip("Rollback to the last state or first "
                                      "to the last 'Apply-Commit'")
         self.applyBtn.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
         self.applyBtn.SetForegroundColour('#ff3f15')
-        self.applyBtn.SetToolTipString("Make an update and commit new "
+        self.applyBtn.SetToolTip("Make an update and commit new "
                                        "changes into database")
         self.editBtn.Disable()
         self.rollbackBtn.Disable()

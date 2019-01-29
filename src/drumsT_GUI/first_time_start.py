@@ -11,7 +11,7 @@
 #########################################################
 #
 import wx
-from add_school import AddSchool
+from src.drumsT_GUI.add_school import AddSchool
 from src.drumsT_SYS.SQLite_lib import School_Class
 from src.drumsT_SYS.os_filesystem import write_newpath, create_rootdir
 

@@ -11,6 +11,7 @@
 #########################################################
 
 import wx
+import wx.adv
 from src.drumsT_SYS.SQLite_lib import School_Class
 
 class PanelOne(wx.Panel):
@@ -40,7 +41,9 @@ class PanelOne(wx.Panel):
         """
         Start with widget and panel setup
         """
-        self.datepk = wx.DatePickerCtrl(self, wx.ID_ANY, style=wx.DP_DEFAULT)
+        self.datepk = wx.adv.DatePickerCtrl(self, wx.ID_ANY, 
+                                            style=wx.adv.DP_DEFAULT
+                                            )
         boxDate = wx.StaticBox(self, wx.ID_ANY, ("Setting Date lesson"))
         self.rdb = wx.RadioBox(self, wx.ID_ANY, ("Attendances Register"), 
                                choices=[("All Present"),
@@ -179,7 +182,7 @@ class PanelOne(wx.Panel):
         self.currdate = self.datepk.GetValue() 
         
         ######################## binding #####################
-        self.Bind(wx.EVT_DATE_CHANGED, self.onDate, self.datepk)
+        self.Bind(wx.adv.EVT_DATE_CHANGED, self.onDate, self.datepk)
         self.Bind(wx.EVT_RADIOBOX, self.onAbsences, self.rdb)
         btnExit.Bind(wx.EVT_BUTTON, self.on_close)
         self.Bind(wx.EVT_BUTTON, self.onApply, self.btnApply)

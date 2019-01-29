@@ -183,16 +183,16 @@ class MainFrame(wx.Frame):
 
         index = 0
         for rec in profiles:
-            rows = self.list_ctrl.InsertStringItem(index, str(rec[0]))
-            self.list_ctrl.SetStringItem(rows, 0, str(rec[0]))
-            self.list_ctrl.SetStringItem(rows, 1, rec[1])
-            self.list_ctrl.SetStringItem(rows, 2, rec[2])
-            self.list_ctrl.SetStringItem(rows, 3, rec[3])
-            self.list_ctrl.SetStringItem(rows, 4, rec[4])
-            self.list_ctrl.SetStringItem(rows, 5, rec[5])
-            self.list_ctrl.SetStringItem(rows, 6, rec[6])
-            self.list_ctrl.SetStringItem(rows, 7, rec[7])
-            self.list_ctrl.SetStringItem(rows, 8, rec[8])
+            rows = self.list_ctrl.InsertItem(index, str(rec[0]))
+            self.list_ctrl.SetItem(rows, 0, str(rec[0]))
+            self.list_ctrl.SetItem(rows, 1, rec[1])
+            self.list_ctrl.SetItem(rows, 2, rec[2])
+            self.list_ctrl.SetItem(rows, 3, rec[3])
+            self.list_ctrl.SetItem(rows, 4, rec[4])
+            self.list_ctrl.SetItem(rows, 5, rec[5])
+            self.list_ctrl.SetItem(rows, 6, rec[6])
+            self.list_ctrl.SetItem(rows, 7, rec[7])
+            self.list_ctrl.SetItem(rows, 8, rec[8])
             if index % 2:
                 self.list_ctrl.SetItemBackgroundColour(index, "white")
             else:
