@@ -3,6 +3,9 @@ DrumsT
 ====
 
 Management program for Drums teachers (with wxPython Graphic interface)
+----
+
+# This repository has been archived.
 
 ## Description
 
